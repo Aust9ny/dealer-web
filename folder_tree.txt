@@ -1,0 +1,23 @@
+.
+├── assets/             # Uncompiled files (SASS, Tailwind CSS, images)
+├── components/         # Auto-imported components
+│   ├── base/           # Reusable UI (BaseButton, BaseInput)
+│   ├── cart/           # Cart-specific components
+│   ├── product/        # Product cards, grids, galleries
+│   └── shared/         # Site-wide (TheHeader, TheFooter)
+├── composables/        # Shared state & logic (useCart, useAuth, useProduct)
+├── constants/          # Static data (Navigation links, currency symbols)
+├── layouts/            # Page templates (default.vue, checkout-layout.vue)
+├── middleware/         # Route guards (auth.global.ts, checkout.ts)
+├── pages/              # File-based routes
+│   ├── index.vue       # Home
+│   ├── products/
+│   │   ├── index.vue   # Catalog
+│   │   └── [id].vue    # Product Detail Page (PDP)
+│   ├── cart.vue        # Shopping Cart
+│   └── checkout.vue    # Checkout page
+├── plugins/            # Third-party integrations (Toast notifications, Analytics)
+├── server/             # API routes & server middleware (Nitro)
+├── stores/             # Pinia stores (cart.ts, user.ts, wishlist.ts)
+├── types/              # TypeScript interfaces (Product.ts, Order.ts)
+└── utils/              # Pure functions (formatPrice.ts, validators.ts)
