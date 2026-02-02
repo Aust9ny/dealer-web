@@ -20,6 +20,7 @@
     "@nuxtjs/tailwindcss": "^6.14.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@unhead/vue": "^2.1.2",
+    "commander": "^11.1.0",
     "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "nuxt": "^3.21.0",
