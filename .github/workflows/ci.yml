@@ -1,0 +1,29 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        # 'npm ci' is faster and cleaner for automated environments than 'npm install'
+        run: npm ci
+
+      - name: Lint Check
+        # This checks for the single quotes, semicolons, and errors we set in ESLint
+        run: npm run lint
+
+      - name: Build Check
+        # This ensures the Nuxt app compiles successfully without errors
+        run: npm run build
