@@ -35,7 +35,7 @@
               placeholder="รหัสผ่านใหม่..."
               class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
             >
-            <button type="button" @click="showNewPass = !showNewPass" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]">
+            <button type="button" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]" @click="showNewPass = !showNewPass">
               <EyeIcon v-if="!showNewPass" />
               <EyeSlashIcon v-else />
             </button>
