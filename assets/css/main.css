@@ -1,2 +1,12 @@
+/* Import both fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=IBM+Plex+Sans+Thai:wght@100;400;700&display=swap');
 @import "tailwindcss";
 
+@theme {
+  /* Set a stack: Inter first for English, IBM Plex for Thai fallback */
+  --font-modern: "Inter", "IBM Plex Sans Thai", sans-serif;
+}
+
+body {
+  font-family: var(--font-modern);
+}
