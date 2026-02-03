@@ -14,7 +14,7 @@
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
           class="w-full h-10 pl-4 pr-24 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        />
+        >
 
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-8 px-4 bg-[#00569C] text-white flex items-center gap-2 rounded-full hover:opacity-90"
