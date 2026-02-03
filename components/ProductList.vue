@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unsafe-function-type -->
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import type { Product } from '~/types/product';
