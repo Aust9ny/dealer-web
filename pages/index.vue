@@ -68,17 +68,17 @@ const categoryTitle = computed(() => {
 </script>
 <template>
   <div class="min-h-screen bg-[#F8FCF8] py-4 px-2 md:px-6">
-     <div class="mx-auto max-w-[1400px]"> 
+     <div class="mx-auto max-w-1400px"> 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
         
         <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-[4/1] w-full"> 
+          <div class="aspect-4/1 w-full"> 
             <PromotionBanner :banners="banner1" />
           </div>
         </div>
 
         <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-[4/1] w-full"> 
+          <div class="aspect-4/1 w-full"> 
             <PromotionBanner :banners="banner2" />
           </div>
         </div>
