@@ -67,6 +67,10 @@ const newList = ref<News[]>([
 const categoryTitle = computed(() => {
   return products.value.length > 0 ? products.value[0].category : 'Products';
 });
+
+const startDate = ref<string | null>(null);
+const endDate = ref<string | null>(null);
+
 </script>
 <template>
   <div class="bg-gray-50 min-h-screen">
@@ -144,24 +148,23 @@ const categoryTitle = computed(() => {
               bg-gray-50 border border-gray-200
               rounded-xl px-3 py-2"
       >
-        <!-- Start date -->
+      <!-- Start date -->
         <input
-          type="date"
           v-model="startDate"
-          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
-                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        />
-
-        <span class="text-gray-400">–</span>
-
-        <!-- End date -->
-        <input
           type="date"
-          v-model="endDate"
           class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
                 focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        />
-        <button class = "ml-1 w-10 h-10 flex items-center justify-center rounded-lg bg-[#00569C] text-white hover:bg-[#004a86] active:scale-95 transition" title="ค้นหา" @click="applyDate">
+        ></input>
+        <span class="text-gray-400">–</span>
+      <!-- End date -->
+        <input
+          v-model="endDate"
+          type="date"
+          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
+                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
+        ></input>
+
+        <button class = "ml-1 w-10 h-10 flex items-center justify-center rounded-lg bg-[#00569C] text-white hover:bg-[#004a86] active:scale-95 transition" title="ค้นหา" >
           <svg
             xmlns="http://www.w3.org/2000/svg"
             class="w-5 h-5"
