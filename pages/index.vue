@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Product , } from '~/types/product';
 import type { Banner } from '~/types/banner';
+import type { News } from '~/types/news';
 
 const banner1 = ref<Banner[]>([
   { 
@@ -55,23 +56,31 @@ const products = ref<Product[]>([
   // ... (Keep your original product list here)
 ]);
 
+const newList = ref<News[]>([
+  { id: 1, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU Release' },
+  { id: 2, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://img.advice.co.th/images_nas/advice_activity/202601302059541189.jpg', alt: 'Tech Conference' },
+  { id: 3, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU Release' },
+  { id: 4, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://img.advice.co.th/images_nas/advice_activity/202601302059541189.jpg', alt: 'Tech Conference' },
+  // ... (Add more news items as needed)
+]);
+
 const categoryTitle = computed(() => {
   return products.value.length > 0 ? products.value[0].category : 'Products';
 });
 </script>
 <template>
   <div class="min-h-screen bg-[#F8FCF8] py-4 px-2 md:px-6">
-     <div class="mx-auto max-w-[1400px]"> 
+     <div class="mx-auto max-w-1400px"> 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
         
         <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-[4/1] w-full"> 
+          <div class="aspect-4/1 w-full"> 
             <PromotionBanner :banners="banner1" />
           </div>
         </div>
 
         <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-[4/1] w-full"> 
+          <div class="aspect-4/1 w-full"> 
             <PromotionBanner :banners="banner2" />
           </div>
         </div>
@@ -84,7 +93,10 @@ const categoryTitle = computed(() => {
           :products="products" 
         />
       </div>
+      <div class="mt-12">
+        <FooterNews :news-list="newList" />
     </div>
+  </div>
   </div>
 </template>
 <style scoped>
