@@ -11,6 +11,7 @@
     "lint": "eslint . --fix"
   },
   "dependencies": {
+    "@iconify/vue": "^5.0.0",
     "@nuxt/eslint": "^1.13.0",
     "@nuxt/hints": "^1.0.0-alpha.6",
     "@nuxt/image": "^2.0.0",
