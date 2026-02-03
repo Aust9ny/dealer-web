@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Product , } from '~/types/product';
 import type { Banner } from '~/types/banner';
+import type { News } from '~/types/news';
 
 const banner1 = ref<Banner[]>([
   { 
@@ -55,6 +56,12 @@ const products = ref<Product[]>([
   // ... (Keep your original product list here)
 ]);
 
+const newList = ref<News[]>([
+  { id: 1, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://example.com/news1.jpg', alt: 'GPU Release' },
+  { id: 2, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://example.com/news2.jpg', alt: 'Tech Conference' },
+  // ... (Add more news items as needed)
+]);
+
 const categoryTitle = computed(() => {
   return products.value.length > 0 ? products.value[0].category : 'Products';
 });
@@ -84,7 +91,10 @@ const categoryTitle = computed(() => {
           :products="products" 
         />
       </div>
+      <div class="mt-12">
+        <FooterNews :news-list="newList" />
     </div>
+  </div>
   </div>
 </template>
 <style scoped>
