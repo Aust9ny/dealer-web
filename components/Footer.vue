@@ -13,14 +13,14 @@ import { Icon } from '@iconify/vue';
           Advice <br>
           <span class="text-green-500">Dealers</span>
         </div>
-        <div class="mt-2 h-[2px] w-85 bg-gray-200"></div>
+        <div class="mt-2 h-[2px] w-85 bg-gray-200"/>
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
-          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br/> ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
+          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br> ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
 
         <p class="text-gray-500 text-xs leading-relaxed">
           จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” เพราะเราคือ
-          “Lifestyle IT Community” มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online <br/>
+          “Lifestyle IT Community” มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online <br>
           จะซื้อ จะซ่อม จะขาย พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
         </p>
       </div>

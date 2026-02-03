@@ -16,11 +16,20 @@ const products = ref<Product[]>([
 const categoryTitle = computed(() => {
   return products.value.length > 0 ? products.value[0].category : 'Products';
 });
+
+const startDate = ref<string>('');
+const endDate = ref<string>('');
+
+const applyDate = () => {
+  console.log('ช่วงวันที่เลือก:', startDate.value, endDate.value);
+}
+
 </script>
 
 
 <template>
-  <div class="grid grid-cols-8 grid-rows-8 gap-4 p-6 bg-gray-50 min-h-screen">
+  <div class="bg-gray-50 min-h-screen">
+  <div class="grid grid-cols-8 grid-rows-6 gap-4 p-6 bg-gray-50 min-h-screen">
     <div
       class="row-span-6 col-span-1 col-start-2 bg-white rounded-xl p-4 space-y-4 shadow-sm"
     >
@@ -34,7 +43,7 @@ const categoryTitle = computed(() => {
           <li>ใบสั่งซื้อย้อนหลัง</li>
         </ul>
       </div>
-
+      <div class="mt-2 h-[2px] w-full bg-gray-200"/>
       <div>
         <h3 class="font-semibold flex items-center gap-2">
           💳 การเงินและชำระเงิน
@@ -44,7 +53,7 @@ const categoryTitle = computed(() => {
           <li>ชำระหนี้ Advice สนญ.</li>
         </ul>
       </div>
-
+      <div class="mt-2 h-[2px] w-full bg-gray-200"/>
       <div>
         <h3 class="font-semibold flex items-center gap-2">
           📦 ติดตามสถานะและเคลม
@@ -55,7 +64,7 @@ const categoryTitle = computed(() => {
           <li>รายงานการจัดส่ง</li>
         </ul>
       </div>
-
+      <div class="mt-2 h-[2px] w-full bg-gray-200"/>
       <div>
         <h3 class="font-semibold flex items-center gap-2">
           🏷 สื่อการขายและโปรโมชั่น
@@ -66,6 +75,7 @@ const categoryTitle = computed(() => {
           <li>พิมพ์ป้ายราคา (Gaming)</li>
         </ul>
       </div>
+      <div class="mt-2 h-[2px] w-full bg-gray-200"/>
       <div>
         <h3 class="font-semibold flex items-center gap-2">
           ⚙️ ข้อมูลและตั้งค่า
@@ -76,25 +86,66 @@ const categoryTitle = computed(() => {
           <li>เงื่อนไขการจัดส่ง</li>
         </ul>
       </div>
+      <div class="mt-2 h-[2px] w-full bg-gray-200"/>
     </div>
 
     <div
-      class="col-span-5 col-start-3 bg-white rounded-xl p-4 shadow-sm flex items-center gap-4"
-    >
-      <h2 class="font-semibold">สรุปผลการดำเนินงาน:</h2>
-      <div class="flex items-center gap-2 border rounded-lg px-3 py-2 text-sm">
-        <span>01/04/2024</span>
-        <span>→</span>
-        <span>01/04/2025</span>
+  class="col-span-5 col-start-3 bg-white rounded-xl p-4 shadow-sm
+         flex items-center justify-between"
+>
+      <h2 class="font-semibold text-gray-700">
+        สรุปผลการดำเนินงาน
+      </h2>
+
+      <!-- Outer frame -->
+      <div
+        class="flex items-center gap-2 text-sm
+              bg-gray-50 border border-gray-200
+              rounded-xl px-3 py-2"
+      >
+        <!-- Start date -->
+        <input
+          type="date"
+          v-model="startDate"
+          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
+                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
+        />
+
+        <span class="text-gray-400">–</span>
+
+        <!-- End date -->
+        <input
+          type="date"
+          v-model="endDate"
+          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
+                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
+        />
+        <button class = "ml-1 w-10 h-10 flex items-center justify-center rounded-lg bg-[#00569C] text-white hover:bg-[#004a86] active:scale-95 transition" title="ค้นหา" @click="applyDate">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z"
+            />
+          </svg>
+        </button>
       </div>
     </div>
+
     <div
       class="col-span-5 col-start-3 row-span-3 row-start-2 bg-white rounded-xl shadow-sm flex items-center justify-center text-center"
     >
       <div class="space-y-2">
         <p class="text-xl font-semibold text-gray-700">Dashboard Area</p>
         <p class="text-sm text-gray-500">
-          ยอดเงินที่สั่งซื้อ, รายงานการสั่งซื้อ,<br />
+          ยอดเงินที่สั่งซื้อ, รายงานการสั่งซื้อ,<br>
           สินค้าค้างส่ง, สินค้าขายดี
         </p>
       </div>
@@ -128,23 +179,16 @@ const categoryTitle = computed(() => {
     >
       Quick Shortcuts
     </div>
-    <div
-      class="col-span-3 col-start-2 row-span-2 row-start-7 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      <span class="text-gray-500">Banner Left</span>
-    </div> 
-    <div
-      class="col-span-3 col-start-5 row-span-2 row-start-7 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      <span class="text-gray-500">Banner Right</span>
-    </div>
   </div>
-
-  <div class="max-w-7xl mx-auto px-4">
-    <ProductList 
-      :title="categoryTitle"
-      :products="products" 
-    />
+  <!-- ===== PRODUCT LIST (OUTSIDE GRID) ===== -->
+    <section class="bg-gray-50">
+      <div class="max-w-7xl mx-auto px-6 py-12">
+        <ProductList
+          :title="categoryTitle"
+          :products="products"
+        />
+      </div>
+    </section>
   </div>
 </template>
 <style scoped>
