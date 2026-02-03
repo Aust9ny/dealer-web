@@ -66,7 +66,7 @@ onUnmounted(() => stopTimer());
       
       <button 
         class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl transition-colors border border-slate-200"
-        @click="" 
+        @click="void(0)" 
       >
         <span class="inline-block transition-transform duration-200 text-lg origin-center group-hover:scale-103 border rounded-3xl p-2">ดูทั้งหมด</span>
         <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
