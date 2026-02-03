@@ -12,7 +12,7 @@
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
           class="w-full h-10 pl-4 pr-24 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        />
+        >
 
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2
@@ -45,7 +45,7 @@
         src="https://i.pravatar.cc/40"
         alt="profile"
         class="w-9 h-9 rounded-full"
-      />
+      >
       <span class="text-sm font-medium text-gray-700"> Jam </span>
     </div>
   </header>

@@ -1,5 +1,5 @@
 <script setup>
-import { Icon } from "@iconify/vue";
+import { Icon } from '@iconify/vue';
 </script>
 <template>
   <footer class="bg-white border-t mt-20">
@@ -10,10 +10,10 @@ import { Icon } from "@iconify/vue";
       <!-- Column 1 -->
       <div class="space-y-4 lg:pr-10">
         <div class="text-3xl font-bold text-blue-600">
-          Advice <br />
+          Advice <br>
           <span class="text-green-500">Dealers</span>
         </div>
-        <div class="mt-2 h-[2px] w-full bg-gray-200"></div>
+        <div class="mt-2 h-0.5 w-full bg-gray-200"/>
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
           “แอดไวซ์ ศูนย์รวมเทคโนโลยี ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
@@ -29,7 +29,7 @@ import { Icon } from "@iconify/vue";
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ระบบการสั่งซื้อ</h3>
-          <div class="h-[2px] w-full bg-gray-200"></div>
+          <div class="h-0.5 w-full bg-gray-200"/>
 
           <ul class="mt-3 space-y-2">
             <li>สั่งซื้อสินค้า</li>
@@ -40,7 +40,7 @@ import { Icon } from "@iconify/vue";
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">รายงาน</h4>
-          <div class="h-[2px] w-full bg-gray-200"></div>
+          <div class="h-0.5 w-full bg-gray-200"/>
 
           <ul class="mt-3 space-y-2">
             <li>รายงานยอดขาย</li>
@@ -53,7 +53,7 @@ import { Icon } from "@iconify/vue";
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">การเงินและชำระเงิน</h3>
-          <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
+          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
 
           <ul class="space-y-2 mt-4">
             <li>ชำระ / อัปโหลดหลักฐานโอน</li>
@@ -65,7 +65,7 @@ import { Icon } from "@iconify/vue";
           <h4 class="font-semibold mb-2 text-gray-900">
             สื่อการขายและโปรโมชั่น
           </h4>
-          <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
+          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
 
           <ul class="space-y-2 mt-4">
             <li>โปรโมชั่น Dealers</li>
@@ -79,7 +79,7 @@ import { Icon } from "@iconify/vue";
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ติดตามสถานะและเคลม</h3>
-          <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
+          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
 
           <ul class="space-y-2 mt-4">
             <li>ตรวจสอบสถานะการเคลม</li>
@@ -90,7 +90,7 @@ import { Icon } from "@iconify/vue";
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">เงื่อนไข</h4>
-          <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
+          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
 
           <ul class="space-y-2 mt-4">
             <li>เงื่อนไขการจัดส่ง</li>
@@ -116,7 +116,7 @@ import { Icon } from "@iconify/vue";
             ต.ท่าอิฐ อ.ปากเกร็ด จ.นนทบุรี 11120
           </p>
           <!-- Social -->
-          <div class="mt-6 max-w-[260px]">
+          <div class="mt-6 max-w-65">
             <h3 class="font-semibold mb-3 text-gray-900">
               ติดตามเราได้ทุกช่องทาง
             </h3>
