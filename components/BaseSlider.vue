@@ -6,12 +6,15 @@ const props = defineProps<{
   title?: string;
   itemsPerRow?: number; 
   autoPlay?: boolean;
+  showArrows?: boolean;
+  interval?: number | 5000;
 }>();
 
 const visibleItems = ref(1);
 const currentIndex = ref(0);
 const isPaused = ref(false);
 const autoSlideTimer = ref<NodeJS.Timeout | null>(null);
+const shouldShowArrows = computed(() => props.showArrows !== false);
 
 const updateVisibleItems = () => {
   const width = window.innerWidth;
@@ -79,7 +82,7 @@ onUnmounted(() => {
     </div>
 
     <div class="relative group" @mouseenter="isPaused = true" @mouseleave="isPaused = false">
-      <button v-if="totalPages > 1" class="nav-btn left-0" @click="prev()">
+      <button v-if="totalPages > 1 && shouldShowArrows" class="nav-btn left-0" @click="prev()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" /></svg>
       </button>
 
@@ -99,12 +102,12 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <button v-if="totalPages > 1" class="nav-btn right-0" @click="next()">
+      <button v-if="totalPages > 1 && shouldShowArrows" class="nav-btn right-0" @click="next()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
       </button>
     </div>
 
-    <div v-if="totalPages > 1" class="flex justify-center gap-2 mt-8">
+    <div v-if="totalPages > 1 " class="flex justify-center gap-2 mt-8">
       <button 
         v-for="(_, i) in totalPages" :key="i"
         class="h-1.5 transition-all duration-300 rounded-full"

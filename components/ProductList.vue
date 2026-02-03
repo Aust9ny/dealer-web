@@ -8,7 +8,12 @@ defineProps<{
 </script>
 
 <template>
-  <BaseSlider :title="title" :items="products" :items-per-row="5" auto-play>
+  <BaseSlider
+   :title="title" 
+   :items="products" 
+   :items-per-row="5"
+   :show-arrows="true" 
+   auto-play>
     
     <template #header-action>
       <button class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl transition-colors border border-slate-200">
