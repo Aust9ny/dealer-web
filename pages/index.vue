@@ -57,8 +57,10 @@ const products = ref<Product[]>([
 ]);
 
 const newList = ref<News[]>([
-  { id: 1, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://example.com/news1.jpg', alt: 'GPU Release' },
-  { id: 2, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://example.com/news2.jpg', alt: 'Tech Conference' },
+  { id: 1, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU Release' },
+  { id: 2, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://img.advice.co.th/images_nas/advice_activity/202601302059541189.jpg', alt: 'Tech Conference' },
+  { id: 3, title: 'New GPU Release', link: '#', description: 'The latest GPU has been released with amazing features.', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU Release' },
+  { id: 4, title: 'Tech Conference 2024', link: '#', description: 'Join us at the annual tech conference to explore new innovations.', date: '2024-05-20', image: 'https://img.advice.co.th/images_nas/advice_activity/202601302059541189.jpg', alt: 'Tech Conference' },
   // ... (Add more news items as needed)
 ]);
 
