@@ -2,25 +2,25 @@
 import { Icon } from "@iconify/vue";
 </script>
 <template>
-  <footer class="bg-white border-t mt-20">
+  <footer class="bg-white">
     <!-- Top section -->
     <div
-      class="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[3fr_1.7fr_2.1fr_1.9fr_2.3fr] gap-y-8 gap-x-16 text-sm text-gray-700"
+      class="max-w-screen-2xl mx-auto py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4"
     >
       <!-- Column 1 -->
-      <div class="space-y-4 lg:pr-10">
+      <div class="space-y-4">
         <div class="text-3xl font-bold text-blue-600">
           Advice <br />
           <span class="text-green-500">Dealers</span>
         </div>
-        <div class="mt-2 h-[2px] w-full bg-gray-200"></div>
+        <div class="mt-2 h-[2px] w-85 bg-gray-200"></div>
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
-          “แอดไวซ์ ศูนย์รวมเทคโนโลยี ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
+          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br/> ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
 
         <p class="text-gray-500 text-xs leading-relaxed">
           จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” เพราะเราคือ
-          “Lifestyle IT Community” มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online
+          “Lifestyle IT Community” มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online <br/>
           จะซื้อ จะซ่อม จะขาย พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
         </p>
       </div>
@@ -50,7 +50,7 @@ import { Icon } from "@iconify/vue";
       </div>
 
       <!-- Column 3 -->
-      <div class="space-y-8">
+      <div class="space-y-8 ">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">การเงินและชำระเงิน</h3>
           <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
@@ -76,7 +76,7 @@ import { Icon } from "@iconify/vue";
       </div>
 
       <!-- Column 4 -->
-      <div class="space-y-8">
+      <div class="space-y-8 ">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ติดตามสถานะและเคลม</h3>
           <div class="mt-1 h-[2px] w-full bg-gray-200"></div>
@@ -99,7 +99,7 @@ import { Icon } from "@iconify/vue";
       </div>
 
       <!-- Column 5 -->
-      <div>
+      <div class="space-y-3">
         <div class="flex flex-col space-y-3 lg:pl-10">
           <h3 class="font-semibold text-gray-900">สอบถามข้อมูลเพิ่มเติม</h3>
 
