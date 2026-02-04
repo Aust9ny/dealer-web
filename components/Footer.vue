@@ -4,9 +4,7 @@ import { Icon } from '@iconify/vue';
 <template>
   <footer class="bg-white">
     <!-- Top section -->
-    <div
-      class="max-w-screen-2xl mx-auto py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4"
-    >
+    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4">
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-blue-600">
