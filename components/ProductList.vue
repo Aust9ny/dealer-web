@@ -37,9 +37,9 @@ const filteredProducts = computed(() => {
 
 const displayTitle = computed(() => {
   if (selectedCategory.value === 'All') {
-    return props.title || 'รายการสินค้าแนะนำ';
+    return 'รายการสินค้าแนะนำ';
   }
-  return selectedCategory.value;
+  return `รายการสินค้าประเภท ${selectedCategory.value}`;
 });
 
 // เฝ้าดูการเปลี่ยนหมวดหมู่
