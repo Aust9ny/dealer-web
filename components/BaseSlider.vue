@@ -87,7 +87,6 @@ onUnmounted(() => {
 <template>
   <div class="py-8  bg-white rounded-2xl ">
     <div class="flex items-center justify-between mb-4 mx-14 ">
-      <h2 v-if="title" class="text-2xl font-bold text-slate-800">{{ title }}</h2>
       <slot name="header-action" />
     </div>
 
