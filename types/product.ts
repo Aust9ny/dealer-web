@@ -1,7 +1,6 @@
 // types/product.ts
 export interface Product {
   id: number;
-  title :string;
   sku: string;
   name: string;
   brand: string;
