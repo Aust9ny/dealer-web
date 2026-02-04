@@ -1,5 +1,5 @@
 <template>
-  <article class="group relative bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all border border-slate-100 ">
+  <article class="group relative bg-white rounded-2xl p-4 shadow-sm hover:shadow-md transition-all border border-slate-300 ">
     <div class="flex justify-between items-start mb-4">
       <span v-if="product.isHot" class="bg-[#ef4444] text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
         🔥 Hot Item

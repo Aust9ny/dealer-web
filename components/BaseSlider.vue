@@ -55,12 +55,22 @@ const startTimer = () => {
   stopTimer();
   autoSlideTimer.value = setInterval(() => {
     if (!isPaused.value) next();
-  }, 5000);
+  }, props.interval || 5000); 
 };
 
 const stopTimer = () => {
   if (autoSlideTimer.value) clearInterval(autoSlideTimer.value);
 };
+
+const resetSlider = () => {
+  currentIndex.value = 0; // Reset to page 1
+  startTimer(); // Restart the 5s countdown
+};
+
+defineExpose({
+  resetSlider,
+  currentIndex
+});
 
 onMounted(() => {
   updateVisibleItems();
@@ -75,9 +85,8 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="py-8">
-    <div class="flex items-center justify-between mb-6">
-      <h2 v-if="title" class="text-2xl font-bold text-slate-800">{{ title }}</h2>
+  <div class="py-8  bg-white rounded-2xl ">
+    <div class="flex items-center justify-between mb-4 mx-14 ">
       <slot name="header-action" />
     </div>
 
