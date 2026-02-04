@@ -7,10 +7,15 @@ export interface Product {
   price: number;
   category: string;
   image: string;
+  brandImg? : string;
   specs: string;
   promotion?: string;
   warranty: string;
   delivery: string;
   views: string;
   isHot?: boolean;
+  isDiscount?: boolean;
+  discountPercentage?: number;
+  isNew?: boolean;
+  isSale?: boolean;
 }
