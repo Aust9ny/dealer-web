@@ -2,6 +2,7 @@
 import type { Product , } from '~/types/product';
 import type { Banner } from '~/types/banner';
 import type { News } from '~/types/news';
+import BarChart from '../components/IndexChart.vue';
 
 const banner1 = ref<Banner[]>([
   { 
@@ -74,6 +75,13 @@ const newList = ref<News[]>([
   // ... (Add more news items as needed)
 ]);
 
+const stats = [
+  { label: 'ยอดสั่งซื้อสะสม', value: '฿13,342,314', colorClass: 'text-slate-800', icon: '💰' },
+  { label: 'สินค้าค้างส่ง', value: '10 รายการ', colorClass: 'text-slate-800', icon: '📦' },
+  { label: 'สินค้าเคลมรอตัดสินใจ', value: '10 รายการ', colorClass: 'text-slate-800', icon: '⚠️' },
+  { label: 'รายการจัดส่ง', value: '10 รายการ', colorClass: 'text-slate-800', icon: '🚚' },
+];
+
 const categoryTitle = computed(() => {
   return products.value.length > 0 ? products.value[0].category : 'Products';
 });
@@ -84,189 +92,157 @@ const endDate = ref<string | null>(null);
 
 </script>
 <template>
-  <div class="bg-gray-50 min-h-screen">
-  <div class="grid grid-cols-8 grid-rows-6 gap-4 p-6 bg-gray-50 min-h-screen">
-    <div
-      class="row-span-6 col-span-1 col-start-2 bg-white rounded-xl p-4 space-y-4 shadow-sm"
-    >
-      <div>
-        <h3 class="font-semibold flex items-center gap-2">
-          🛒 ระบบการสั่งซื้อ
-        </h3>
-        <ul class="mt-2 space-y-1 text-sm text-gray-600">
-          <li>สั่งซื้อสินค้า</li>
-          <li>รายการสินค้าค้างส่ง</li>
-          <li>ใบสั่งซื้อย้อนหลัง</li>
-        </ul>
-      </div>
-      <div class="mt-2 h-0.5 w-full bg-gray-200"/>
-      <div>
-        <h3 class="font-semibold flex items-center gap-2">
-          💳 การเงินและชำระเงิน
-        </h3>
-        <ul class="mt-2 space-y-1 text-sm text-gray-600">
-          <li>ชำระ / อัปโหลดหลักฐานโอน</li>
-          <li>ชำระหนี้ Advice สนญ.</li>
-        </ul>
-      </div>
-      <div class="mt-2 h-0.5 w-full bg-gray-200"/>
-      <div>
-        <h3 class="font-semibold flex items-center gap-2">
-          📦 ติดตามสถานะและเคลม
-        </h3>
-        <ul class="mt-2 space-y-1 text-sm text-gray-600">
-          <li>ตรวจสอบสถานะการเคลม</li>
-          <li>สินค้าคืนรอตัดสินใจ</li>
-          <li>รายงานการจัดส่ง</li>
-        </ul>
-      </div>
-      <div class="mt-2 h-0.5 w-full bg-gray-200"/>
-      <div>
-        <h3 class="font-semibold flex items-center gap-2">
-          🏷 สื่อการขายและโปรโมชั่น
-        </h3>
-        <ul class="mt-2 space-y-1 text-sm text-gray-600">
-          <li>โปรโมชั่น Dealers</li>
-          <li>พิมพ์ป้ายราคา (Standard)</li>
-          <li>พิมพ์ป้ายราคา (Gaming)</li>
-        </ul>
-      </div>
-      <div class="mt-2 h-0.5 w-full bg-gray-200"/>
-      <div>
-        <h3 class="font-semibold flex items-center gap-2">
-          ⚙️ ข้อมูลและตั้งค่า
-        </h3>
-        <ul class="mt-2 space-y-1 text-sm text-gray-600">
-          <li>รายการเคลื่อนไหวของบัญชี</li>
-          <li>รายชื่อไฟล์ที่อัปโหลด</li>
-          <li>เงื่อนไขการจัดส่ง</li>
-        </ul>
-      </div>
-      <div class="mt-2 h-0.5 w-full bg-gray-200"/>
-    </div>
+  <div class="bg-gray-100 min-h-screen font-thai">
+    <div class="max-w-400 mx-auto p-6">
+      <div class="grid grid-cols-12 gap-6">
+        
+        <aside class="col-span-12 lg:col-span-3 space-y-4">
+          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-300">
+            <nav class="space-y-6">
+              <div>
+                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                  <span class="text-lg">🛒</span> ระบบการสั่งซื้อ
+                </h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">สั่งซื้อสินค้า</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">รายการสินค้าค้างส่ง</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">ใบสั่งซื้อย้อนหลัง</li>
+                </ul>
+                <div class="mt-4 h-px w-full bg-slate-400"/>
+              </div>
 
-    <div
-  class="col-span-5 col-start-3 bg-white rounded-xl p-4 shadow-sm
-         flex items-center justify-between"
->
-      <h2 class="font-semibold text-gray-700">
-        สรุปผลการดำเนินงาน
-      </h2>
+              <div>
+                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                  <span class="text-lg">💳</span> การเงินและชำระเงิน
+                </h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">ชำระ / อัปโหลดหลักฐานโอน</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">ชำระหนี้ Advice สนญ.</li>
+                </ul>
+                <div class="mt-4 h-px w-full bg-slate-400"/>
+              </div>
+              
+              <div>
+                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                  <span class="text-lg">💳</span> ติดตามสถานะและเคลม
+                </h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">ตรวจสอบสถานะการเคลม</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">สินค้าเคลมรอตัดสินใจ</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">รายงานการจัดส่ง</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">เงื่อนไขการจัดส่ง</li>
+                </ul>
+                <div class="mt-4 h-px w-full bg-slate-400"/>
+              </div>
+              
+              <div>
+                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                  <span class="text-lg">💳</span> สื่อการขายและโปรโมชั่น
+                </h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">โปรโมชั่น Dealers</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">พิมพ์ป้ายราคา (Standard)</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">พิมพ์ป้ายราคา (Gaming)</li>
+                </ul>
+                <div class="mt-4 h-px w-full bg-slate-400"/>
+              </div>
 
-      <!-- Outer frame -->
-      <div
-        class="flex items-center gap-2 text-sm
-              bg-gray-50 border border-gray-200
-              rounded-xl px-3 py-2"
+              <div>
+                <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+                  <span class="text-lg">💳</span> ข้อมูลและการตั้งค่า
+                </h3>
+                <ul class="space-y-2 text-sm text-slate-600">
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">รายการเคลื่อนไหวของบัญชี</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">รายขื่อไฟล์ที่อัปโหลด</li>
+                  <li class="hover:text-[#2196F3] cursor-pointer transition">เงื่อนไขการจัดส่ง</li>
+                </ul>
+                <div class="mt-4 h-px w-full bg-slate-100"/>
+              </div>
+
+            </nav>
+          </div>
+        </aside>
+
+        <main class="col-span-12 lg:col-span-9 space-y-10">
+          
+          <header class="bg-white rounded-2xl p-4 shadow-sm border border-slate-300 flex flex-wrap items-center justify-between gap-4 ">
+            <h2 class="font-bold text-xl text-slate-800 px-2">สรุปผลการดำเนินงาน</h2>
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl p-1.5">
+              <input v-model="startDate" type="date" class="bg-transparent border-none text-sm focus:ring-0">
+              <span class="text-slate-300">|</span>
+              <input v-model="endDate" type="date" class="bg-transparent border-none text-sm focus:ring-0">
+              <button class="bg-[#00569C] p-2.5 rounded-lg text-white hover:bg-[#004a86] transition active:scale-95">
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z" /></svg>
+              </button>
+            </div>
+          </header>
+
+<div class="bg-white rounded-2xl p-8 lg:p-12 shadow-sm border border-slate-300 w-full">
+    
+
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+      <div 
+        v-for="stat in stats" 
+        :key="stat.label"
+        class="relative overflow-hidden bg-white border border-slate-300 rounded-2xl p-6 transition-all duration-300 hover:shadow-md hover:-translate-y-1 group cursor-pointer"
       >
-      <!-- Start date -->
-        <input
-          v-model="startDate"
-          type="date"
-          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
-                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        >
-        <span class="text-gray-400">–</span>
-      <!-- End date -->
-        <input
-          v-model="endDate"
-          type="date"
-          class="bg-white border border-gray-300 rounded-lg px-3 py-2 text-gray-600
-                focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        >
-
-        <button class = "ml-1 w-10 h-10 flex items-center justify-center rounded-lg bg-[#00569C] text-white hover:bg-[#004a86] active:scale-95 transition" title="ค้นหา" >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            stroke-width="2"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1010.5 18a7.5 7.5 0 006.15-3.35z"
-            />
-          </svg>
-        </button>
+        <div class="flex justify-between items-start relative z-10">
+          <div>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-widest mb-1">
+              {{ stat.label }}
+            </p>
+            <h2 class="text-2xl font-black tracking-tight" :class="stat.colorClass">
+              {{ stat.value }}
+            </h2>
+          </div>
+          <span class="text-slate-300 group-hover:text-slate-500 transition-colors">❯</span>
+        </div>
+        
+        <div class="absolute -right-2 -bottom-2 opacity-5 text-4xl grayscale">
+          {{ stat.icon }}
+        </div>
       </div>
+      <h1 class="text-xl font-bold text-slate-800">ยอดขายรายเดือน</h1>
     </div>
 
-    <div
-      class="col-span-5 col-start-3 row-span-3 row-start-2 bg-white rounded-xl shadow-sm flex items-center justify-center text-center"
-    >
-      <div class="space-y-2">
-        <p class="text-xl font-semibold text-gray-700">Dashboard Area</p>
-        <p class="text-sm text-gray-500">
-          ยอดเงินที่สั่งซื้อ, รายงานการสั่งซื้อ,<br>
-          สินค้าค้างส่ง, สินค้าขายดี
-        </p>
-      </div>
-    </div>
-    <div
-      class="row-span-2 col-start-3 row-start-5 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      Quick Shortcuts
+    <div class="w-full h-100 relative">
+      <BarChart />
     </div>
 
-    <div
-      class="row-span-2 col-start-4 row-start-5 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      Quick Shortcuts
-    </div>
-
-    <div
-      class="row-span-2 col-start-5 row-start-5 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      Quick Shortcuts
-    </div>
-
-    <div
-      class="row-span-2 col-start-6 row-start-5 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      Quick Shortcuts
-    </div>
-
-    <div
-      class="row-span-2 col-start-7 row-start-5 bg-white rounded-xl shadow-sm flex items-center justify-center"
-    >
-      Quick Shortcuts
-    </div>
   </div>
 
-  <div class="min-h-screen bg-[#F8FCF8] py-4 px-2 md:px-6">
-     <div class="mx-auto max-w-1400px"> 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mb-6">
-        
-        <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-4/1 w-full"> 
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div v-for="i in 5" :key="i" class="bg-slate-100 p-4 rounded-2xl shadow-sm border border-slate-300 text-center hover:border-blue-400 transition cursor-pointer group">
+              <div class="w-30 h-30 bg-slate-50 rounded-xl mx-auto mb-2 flex items-center justify-center group-hover:bg-blue-50 transition ">
+                Quick Access
+              </div>
+
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div class="bg-white border-t border-slate-200  pb-20 px-6">
+      <div class="max-w-350 mx-auto space-y-10">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div class="rounded-2xl overflow-hidden shadow-lg aspect-2/1">
             <PromotionBanner :banners="banner1" />
           </div>
-        </div>
-
-        <div class="relative overflow-hidden rounded-xl border border-slate-200 bg-white">
-          <div class="aspect-4/1 w-full"> 
+          <div class="rounded-2xl overflow-hidden shadow-lg aspect-2/1">
             <PromotionBanner :banners="banner2" />
           </div>
         </div>
-        
-      </div>
 
-      <div class="mt-4">
-        <ProductList 
-          :title="categoryTitle"
-          :products="products" 
-        />
-      </div>
-      <div class="mt-12">
+        <ProductList :title="categoryTitle" :products="products" />
+        
         <FooterNews :news-list="newList" />
+      </div>
     </div>
   </div>
-  </div>
-  </div>
 </template>
+
 <style scoped>
 .flex {
   backface-visibility: hidden;

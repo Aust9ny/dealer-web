@@ -1,7 +1,8 @@
 <template>
   <div class="flex  items-center justify-center bg-slate-50 font-thai p-6">
-    <div class="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
-      
+    <div
+      class="w-full max-w-2xl overflow-hidden rounded-[2.5rem] bg-white shadow-2xl shadow-slate-200 ring-1 ring-slate-200">
+
       <div class="p-8 text-center border-b border-slate-50">
         <h1 class="text-2xl font-black text-[#2196F3] uppercase ">
           เปลี่ยนรหัสผ่าน
@@ -9,19 +10,14 @@
       </div>
 
       <form class="space-y-6 p-8" @submit.prevent="handlePasswordChange">
-        
+
         <div class="relative group">
-          <input 
-            v-model="password"
-            :type="showPass ? 'text' : 'password'"
-            placeholder="รหัสผ่านปัจจุบัน..."
-            class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
-          >
+          <input
+           v-model="password" :type="showPass ? 'text' : 'password'" placeholder="รหัสผ่านปัจจุบัน..."
+            class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none">
           <button 
-          type="button" 
-          class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
-          @click="showPass = !showPass" 
-          >
+          type="button" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
+            @click="showPass = !showPass">
             <EyeIcon v-if="!showPass" />
             <EyeSlashIcon v-else />
           </button>
@@ -30,76 +26,81 @@
         <div class="space-y-2">
           <div class="relative group">
             <input 
-              v-model="newPassword"
-              :type="showNewPass ? 'text' : 'password'"
-              placeholder="รหัสผ่านใหม่..."
-              class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
-            >
-            <button type="button" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]" @click="showNewPass = !showNewPass">
+            v-model="newPassword" :type="showNewPass ? 'text' : 'password'" placeholder="รหัสผ่านใหม่..."
+            class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none">
+            <button 
+            type="button" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
+              @click="showNewPass = !showNewPass">
               <EyeIcon v-if="!showNewPass" />
               <EyeSlashIcon v-else />
             </button>
           </div>
-          
-          <div v-if="newPassword.length > 0" class="mt-4 space-y-2 rounded-2xl bg-slate-50 p-4 transition-all border border-slate-100">
+
+          <Transition 
+            enter-active-class="transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+            enter-from-class="transform -translate-y-4 opacity-0 scale-95"
+            enter-to-class="transform translate-y-0 opacity-100 scale-100"
+            leave-active-class="transition duration-300 ease-in"
+            leave-from-class="transform translate-y-0 opacity-100 scale-100"
+            leave-to-class="transform -translate-y-4 opacity-0 scale-95">
             <div 
-              v-for="rule in strength.constraints" 
-              :key="rule.id"
-              class="flex items-center gap-2 text-xs transition-colors duration-300"
-              :class="rule.met ? 'text-[#2196F3] font-bold' : 'text-slate-400'"
-            >
-              <div class="h-1.5 w-1.5 rounded-full" :class="rule.met ? 'bg-[#2196F3]' : 'bg-slate-300'" />
-              {{ rule.label }}
-            </div>
-            
-            <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200">
+            v-if="newPassword.length > 0"
+              class="mt-4 space-y-2 rounded-2xl p-4 transition-all duration-500 border-2 overflow-hidden" :class="[
+                strength.isComplete
+                  ? 'border-emerald-500 bg-emerald-50/30 shadow-md shadow-emerald-100'
+                  : 'border-rose-400 bg-slate-50'
+              ]">
               <div 
-                class="h-full transition-all duration-500"
-                :class="strength.isComplete ? 'bg-[#2196F3]' : 'bg-amber-500'"
-                :style="{ width: `${(strength.passedCount / 4) * 100}%` }"
-              />
+              v-for="rule in strength.constraints" :key="rule.id"
+                class="flex items-center gap-2 text-xs transition-all duration-500"
+                :class="rule.met ? 'text-emerald-600 font-bold translate-x-2' : 'text-slate-400'">
+                <div 
+                class="h-1.5 w-1.5 rounded-full transition-all duration-300"
+                  :class="rule.met ? 'bg-emerald-500 scale-150' : 'bg-slate-300'" />
+                {{ rule.label }}
+              </div>
+
+              <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200/60">
+                <div 
+                class="h-full transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
+                  :class="strength.isComplete ? 'bg-emerald-500' : 'bg-amber-500'"
+                  :style="{ width: `${(strength.passedCount / 4) * 100}%` }" />
+              </div>
             </div>
-          </div>
+          </Transition>
         </div>
 
         <div class="relative group">
           <input 
-            v-model="confirmNewPassword"
-            :type="showConfirm ? 'text' : 'password'"
+          v-model="confirmNewPassword" :type="showConfirm ? 'text' : 'password'"
             placeholder="ยืนยันรหัสผ่านใหม่..."
-            class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
-          >
+            class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none">
           <button 
-          type="button"
-          class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
-           @click="showConfirm = !showConfirm" 
-           >
+          type="button" class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
+            @click="showConfirm = !showConfirm">
             <EyeIcon v-if="!showConfirm" />
             <EyeSlashIcon v-else />
           </button>
         </div>
 
         <div v-if="newPassword !== '' && confirmNewPassword !== ''" class="mt-2 font-thai text-sm">
-        
-        <div v-if="newPassword !== confirmNewPassword" class="text-red-500">
-            รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน
-        </div>
 
-        <div v-else class="text-green-500 font-bold">
+          <div v-if="newPassword !== confirmNewPassword" class="text-red-500">
+            รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน
+          </div>
+
+          <div v-else class="text-green-500 font-bold">
             รหัสผ่านตรงกัน
-        </div>
+          </div>
 
         </div>
 
         <div class="flex flex-col gap-3 pt-4">
-            <button 
-            type="submit"
-            :disabled="isLoading || !strength.isComplete"
-            class="w-full rounded-2xl bg-[#2196F3] py-4 font-black uppercase text-white transition-all 
+          <button 
+          type="submit" :disabled="isLoading || !strength.isComplete" class="w-full rounded-2xl bg-[#2196F3] py-4 font-black uppercase text-white transition-all 
                     hover:bg-[#1976D2] active:scale-[0.98] 
                     disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 
-                    disabled:pointer-events-none shadow-lg"
-            >
+                    disabled:pointer-events-none shadow-lg">
             <span v-if="!isLoading">เปลี่ยนรหัสผ่าน</span>
             <div v-else class="flex items-center justify-center gap-2">
               <div class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white" />
@@ -107,17 +108,17 @@
             </div>
           </button>
 
-          <button
-            type="button"
+          <button 
+          type="button"
             class="w-full rounded-2xl bg-red-500 border border-slate-200 py-4 font-thai uppercase text-white transition-all hover:bg-red-600 hover:text-white hover:border-red-100 active:scale-[0.98]"
-            @click="handleCancel"
-          >
+            @click="handleCancel">
             ยกเลิก
           </button>
         </div>
       </form>
     </div>
   </div>
+
 </template>
 
 <script setup>
@@ -155,7 +156,7 @@ const strength = computed(() => {
   ];
 
   const passedCount = constraints.filter(c => c.met).length;
-  
+
   return {
     constraints,
     passedCount,
