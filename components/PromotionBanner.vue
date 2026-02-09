@@ -18,7 +18,7 @@ defineProps<{
       <template #default="{ item }">
         <a 
           :href="(item as Banner).link || '#'" 
-          class="block w-full aspect-4/1 md:aspect-8/3 overflow-hidden rounded-xl border border-slate-200 shadow-sm"
+          class="block w-full aspect-4/1 md:aspect-8/3 overflow-hidden rounded-xl "
         >
           <img 
             :src="(item as Banner).image" 
