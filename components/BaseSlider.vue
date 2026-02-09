@@ -15,6 +15,44 @@ const currentIndex = ref(0);
 const isPaused = ref(false);
 const autoSlideTimer = ref<NodeJS.Timeout | null>(null);
 const shouldShowArrows = computed(() => props.showArrows !== false);
+// 1. Guard totalPages against undefined items
+const totalPages = computed(() => {
+  if (!props.items) return 0;
+  return Math.ceil(props.items.length / visibleItems.value);
+});
+
+// 2. Guard currentPage
+const currentPage = computed(() => {
+  if (visibleItems.value === 0) return 0;
+  return Math.floor(currentIndex.value / visibleItems.value);
+});
+
+// 3. Guard transformOffset
+const transformOffset = computed(() => {
+  if (visibleItems.value === 0) return 0;
+  return -(currentIndex.value * (100 / visibleItems.value));
+});
+
+// 4. Update next function to handle undefined
+const next = () => {
+  if (!props.items?.length) return; 
+  if (currentIndex.value + visibleItems.value < props.items.length) {
+    currentIndex.value += visibleItems.value;
+  } else {
+    currentIndex.value = 0;
+  }
+};
+
+// 5. Update prev function to handle undefined
+const prev = () => {
+  if (!props.items?.length) return;
+  if (currentIndex.value - visibleItems.value >= 0) {
+    currentIndex.value -= visibleItems.value;
+  } else {
+    currentIndex.value = Math.max(0, (totalPages.value - 1) * visibleItems.value);
+  }
+};
+
 
 const updateVisibleItems = () => {
   const width = window.innerWidth;
@@ -27,26 +65,6 @@ const updateVisibleItems = () => {
     else if (width >= 768) visibleItems.value = 3;
     else if (width >= 640) visibleItems.value = 2;
     else visibleItems.value = 1;
-  }
-};
-
-const transformOffset = computed(() => -(currentIndex.value * (100 / visibleItems.value)));
-const totalPages = computed(() => Math.ceil(props.items.length / visibleItems.value));
-const currentPage = computed(() => Math.floor(currentIndex.value / visibleItems.value));
-
-const next = () => {
-  if (currentIndex.value + visibleItems.value < props.items.length) {
-    currentIndex.value += visibleItems.value;
-  } else {
-    currentIndex.value = 0;
-  }
-};
-
-const prev = () => {
-  if (currentIndex.value - visibleItems.value >= 0) {
-    currentIndex.value -= visibleItems.value;
-  } else {
-    currentIndex.value = Math.max(0, (totalPages.value - 1) * visibleItems.value);
   }
 };
 

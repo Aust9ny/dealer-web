@@ -5,6 +5,7 @@
 @theme {
   /* Set a stack: Inter first for English, IBM Plex for Thai fallback */
   --font-modern: "Inter", "IBM Plex Sans Thai", sans-serif;
+  --color-primary: #00569C;
 }
 
 body {
