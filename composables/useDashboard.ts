@@ -51,6 +51,30 @@ export const useDashboard = () => {
     { label: 'รายการจัดส่ง', value: '10 รายการ', colorClass: 'text-slate-800', icon: '🚚' },
   ];
 
+  const quickAccessItems = [
+  { title: 'เช็ค Serial Number', bgColor: 'bg-white', textColor: 'text-slate-800', hoverBorder: 'hover:border-primary' },
+  { title: 'แจ้งเคลมสินค้า', bgColor: 'bg-white', textColor: 'text-slate-800', hoverBorder: 'hover:border-primary' },
+  { title: 'พิมพ์ป้ายราคา', bgColor: 'bg-white', textColor: 'text-slate-800', hoverBorder: 'hover:border-primary' },
+  { title: 'โปรโมชันล่าสุด', bgColor: 'bg-white', textColor: 'text-slate-800', hoverBorder: 'hover:border-primary' },
+];
+
+// ตัวอย่างข้อมูลสำหรับแสดงผลอันดับยอดขาย
+const topSales = [
+  { name: 'VGA ZOTAC GEFORCE RTX 4060 TI TWIN EDGE', amount: 45, total: 645000 },
+  { name: 'AMD RYZEN 7 7800X3D', amount: 38, total: 570000 },
+  { name: 'SAMSUNG 990 PRO 2TB', amount: 30, total: 210000 },
+  { name: 'CORSAIR DOMINATOR PLATINUM 32GB', amount: 25, total: 185000 },
+  { name: 'MSI MAG B650 TOMAHAWK WIFI', amount: 18, total: 142000 },
+];
+
+const bottomSales = [
+  { name: 'USB Hub 2.0 No-brand', amount: 2, total: 150 },
+  { name: 'Mouse Pad Generic Black', amount: 1, total: 89 },
+  { name: 'VGA Cable 1.5M', amount: 1, total: 120 },
+  { name: 'CR2032 Battery x1', amount: 0, total: 0 },
+  { name: 'Broken Fan Case (Dummy)', amount: 0, total: 0 },
+];
+
   const categoryTitle = computed(() => products.value[0]?.category || 'Products');
   const chartData = computed(() => {
     return {
@@ -103,6 +127,6 @@ export const useDashboard = () => {
   });
   
   return {
-    startDate, endDate, banner1, banner2, products, trendingProducts, newList, stats, categoryTitle, chartData, productDistribution
+    startDate, endDate, banner1, banner2, products, trendingProducts, newList, stats, categoryTitle, chartData, productDistribution, quickAccessItems, topSales, bottomSales
   };
 };

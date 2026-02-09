@@ -12,7 +12,8 @@ newsList: News[];
         </h1>
         <NuxtLink to="https://www.advice.co.th/article/activity-promotion" external target="_blank">
             <button 
-            class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl  border border-slate-400 hover:border-[#2196F3]" href='https://www.advice.co.th/article/activity-promotion'>
+            class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl  border border-slate-400 hover:border-[#2196F3] active:scale-95 transition-all" 
+            href='https://www.advice.co.th/article/activity-promotion'>
                 <span class="inline-block duration-200 text-lg origin-center" >ดูบทความทั้งหมด</span>
                 <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
