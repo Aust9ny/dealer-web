@@ -1,12 +1,12 @@
-<script setup>
-import { ref, computed } from  'vue';
-
+<script setup lang="ts">
+import { ref, computed } from "vue";
+const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
 const showSearchModal = ref(false);
 
 // mock user
-const firstName = 'Puck';
-const lastName = 'Sheres';
+const firstName = "Puck";
+const lastName = "Sheres";
 
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
@@ -45,74 +45,225 @@ const initials = computed(() => {
       <!-- Search Modal -->
       <div
         v-if="showSearchModal"
-        class="absolute top-[72px] left-0 w-[1100px] max-w-none bg-white border border-gray-200 rounded-xl shadow-xl z-50"
+        class="absolute top-[60px] left-1/2 -translate-x-1/2 w-[1500px] max-w-[95vw] bg-white border border-gray-200 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] z-50"
       >
         <div
-          class="grid grid-cols-12 min-h-[320px] max-h-[70vh] overflow-hidden"
+          class="grid grid-cols-12 min-h-[420px] max-h-[80vh] overflow-y-auto"
         >
-          <!-- Col 1 (2 cols) : แบ่งครึ่งบน / ล่าง -->
-          <div
-            class="col-span-2 row-span-6 grid grid-rows-2 border-r border-gray-200"
-          >
-            <!-- เทรนด์การค้นหา -->
-            <div class="p-6">
-              <div class="font-medium text-gray-700 mb-3">เทรนด์การค้นหา</div>
-              <ul class="space-y-2 text-sm text-gray-600">
-                <li class="hover:text-[#00569C] cursor-pointer">RTX 4090</li>
-                <li class="hover:text-[#00569C] cursor-pointer">MacBook Air</li>
+          <!-- Col 1 -->
+          <div class="col-span-2 grid grid-rows-2 border-r border-gray-200">
+            <!-- Trending search -->
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="flex items-center gap-2 text-[13px] font-semibold text-gray-800"
+                >
+                  📈 เทรนด์การค้นหาช่วงนี้
+                </div>
+              </div>
+              <div class="h-px bg-gray-200 my-3"></div>
+
+              <ul class="space-y-2 text-[13px] text-gray-600">
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  RTX 4090 AORUS MASTER
+                </li>
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  MacBook Air 2023
+                </li>
                 <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
-                <li class="hover:text-[#00569C] cursor-pointer">MacBook Air</li>
-                <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  คอมประกอบ Intel
+                </li>
+                <li class="hover:text-[#00569C] cursor-pointer">งบจำกัด</li>
               </ul>
+
+              <div
+                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                แสดงผลลัพธ์เพิ่มเติม 10+
+              </div>
             </div>
 
-            <!-- ประวัติการค้นหา -->
-            <div class="border-t border-gray-200 p-6">
-              <div class="font-medium text-gray-700 mb-3">ประวัติการค้นหา</div>
-              <ul class="space-y-2 text-sm text-gray-500">
-                <li class="hover:text-[#00569C] cursor-pointer">SSD 1TB</li>
-                <li class="hover:text-[#00569C] cursor-pointer">MacBook Pro</li>
-                <li class="hover:text-[#00569C] cursor-pointer">SSD 1TB</li>
-                <li class="hover:text-[#00569C] cursor-pointer">MacBook Pro</li>
+            <!-- Search history -->
+            <div class="border-t border-gray-200 p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="flex items-center gap-2 text-[13px] font-semibold text-gray-800"
+                >
+                  🕘 ประวัติที่คุณเคยค้นหา
+                </div>
+                <span
+                  class="text-[12px] text-gray-400 cursor-pointer hover:text-red-500"
+                >
+                  ลบทั้งหมด
+                </span>
+              </div>
+              <div class="h-px bg-gray-200 my-3"></div>
+              <ul class="space-y-2 text-[13px] text-gray-500">
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  ssd
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  hdd
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  cpu
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  camera
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  rtx 4080
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
               </ul>
+
+              <div
+                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                แสดงผลลัพธ์เพิ่มเติม 10+
+              </div>
             </div>
           </div>
 
-          <!-- Col 2 (5 cols) -->
-          <div
-            class="col-span-5 col-start-3 row-span-6 p-6 border-r border-gray-200"
-          >
-            <div class="font-medium text-gray-700 mb-3">
-              สินค้าที่เป็นเทรนด์
+          <!-- Col 2 : Trending products -->
+          <div class="col-span-5 col-start-3 p-5 border-r border-gray-200">
+            <div class="flex items-center justify-between mb-3">
+              <div class="text-[13px] font-semibold text-gray-800">
+                สินค้าที่เป็นเทรนด์ตอนนี้
+              </div>
+              <span
+                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                ดูทั้งหมด
+              </span>
             </div>
 
-            <div class="space-y-3 text-sm">
-              <div
-                class="flex gap-3 items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
-              >
-                <div class="w-12 h-12 bg-gray-100 rounded"></div>
-                <div>
-                  <div class="text-gray-800">VGA RTX 3080</div>
-                  <div class="text-gray-400 text-xs">฿19,900</div>
-                </div>
-              </div>
+            <div class="h-px bg-gray-200 mb-3"></div>
 
+            <div class="space-y-1">
               <div
-                class="flex gap-3 items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+                v-for="(product, index) in trendingProducts"
+                :key="product.id"
+                class="grid grid-cols-[80px_1fr_auto] gap-3 py-3 px-2 hover:bg-gray-50 cursor-pointer"
               >
-                <div class="w-12 h-12 bg-gray-100 rounded"></div>
-                <div>
-                  <div class="text-gray-800">SSD 1TB</div>
-                  <div class="text-gray-400 text-xs">฿2,990</div>
+                <!-- Image -->
+                <img
+                  :src="product.image"
+                  class="w-20 h-20 object-cover rounded-md bg-gray-100"
+                />
+
+                <!-- Product info -->
+                <div class="min-w-0">
+                  <!-- Brand -->
+                  <div class="text-[11px] text-blue-600 font-medium mb-0.5">
+                    MSI
+                  </div>
+
+                  <!-- Name -->
+                  <div
+                    class="text-[13px] text-gray-800 leading-snug line-clamp-2"
+                  >
+                    {{ product.name }}
+                  </div>
+
+                  <!-- Spec -->
+                  <div class="text-[11px] text-gray-400 mt-0.5">
+                    8GB / GDDR6 / 128-bit / PCIe 4.0 / 1xHDMI
+                  </div>
                 </div>
+
+                <!-- Price / Promotion -->
+                <div class="text-right whitespace-nowrap">
+                  <!-- ราคาปัจจุบัน -->
+                  <div class="text-[14px] font-semibold text-gray-900">
+                    ฿{{ product.price.toLocaleString() }}
+                  </div>
+
+                  <!-- ราคาเดิม + ส่วนลด (บรรทัดเดียวกัน) -->
+                  <div class="flex items-center justify-end gap-2 mt-0.5">
+                    <span
+                      v-if="product.isHot"
+                      class="text-[10px] px-2 py-0.5 bg-red-500 text-white rounded-full"
+                    >
+                      -฿1,500
+                    </span>
+                    <span class="text-[11px] text-gray-400 line-through">
+                      ฿13,965
+                    </span>
+                  </div>
+
+                  <!-- Ready / Online only -->
+                  <div class="mt-1 text-[11px] text-green-600">
+                    *Ready Point: 999
+                  </div>
+                  <div class="text-[11px] text-gray-400">*เฉพาะออนไลน์เท่านั้น</div>
+                </div>
+
+                <!-- Divider -->
+                <div
+                  v-if="index !== trendingProducts.length - 1"
+                  class="col-span-3 h-px bg-gray-100 mt-3"
+                ></div>
               </div>
             </div>
           </div>
 
-          <!-- Col 3 (5 cols) -->
-          <div class="col-span-5 col-start-8 row-span-6 p-6">
-            <div class="font-medium text-gray-700 mb-3">โปรโมชั่น</div>
-            <div class="h-40 bg-gray-100 rounded"></div>
+          <!-- Col 3 : Promotion -->
+          <div class="col-span-5 col-start-8 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-[13px] font-semibold text-gray-800">
+                โปรโมชั่น
+              </div>
+              <span
+                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                ดูทั้งหมด
+              </span>
+            </div>
+
+            <div class="space-y-3">
+              <a
+                v-for="banner in banner1"
+                :key="banner.id"
+                :href="banner.link"
+                target="_blank"
+                class="block overflow-hidden rounded-xl border hover:shadow-md transition"
+              >
+                <img
+                  :src="banner.image"
+                  :alt="banner.alt"
+                  class="w-full h-36 object-cover"
+                />
+              </a>
+              <a
+                v-for="banner in banner1"
+                :key="banner.id"
+                :href="banner.link"
+                target="_blank"
+                class="block overflow-hidden rounded-xl border hover:shadow-md transition"
+              >
+                <img
+                  :src="banner.image"
+                  :alt="banner.alt"
+                  class="w-full h-36 object-cover"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </div>

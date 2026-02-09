@@ -95,7 +95,14 @@ export const useDashboard = () => {
       ],
     };
   });
+
+  const trendingProducts = computed(() => {
+    return products.value
+      .filter(p => p.isHot)
+      .slice(0, 5);             
+  });
+  
   return {
-    startDate, endDate, banner1, banner2, products, newList, stats, categoryTitle, chartData, productDistribution
+    startDate, endDate, banner1, banner2, products, trendingProducts, newList, stats, categoryTitle, chartData, productDistribution
   };
 };
