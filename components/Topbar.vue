@@ -107,45 +107,19 @@ const initials = computed(() => {
 
           <div class="h-px bg-gray-200 mx-3"></div>
 
+          <!-- การเงินเเละการชำระเงิน -->
+          <div
+            class="px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+          >
+            การเงินเเละการชำระเงิน
+          </div>
+
+          <div class="h-px bg-gray-200 mx-3"></div>
+
           <!-- บัญชีของฉัน -->
           <NuxtLink to="/Dealer_Profile" class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
             บัญชีของฉัน
           </NuxtLink>
-          <div class="h-px bg-gray-200 mx-3"></div>
-
-          <!-- สินค้าที่ถูกใจ -->
-          <div
-            class="px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-          >
-            สินค้าที่ถูกใจ
-          </div>
-
-          <div class="h-px bg-gray-200 mx-3"></div>
-
-          <!-- คูปองของฉัน -->
-          <div
-            class="px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-          >
-            คูปองของฉัน
-          </div>
-
-          <div class="h-px bg-gray-200 mx-3"></div>
-
-          <!-- บริการ -->
-          <div
-            class="px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-          >
-            บริการ (เช็ค / ตรวจสอบ)
-          </div>
-
-          <div class="h-px bg-gray-200 mx-3"></div>
-
-          <!-- ศูนย์ช่วยเหลือ -->
-          <div
-            class="px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-          >
-            ศูนย์ช่วยเหลือ
-          </div>
 
           <div class="h-px bg-gray-200 mx-3"></div>
 
