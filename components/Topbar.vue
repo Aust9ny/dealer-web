@@ -1,11 +1,12 @@
-<script setup>
-import { ref, computed } from 'vue';
-
+<script setup lang="ts">
+import { ref, computed } from "vue";
+const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
+const showSearchModal = ref(false);
 
 // mock user
-const firstName = 'Puck';
-const lastName = 'Sheres';
+const firstName = "Puck";
+const lastName = "Sheres";
 
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
@@ -24,19 +25,255 @@ const initials = computed(() => {
     </div>
 
     <!-- Center : Search -->
-    <div class="flex-1 flex justify-center px-12">
-      <div class="relative w-full max-w-3xl">
+    <div class="flex-1 flex justify-center px-12 relative">
+      <!-- Search Bar -->
+      <div class="relative w-full max-w-3xl z-50">
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
+          @click="showSearchModal = true"
           class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00569C]"
         />
+
         <button
-          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-[#00569C] text-white rounded-full flex items-center gap-2 hover:opacity-90"
+          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-[#00569C] text-white rounded-full flex items-center gap-2"
         >
           🔍 ค้นหา
         </button>
       </div>
+
+      <!-- Search Modal -->
+      <div
+        v-if="showSearchModal"
+        class="absolute top-[60px] left-1/2 -translate-x-1/2 w-[1500px] max-w-[95vw] bg-white border border-gray-200 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] z-50"
+      >
+        <div
+          class="grid grid-cols-12 min-h-[420px] max-h-[80vh] overflow-y-auto"
+        >
+          <!-- Col 1 -->
+          <div class="col-span-2 grid grid-rows-2 border-r border-gray-200">
+            <!-- Trending search -->
+            <div class="p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="flex items-center gap-2 text-[13px] font-semibold text-gray-800"
+                >
+                  📈 เทรนด์การค้นหาช่วงนี้
+                </div>
+              </div>
+              <div class="h-px bg-gray-200 my-3"></div>
+
+              <ul class="space-y-2 text-[13px] text-gray-600">
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  RTX 4090 AORUS MASTER
+                </li>
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  MacBook Air 2023
+                </li>
+                <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
+                <li class="hover:text-[#00569C] cursor-pointer">
+                  คอมประกอบ Intel
+                </li>
+                <li class="hover:text-[#00569C] cursor-pointer">งบจำกัด</li>
+              </ul>
+
+              <div
+                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                แสดงผลลัพธ์เพิ่มเติม 10+
+              </div>
+            </div>
+
+            <!-- Search history -->
+            <div class="border-t border-gray-200 p-5">
+              <div class="flex items-center justify-between mb-3">
+                <div
+                  class="flex items-center gap-2 text-[13px] font-semibold text-gray-800"
+                >
+                  🕘 ประวัติที่คุณเคยค้นหา
+                </div>
+                <span
+                  class="text-[12px] text-gray-400 cursor-pointer hover:text-red-500"
+                >
+                  ลบทั้งหมด
+                </span>
+              </div>
+              <div class="h-px bg-gray-200 my-3"></div>
+              <ul class="space-y-2 text-[13px] text-gray-500">
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  ssd
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  hdd
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  cpu
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  camera
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+                <li
+                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                >
+                  rtx 4080
+                  <span class="ml-auto text-gray-300">✕</span>
+                </li>
+              </ul>
+
+              <div
+                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                แสดงผลลัพธ์เพิ่มเติม 10+
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 2 : Trending products -->
+          <div class="col-span-5 col-start-3 p-5 border-r border-gray-200">
+            <div class="flex items-center justify-between mb-3">
+              <div class="text-[13px] font-semibold text-gray-800">
+                สินค้าที่เป็นเทรนด์ตอนนี้
+              </div>
+              <span
+                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                ดูทั้งหมด
+              </span>
+            </div>
+
+            <div class="h-px bg-gray-200 mb-3"></div>
+
+            <div class="space-y-1">
+              <div
+                v-for="(product, index) in trendingProducts"
+                :key="product.id"
+                class="grid grid-cols-[80px_1fr_auto] gap-3 py-3 px-2 hover:bg-gray-50 cursor-pointer"
+              >
+                <!-- Image -->
+                <img
+                  :src="product.image"
+                  class="w-20 h-20 object-cover rounded-md bg-gray-100"
+                />
+
+                <!-- Product info -->
+                <div class="min-w-0">
+                  <!-- Brand -->
+                  <div class="text-[11px] text-blue-600 font-medium mb-0.5">
+                    MSI
+                  </div>
+
+                  <!-- Name -->
+                  <div
+                    class="text-[13px] text-gray-800 leading-snug line-clamp-2"
+                  >
+                    {{ product.name }}
+                  </div>
+
+                  <!-- Spec -->
+                  <div class="text-[11px] text-gray-400 mt-0.5">
+                    8GB / GDDR6 / 128-bit / PCIe 4.0 / 1xHDMI
+                  </div>
+                </div>
+
+                <!-- Price / Promotion -->
+                <div class="text-right whitespace-nowrap">
+                  <!-- ราคาปัจจุบัน -->
+                  <div class="text-[14px] font-semibold text-gray-900">
+                    ฿{{ product.price.toLocaleString() }}
+                  </div>
+
+                  <!-- ราคาเดิม + ส่วนลด (บรรทัดเดียวกัน) -->
+                  <div class="flex items-center justify-end gap-2 mt-0.5">
+                    <span
+                      v-if="product.isHot"
+                      class="text-[10px] px-2 py-0.5 bg-red-500 text-white rounded-full"
+                    >
+                      -฿1,500
+                    </span>
+                    <span class="text-[11px] text-gray-400 line-through">
+                      ฿13,965
+                    </span>
+                  </div>
+
+                  <!-- Ready / Online only -->
+                  <div class="mt-1 text-[11px] text-green-600">
+                    *Ready Point: 999
+                  </div>
+                  <div class="text-[11px] text-gray-400">*เฉพาะออนไลน์เท่านั้น</div>
+                </div>
+
+                <!-- Divider -->
+                <div
+                  v-if="index !== trendingProducts.length - 1"
+                  class="col-span-3 h-px bg-gray-100 mt-3"
+                ></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 3 : Promotion -->
+          <div class="col-span-5 col-start-8 p-5">
+            <div class="flex items-center justify-between mb-4">
+              <div class="text-[13px] font-semibold text-gray-800">
+                โปรโมชั่น
+              </div>
+              <span
+                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+              >
+                ดูทั้งหมด
+              </span>
+            </div>
+
+            <div class="space-y-3">
+              <a
+                v-for="banner in banner1"
+                :key="banner.id"
+                :href="banner.link"
+                target="_blank"
+                class="block overflow-hidden rounded-xl border hover:shadow-md transition"
+              >
+                <img
+                  :src="banner.image"
+                  :alt="banner.alt"
+                  class="w-full h-36 object-cover"
+                />
+              </a>
+              <a
+                v-for="banner in banner1"
+                :key="banner.id"
+                :href="banner.link"
+                target="_blank"
+                class="block overflow-hidden rounded-xl border hover:shadow-md transition"
+              >
+                <img
+                  :src="banner.image"
+                  :alt="banner.alt"
+                  class="w-full h-36 object-cover"
+                />
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay -->
+      <div
+        v-if="showSearchModal"
+        @click="showSearchModal = false"
+        class="fixed inset-0 z-40"
+      ></div>
     </div>
 
     <!-- Right -->
@@ -117,7 +354,10 @@ const initials = computed(() => {
           <div class="h-px bg-gray-200 mx-3"></div>
 
           <!-- บัญชีของฉัน -->
-          <NuxtLink to="/Dealer_Profile" class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
+          <NuxtLink
+            to="/Dealer_Profile"
+            class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+          >
             บัญชีของฉัน
           </NuxtLink>
 
