@@ -10,13 +10,15 @@ newsList: News[];
         <h1 class="text-2xl font-bold text-slate-800">
             ข่าวสารและกิจกรรม
         </h1>
-
-        <button class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl  border border-slate-400 hover:border-[#2196F3]">
-            <span class="inline-block duration-200 text-lg origin-center">ดูข่าวสารทั้งหมด</span>
-            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-        </button>
+        <NuxtLink to="https://www.advice.co.th/article/activity-promotion" external target="_blank">
+            <button 
+            class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl  border border-slate-400 hover:border-[#2196F3]" href='https://www.advice.co.th/article/activity-promotion'>
+                <span class="inline-block duration-200 text-lg origin-center" >ดูบทความทั้งหมด</span>
+                <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                </svg>
+            </button>
+        </NuxtLink>
         
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-center justify-center mx-10">

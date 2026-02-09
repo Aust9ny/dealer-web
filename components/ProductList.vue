@@ -68,14 +68,14 @@ onUnmounted(() => {
   <div class="product-list-section py-4">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mx-14 mb-4">
       
-      <h2 class="text-2xl font-bold text-slate-800 min-w-[200px]">
+      <h2 class="text-2xl font-bold text-slate-800 min-w-50">
         {{ displayTitle }}
       </h2>
 
       <div class="flex items-center gap-4">
         <div 
           v-if="categories.length > 1" 
-          class="hidden md:flex items-center gap-1 bg-slate-100 p-1 rounded-full border border-slate-300 relative overflow-hidden"
+          class="hidden md:flex items-center gap-1 bg-white p-1 rounded-full border border-slate-300 relative overflow-hidden"
         >
           <div 
             class="absolute bg-[#2196F3] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
@@ -95,7 +95,7 @@ onUnmounted(() => {
             type="button"
             :class="[
               'relative z-10 px-4 py-1.5 text-sm font-bold rounded-full transition-colors duration-300 whitespace-nowrap',
-              selectedCategory === cat ? 'text-white' : 'text-slate-500 hover:text-slate-800'
+              selectedCategory === cat ? 'text-white' : 'text-slate-400 hover:text-slate-800'
             ]"
             @click="selectedCategory = cat"
           >
