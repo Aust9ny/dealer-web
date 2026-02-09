@@ -20,6 +20,7 @@ ChartJS.register(Title, Tooltip, Legend, Filler, LineElement, PointElement, Cate
 
 const props = defineProps<{
   labels: string[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   datasets: any[];
 }>();
 
