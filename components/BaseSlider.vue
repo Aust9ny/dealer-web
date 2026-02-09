@@ -85,7 +85,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="py-8  bg-white rounded-2xl ">
+  <div>
     <div class="flex items-center justify-between mb-4 mx-14 ">
       <slot name="header-action" />
     </div>
