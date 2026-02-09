@@ -227,10 +227,10 @@ const endDate = ref<string | null>(null);
     <div class="bg-white border-t border-slate-200  pb-20 px-6">
       <div class="max-w-350 mx-auto space-y-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="rounded-2xl overflow-hidden shadow-lg aspect-2/1">
+          <div class="rounded-2xl overflow-hidden  aspect-2/1">
             <PromotionBanner :banners="banner1" />
           </div>
-          <div class="rounded-2xl overflow-hidden shadow-lg aspect-2/1">
+          <div class="rounded-2xl overflow-hidden aspect-2/1">
             <PromotionBanner :banners="banner2" />
           </div>
         </div>
