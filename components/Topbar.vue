@@ -1,7 +1,8 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed } from  'vue';
 
 const showAccountMenu = ref(false);
+const showSearchModal = ref(false);
 
 // mock user
 const firstName = 'Puck';
@@ -24,19 +25,104 @@ const initials = computed(() => {
     </div>
 
     <!-- Center : Search -->
-    <div class="flex-1 flex justify-center px-12">
-      <div class="relative w-full max-w-3xl">
+    <div class="flex-1 flex justify-center px-12 relative">
+      <!-- Search Bar -->
+      <div class="relative w-full max-w-3xl z-50">
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
+          @click="showSearchModal = true"
           class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00569C]"
         />
+
         <button
-          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-[#00569C] text-white rounded-full flex items-center gap-2 hover:opacity-90"
+          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-[#00569C] text-white rounded-full flex items-center gap-2"
         >
           🔍 ค้นหา
         </button>
       </div>
+
+      <!-- Search Modal -->
+      <div
+        v-if="showSearchModal"
+        class="absolute top-[72px] left-0 w-[1100px] max-w-none bg-white border border-gray-200 rounded-xl shadow-xl z-50"
+      >
+        <div
+          class="grid grid-cols-12 min-h-[320px] max-h-[70vh] overflow-hidden"
+        >
+          <!-- Col 1 (2 cols) : แบ่งครึ่งบน / ล่าง -->
+          <div
+            class="col-span-2 row-span-6 grid grid-rows-2 border-r border-gray-200"
+          >
+            <!-- เทรนด์การค้นหา -->
+            <div class="p-6">
+              <div class="font-medium text-gray-700 mb-3">เทรนด์การค้นหา</div>
+              <ul class="space-y-2 text-sm text-gray-600">
+                <li class="hover:text-[#00569C] cursor-pointer">RTX 4090</li>
+                <li class="hover:text-[#00569C] cursor-pointer">MacBook Air</li>
+                <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
+                <li class="hover:text-[#00569C] cursor-pointer">MacBook Air</li>
+                <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
+              </ul>
+            </div>
+
+            <!-- ประวัติการค้นหา -->
+            <div class="border-t border-gray-200 p-6">
+              <div class="font-medium text-gray-700 mb-3">ประวัติการค้นหา</div>
+              <ul class="space-y-2 text-sm text-gray-500">
+                <li class="hover:text-[#00569C] cursor-pointer">SSD 1TB</li>
+                <li class="hover:text-[#00569C] cursor-pointer">MacBook Pro</li>
+                <li class="hover:text-[#00569C] cursor-pointer">SSD 1TB</li>
+                <li class="hover:text-[#00569C] cursor-pointer">MacBook Pro</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Col 2 (5 cols) -->
+          <div
+            class="col-span-5 col-start-3 row-span-6 p-6 border-r border-gray-200"
+          >
+            <div class="font-medium text-gray-700 mb-3">
+              สินค้าที่เป็นเทรนด์
+            </div>
+
+            <div class="space-y-3 text-sm">
+              <div
+                class="flex gap-3 items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+              >
+                <div class="w-12 h-12 bg-gray-100 rounded"></div>
+                <div>
+                  <div class="text-gray-800">VGA RTX 3080</div>
+                  <div class="text-gray-400 text-xs">฿19,900</div>
+                </div>
+              </div>
+
+              <div
+                class="flex gap-3 items-center hover:bg-gray-50 p-2 rounded cursor-pointer"
+              >
+                <div class="w-12 h-12 bg-gray-100 rounded"></div>
+                <div>
+                  <div class="text-gray-800">SSD 1TB</div>
+                  <div class="text-gray-400 text-xs">฿2,990</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Col 3 (5 cols) -->
+          <div class="col-span-5 col-start-8 row-span-6 p-6">
+            <div class="font-medium text-gray-700 mb-3">โปรโมชั่น</div>
+            <div class="h-40 bg-gray-100 rounded"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Overlay -->
+      <div
+        v-if="showSearchModal"
+        @click="showSearchModal = false"
+        class="fixed inset-0 z-40"
+      ></div>
     </div>
 
     <!-- Right -->
@@ -117,7 +203,10 @@ const initials = computed(() => {
           <div class="h-px bg-gray-200 mx-3"></div>
 
           <!-- บัญชีของฉัน -->
-          <NuxtLink to="/Dealer_Profile" class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
+          <NuxtLink
+            to="/Dealer_Profile"
+            class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+          >
             บัญชีของฉัน
           </NuxtLink>
 
