@@ -156,7 +156,7 @@ import { Icon } from '@iconify/vue';
     </div>
 
     <!-- Bottom bar -->
-    <div class="bg-[#00569C] text-white text-sm">
+    <div class="bg-primary text-white text-sm">
       <div class="max-w-7xl mx-auto px-6 py-4 flex justify-center">
         <div
           class="flex flex-col md:flex-row items-center gap-1 md:gap-4 text-center"
