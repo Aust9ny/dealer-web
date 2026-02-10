@@ -1,4 +1,6 @@
-<!-- No fuction to show only same cat list now must be implement inside the page -->
+<!-- No fuction to show only same cat list now must be implement inside the page 
+  <ProductDropdown :products="products" /> this is how to call the component while :products will accept the array of products
+-->
 <script setup lang="ts">
 import type { Product } from '~/types/product';
 
@@ -149,7 +151,8 @@ const selectProduct = (product: Product) => {
                                 <td class="p-3 text-center">
                                     <button
                                         class="bg-slate-900 text-white p-2 rounded-lg hover:bg-primary transition-all">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12"
+                                        <svg
+                                            xmlns="http://www.w3.org/2000/svg" width="12" height="12"
                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
                                             stroke-linecap="round" stroke-linejoin="round">
                                             <path d="M5 12h14" />
