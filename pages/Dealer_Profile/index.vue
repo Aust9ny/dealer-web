@@ -5,19 +5,19 @@
       <div
         class="col-span-2 row-span-1 bg-white rounded-xl shadow overflow-hidden"
       >
-        <div class="h-2 bg-[#00569C]"></div>
+        <div class="h-2 bg-primary"/>
 
         <div class="p-4">
           <div class="flex items-center gap-3">
             <div
-              class="w-10 h-10 rounded-full bg-[#00569C] text-white flex items-center justify-center font-semibold text-sm"
+              class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm"
             >
               PS
             </div>
             <p class="font-medium text-gray-800">สวัสดี, พัค แชร์อย</p>
           </div>
 
-          <div class="my-3 border-t border-gray-200"></div>
+          <div class="my-3 border-t border-gray-200"/>
 
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
@@ -37,7 +37,7 @@
         class="col-span-4 row-span-1 col-start-3 bg-white rounded-xl shadow overflow-hidden"
       >
         <div
-          class="bg-[#00569C] text-white px-5 py-3 font-medium flex items-center gap-2"
+          class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2"
         >
           📄 รายการสั่งซื้อทั้งหมด
         </div>
@@ -45,7 +45,7 @@
         <div class="px-5 py-4">
           <div class="flex gap-6 text-sm border-b">
             <span
-              class="text-[#00569C] border-b-2 border-[#00569C] pb-2 cursor-pointer"
+              class="text-primary border-b-2 border-primary pb-2 cursor-pointer"
             >
               ทั้งหมด (99)
             </span>
@@ -60,8 +60,8 @@
             <input
               type="text"
               placeholder="ค้นหาสินค้า, แบรนด์, รุ่น หรือหมายเลขคำสั่งซื้อ"
-              class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-[#00569C] outline-none"
-            />
+              class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-primary outline-none"
+            >
           </div>
         </div>
       </div>
@@ -80,7 +80,7 @@
 
             <ul class="text-sm space-y-2">
               <li
-                class="flex items-center justify-between text-[#00569C] font-medium cursor-pointer"
+                class="flex items-center justify-between text-primary font-medium cursor-pointer"
               >
                 <span>รายการสั่งซื้อทั้งหมด</span>
                 <span
@@ -90,72 +90,72 @@
                 </span>
               </li>
 
-              <li class="text-gray-600 hover:text-[#00569C] cursor-pointer">
+              <li class="text-gray-600 hover:text-primary cursor-pointer">
                 รายการสินค้าค้างส่ง
               </li>
-              <li class="text-gray-600 hover:text-[#00569C] cursor-pointer">
+              <li class="text-gray-600 hover:text-primary cursor-pointer">
                 ติดตามสถานะการจัดส่ง
               </li>
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"></div>
+          <div class="border-t border-gray-200"/>
 
           <!-- การเงินและชำระเงิน -->
           <div>
             <p class="font-medium mb-2">การเงินและชำระเงิน</p>
             <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 ชำระเงิน / อัปโหลดหลักฐาน
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 จ่ายชำระหนี้ Advice สนญ.
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 รายการเคลื่อนไหวบัญชี
               </li>
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"></div>
+          <div class="border-t border-gray-200"/>
 
           <!-- งานบริการ -->
           <div>
             <p class="font-medium mb-2">งานบริการและติดตามสถานะเคลม</p>
             <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 ตรวจสอบสถานะการแจ้งเคลม
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 สินค้าเคลมรอตัดสินใจ
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 รายงานการส่งคืน
               </li>
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"></div>
+          <div class="border-t border-gray-200"/>
 
           <!-- ข้อมูลบัญชี -->
           <div>
             <p class="font-medium mb-2">ข้อมูลบัญชี</p>
             <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 ข้อมูลส่วนตัวดีลเลอร์
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 รายชื่อไฟล์อัปโหลด
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 เงื่อนไขการจัดส่ง
               </li>
-              <li class="hover:text-[#00569C] cursor-pointer">
+              <li class="hover:text-primary cursor-pointer">
                 เปลี่ยนรหัสผ่าน
               </li>
             </ul>
           </div>
-          <div class="mt-auto p-4 pt-3 border-t border-gray-200"></div>
+          <div class="mt-auto p-4 pt-3 border-t border-gray-200"/>
         </div>
         
         <!-- logout -->
@@ -175,10 +175,10 @@
         <img
           src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
           class="w-40 opacity-70"
-        />
+        >
         <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
         <button
-          class="mt-6 bg-[#00569C] hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
+          class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
         >
           🛒 เปิดสั่งซื้อสินค้าทันที
         </button>

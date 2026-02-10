@@ -40,7 +40,8 @@ const { startDate, endDate, banner1, banner2, products, newList, stats, category
           <div class="bg-white rounded-2xl p-8 lg:p-12 shadow-sm border border-slate-300">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-              <div v-for="stat in stats" :key="stat.label"
+              <div 
+                v-for="stat in stats" :key="stat.label"
                 class="border-2 border-slate-300 rounded-2xl p-6 relative overflow-hidden hover:border-blue-400 ">
                 <p class="text-sm font-bold text-slate-400 uppercase">{{ stat.label }}</p>
                 <h2 class="text-2xl font-black" :class="stat.colorClass">{{ stat.value }}</h2>

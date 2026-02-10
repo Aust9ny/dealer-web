@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
 const showSearchModal = ref(false);
 
 // mock user
-const firstName = "Puck";
-const lastName = "Sheres";
+const firstName = 'Puck';
+const lastName = 'Sheres';
 
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
@@ -15,15 +15,17 @@ const initials = computed(() => {
 
 <template>
   <header
-    class="w-full h-20 bg-white flex items-center px-12 border-t-10 border-[#00569C] shadow-sm relative z-50"
+    class="w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm relative z-50"
   >
+  <NuxtLink to="/">
+
     <!-- Left : Logo -->
     <div class="flex items-center select-none">
       <div class="text-3xl font-bold text-[#0D95DA]">
         Advice <span class="text-green-500 italic">Dealers</span>
       </div>
     </div>
-
+  </NuxtLink>
     <!-- Center : Search -->
     <div class="flex-1 flex justify-center px-12 relative">
       <!-- Search Bar -->
@@ -31,12 +33,12 @@ const initials = computed(() => {
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
+          class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
           @click="showSearchModal = true"
-          class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-[#00569C]"
-        />
+        >
 
         <button
-          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-[#00569C] text-white rounded-full flex items-center gap-2"
+          class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
         >
           🔍 ค้นหา
         </button>
@@ -45,10 +47,10 @@ const initials = computed(() => {
       <!-- Search Modal -->
       <div
         v-if="showSearchModal"
-        class="absolute top-[60px] left-1/2 -translate-x-1/2 w-[1500px] max-w-[95vw] bg-white border border-gray-200 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] z-50"
+        class="absolute top-15 left-1/2 -translate-x-1/2 w-375 max-w-[95vw] bg-white border border-gray-200 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] z-50"
       >
         <div
-          class="grid grid-cols-12 min-h-[420px] max-h-[80vh] overflow-y-auto"
+          class="grid grid-cols-12 min-h-105 max-h-[80vh] overflow-y-auto"
         >
           <!-- Col 1 -->
           <div class="col-span-2 grid grid-rows-2 border-r border-gray-200">
@@ -61,24 +63,24 @@ const initials = computed(() => {
                   📈 เทรนด์การค้นหาช่วงนี้
                 </div>
               </div>
-              <div class="h-px bg-gray-200 my-3"></div>
+              <div class="h-px bg-gray-200 my-3"/>
 
               <ul class="space-y-2 text-[13px] text-gray-600">
-                <li class="hover:text-[#00569C] cursor-pointer">
+                <li class="hover:text-primary cursor-pointer">
                   RTX 4090 AORUS MASTER
                 </li>
-                <li class="hover:text-[#00569C] cursor-pointer">
+                <li class="hover:text-primary cursor-pointer">
                   MacBook Air 2023
                 </li>
-                <li class="hover:text-[#00569C] cursor-pointer">iPhone 14</li>
-                <li class="hover:text-[#00569C] cursor-pointer">
+                <li class="hover:text-primary cursor-pointer">iPhone 14</li>
+                <li class="hover:text-primary cursor-pointer">
                   คอมประกอบ Intel
                 </li>
-                <li class="hover:text-[#00569C] cursor-pointer">งบจำกัด</li>
+                <li class="hover:text-primary cursor-pointer">งบจำกัด</li>
               </ul>
 
               <div
-                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+                class="mt-3 text-[12px] text-primary cursor-pointer hover:underline"
               >
                 แสดงผลลัพธ์เพิ่มเติม 10+
               </div>
@@ -98,34 +100,34 @@ const initials = computed(() => {
                   ลบทั้งหมด
                 </span>
               </div>
-              <div class="h-px bg-gray-200 my-3"></div>
+              <div class="h-px bg-gray-200 my-3"/>
               <ul class="space-y-2 text-[13px] text-gray-500">
                 <li
-                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                  class="flex items-center hover:text-primary cursor-pointer"
                 >
                   ssd
                   <span class="ml-auto text-gray-300">✕</span>
                 </li>
                 <li
-                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                  class="flex items-center hover:text-primary cursor-pointer"
                 >
                   hdd
                   <span class="ml-auto text-gray-300">✕</span>
                 </li>
                 <li
-                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                  class="flex items-center hover:text-primary cursor-pointer"
                 >
                   cpu
                   <span class="ml-auto text-gray-300">✕</span>
                 </li>
                 <li
-                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                  class="flex items-center hover:text-primary cursor-pointer"
                 >
                   camera
                   <span class="ml-auto text-gray-300">✕</span>
                 </li>
                 <li
-                  class="flex items-center hover:text-[#00569C] cursor-pointer"
+                  class="flex items-center hover:text-primary cursor-pointer"
                 >
                   rtx 4080
                   <span class="ml-auto text-gray-300">✕</span>
@@ -133,7 +135,7 @@ const initials = computed(() => {
               </ul>
 
               <div
-                class="mt-3 text-[12px] text-[#00569C] cursor-pointer hover:underline"
+                class="mt-3 text-[12px] text-primary cursor-pointer hover:underline"
               >
                 แสดงผลลัพธ์เพิ่มเติม 10+
               </div>
@@ -147,13 +149,13 @@ const initials = computed(() => {
                 สินค้าที่เป็นเทรนด์ตอนนี้
               </div>
               <span
-                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+                class="text-[12px] text-primary cursor-pointer hover:underline"
               >
                 ดูทั้งหมด
               </span>
             </div>
 
-            <div class="h-px bg-gray-200 mb-3"></div>
+            <div class="h-px bg-gray-200 mb-3"/>
 
             <div class="space-y-1">
               <div
@@ -165,7 +167,7 @@ const initials = computed(() => {
                 <img
                   :src="product.image"
                   class="w-20 h-20 object-cover rounded-md bg-gray-100"
-                />
+                >
 
                 <!-- Product info -->
                 <div class="min-w-0">
@@ -218,7 +220,7 @@ const initials = computed(() => {
                 <div
                   v-if="index !== trendingProducts.length - 1"
                   class="col-span-3 h-px bg-gray-100 mt-3"
-                ></div>
+                />
               </div>
             </div>
           </div>
@@ -230,7 +232,7 @@ const initials = computed(() => {
                 โปรโมชั่น
               </div>
               <span
-                class="text-[12px] text-[#00569C] cursor-pointer hover:underline"
+                class="text-[12px] text-primary cursor-pointer hover:underline"
               >
                 ดูทั้งหมด
               </span>
@@ -248,7 +250,7 @@ const initials = computed(() => {
                   :src="banner.image"
                   :alt="banner.alt"
                   class="w-full h-36 object-cover"
-                />
+                >
               </a>
               <a
                 v-for="banner in banner1"
@@ -261,7 +263,7 @@ const initials = computed(() => {
                   :src="banner.image"
                   :alt="banner.alt"
                   class="w-full h-36 object-cover"
-                />
+                >
               </a>
             </div>
           </div>
@@ -271,9 +273,9 @@ const initials = computed(() => {
       <!-- Overlay -->
       <div
         v-if="showSearchModal"
+        class="fixed inset-0 z-40 "
         @click="showSearchModal = false"
-        class="fixed inset-0 z-40"
-      ></div>
+      />
     </div>
 
     <!-- Right -->
@@ -293,13 +295,13 @@ const initials = computed(() => {
       </button>
 
       <!-- Divider -->
-      <div class="h-6 w-px bg-gray-300"></div>
+      <div class="h-6 w-px bg-gray-300"/>
 
       <!-- Account -->
       <div class="relative">
         <button
-          @click="showAccountMenu = !showAccountMenu"
-          class="flex items-center gap-3 pl-3 pr-4 h-11 rounded-full bg-[#00569C] hover:bg-[#004a85] transition"
+        class="flex items-center gap-3 pl-3 pr-4 h-11 rounded-full bg-primary hover:bg-[#004a85] transition"
+        @click="showAccountMenu = !showAccountMenu"
         >
           <!-- Avatar (ไม่มีกรอบขาวแล้ว) -->
           <div
@@ -342,7 +344,7 @@ const initials = computed(() => {
             </span>
           </div>
 
-          <div class="h-px bg-gray-200 mx-3"></div>
+          <div class="h-px bg-gray-200 mx-3"/>
 
           <!-- การเงินเเละการชำระเงิน -->
           <div
@@ -351,17 +353,18 @@ const initials = computed(() => {
             การเงินเเละการชำระเงิน
           </div>
 
-          <div class="h-px bg-gray-200 mx-3"></div>
+          <div class="h-px bg-gray-200 mx-3"/>
 
           <!-- บัญชีของฉัน -->
           <NuxtLink
             to="/Dealer_Profile"
             class="block px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+            @click="showAccountMenu = !showAccountMenu"
           >
             บัญชีของฉัน
           </NuxtLink>
 
-          <div class="h-px bg-gray-200 mx-3"></div>
+          <div class="h-px bg-gray-200 mx-3"/>
 
           <!-- ออกจากระบบ -->
           <div
