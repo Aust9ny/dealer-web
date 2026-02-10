@@ -1,3 +1,18 @@
+<script setup lang="ts">
+import { ref } from 'vue'
+import Notification from '~/components/Notification.vue';
+
+const showNotification = ref(false);
+
+const onSubmitNotification = (data: {
+  email: string
+  phone: string
+}) => {
+  console.log('สมัครแจ้งเตือน:', data);
+  // TODO: call API
+};
+</script>
+
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto grid grid-cols-6 grid-rows-7 gap-4 p-3">
@@ -5,7 +20,7 @@
       <div
         class="col-span-2 row-span-1 bg-white rounded-xl shadow overflow-hidden"
       >
-        <div class="h-2 bg-primary"/>
+        <div class="h-2 bg-primary" />
 
         <div class="p-4">
           <div class="flex items-center gap-3">
@@ -17,7 +32,7 @@
             <p class="font-medium text-gray-800">สวัสดี, พัค แชร์อย</p>
           </div>
 
-          <div class="my-3 border-t border-gray-200"/>
+          <div class="my-3 border-t border-gray-200" />
 
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
@@ -61,7 +76,7 @@
               type="text"
               placeholder="ค้นหาสินค้า, แบรนด์, รุ่น หรือหมายเลขคำสั่งซื้อ"
               class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-primary outline-none"
-            >
+            />
           </div>
         </div>
       </div>
@@ -99,7 +114,7 @@
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"/>
+          <div class="border-t border-gray-200" />
 
           <!-- การเงินและชำระเงิน -->
           <div>
@@ -117,7 +132,7 @@
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"/>
+          <div class="border-t border-gray-200" />
 
           <!-- งานบริการ -->
           <div>
@@ -129,13 +144,11 @@
               <li class="hover:text-primary cursor-pointer">
                 สินค้าเคลมรอตัดสินใจ
               </li>
-              <li class="hover:text-primary cursor-pointer">
-                รายงานการส่งคืน
-              </li>
+              <li class="hover:text-primary cursor-pointer">รายงานการส่งคืน</li>
             </ul>
           </div>
 
-          <div class="border-t border-gray-200"/>
+          <div class="border-t border-gray-200" />
 
           <!-- ข้อมูลบัญชี -->
           <div>
@@ -150,14 +163,12 @@
               <li class="hover:text-primary cursor-pointer">
                 เงื่อนไขการจัดส่ง
               </li>
-              <li class="hover:text-primary cursor-pointer">
-                เปลี่ยนรหัสผ่าน
-              </li>
+              <li class="hover:text-primary cursor-pointer">เปลี่ยนรหัสผ่าน</li>
             </ul>
           </div>
-          <div class="mt-auto p-4 pt-3 border-t border-gray-200"/>
+          <div class="mt-auto p-4 pt-3 border-t border-gray-200" />
         </div>
-        
+
         <!-- logout -->
         <div class="mt-auto p-4 mb-3">
           <button
@@ -175,13 +186,23 @@
         <img
           src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
           class="w-40 opacity-70"
-        >
+        />
         <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
         <button
           class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
         >
           🛒 เปิดสั่งซื้อสินค้าทันที
         </button>
+        <button
+          class="mx-auto mt-6 block px-6 py-2.5 rounded-full bg-[#00569C] hover:bg-[#004b86] text-sm font-semibold text-white"
+          @click="showNotification = true"
+        >
+          ลงทะเบียนรับการแจ้งเตือน
+        </button>
+        <Notification
+          v-model="showNotification"
+          @submit="onSubmitNotification"
+        />
       </div>
     </div>
   </div>
