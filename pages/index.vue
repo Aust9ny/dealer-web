@@ -134,7 +134,10 @@ const { startDate, endDate, banner1, banner2, products, newList, stats, category
         <ProductList :title="categoryTitle" :products="products" />
         <ProductList :title="categoryTitle" :products="products" />
         <FooterNews :news-list="newList" />
+        
       </div>
+      <ProductDropdown :products="products" />
+      <ProductDropdown :products="products" />
     </div>
   </div>
 </template>
