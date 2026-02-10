@@ -18,4 +18,5 @@ export interface Product {
   discountPercentage?: number;
   isNew?: boolean;
   isSale?: boolean;
+  stock?: number;
 }
