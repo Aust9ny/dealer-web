@@ -14,7 +14,7 @@ const selectedProduct = ref<Product | null>(null);
 </script>
 
 <template>
-    <div class="w-full mb-4">
+    <div class="w-full mb-1">
         <button
             class="w-full flex items-center justify-between bg-white border border-slate-300 px-4 py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
             @click="isOpen = !isOpen"

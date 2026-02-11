@@ -140,7 +140,7 @@
           </div>
         </header>
 
-        <section class="mr-2 mt-4 space-y-4">
+        <section class="mr-2 mt-1">
           <ProductDropdown :products="products" />
           <ProductDropdown :products="products" />
         </section>
@@ -157,25 +157,44 @@ const { products } = useDashboard();
 
 // States
 const isSidebarOpen = ref(true);
-const activeCategory = ref(1); // Default เปิด Apple
-const activeSubCategory = ref(undefined); // Default เลือก iPhone
+const activeCategory = ref(undefined);
+const activeSubCategory = ref(undefined);
 const activeSubTag = ref('ALL');
+const globalLoading = useState('global-loading', () => false);
 
-const categories = [
+
+
+const baseCategories = [
   { 
-    id: 1, name: 'Apple Products', icon: '📱', 
+    name: 'Apple Products', icon: '📱', 
     subCats: ['iPhone', 'iPad', 'Mac', 'AirPods' , 'Apple watch'] 
   },
   { 
-    id: 2, name: 'Laptops', icon: '💻', 
+    name: 'Laptops', icon: '💻', 
     subCats: ['Gaming', 'Thin & Light', 'Workstation'] 
   },
   { 
-    id: 3, name: 'PC Components', icon: '🔌', 
+    name: 'PC Components', icon: '🔌', 
     subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'] 
   },
+  { 
+    name: 'Monitors', icon: '🖥️', 
+    subCats: ['Gaming Monitor', '4K UHD', 'Ultrawide', 'Office'] 
+  },
+  { 
+    name: 'Storage', icon: '💾', 
+    subCats: ['SSD', 'External HDD', 'NVMe', 'Flash Drive'] 
+  }
 ];
 
+// วนลูปเพื่อสร้างข้อมูลให้ครบ 100 รายการ
+const categories = Array.from({ length: 100 }, (_, index) => {
+  const base = baseCategories[index % baseCategories.length];
+  return {
+    id: index + 1,
+    ...base
+  };
+});
 // Computed สำหรับแสดงชื่อ Category หลักที่เลือก
 const activeCategoryName = computed(() => {
   const cat = categories.find(c => c.id === activeCategory.value);
@@ -198,8 +217,21 @@ const toggleCategory = (id) => {
   }
 };
 
-const selectSubCategory = (subName) => {
+const selectSubCategory = async (subName) => {
+  // 2. เรียกใช้งานได้ทันที
+  globalLoading.value = true;
   activeSubCategory.value = subName;
-  activeSubTag.value = 'ALL'; // Reset tag เมื่อเปลี่ยนหมวดหมู่ย่อย
+  activeSubTag.value = 'ALL'; // Reset Tag เมื่อเปลี่ยนหมวดหมู่ย่อย
+
+  try {
+    // จำลองการโหลดข้อมูล
+    await new Promise(resolve => setTimeout(resolve, 500)); 
+  } finally {
+    // 3. แก้ไขตัวสะกดจาก setTimdeout เป็น setTimeout
+    setTimeout(() => {
+      globalLoading.value = false;
+    }, 300);
+  }
 };
+
 </script>
