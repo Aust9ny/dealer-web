@@ -6,6 +6,7 @@ import type { News } from '~/types/news';
 export const useDashboard = () => {
   const startDate = ref<string | null>(null);
   const endDate = ref<string | null>(null);
+  
 
   const banner1 = ref<Banner[]>([
     { id: 1, image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=1920&auto=format&fit=crop', link: 'https://www.advice.co.th/article/activity-promotion', alt: 'GPU Update' },
@@ -75,33 +76,64 @@ const bottomSales = [
   { name: 'Broken Fan Case (Dummy)', amount: 0, total: 0 },
 ];
 
+  const rawMonthlyData = [
+    { month: 'Jan', sales: 12, target: 15, date: '2025-01-01' },
+    { month: 'Feb', sales: 19, target: 25, date: '2025-02-01' },
+    { month: 'Mar', sales: 13, target: 20, date: '2025-03-01' },
+    { month: 'Apr', sales: 15, target: 25, date: '2025-04-01' },
+    { month: 'May', sales: 22, target: 30, date: '2025-05-01' },
+    { month: 'Jun', sales: 18, target: 35, date: '2025-06-01' },
+    { month: 'Jul', sales: 25, target: 40, date: '2025-07-01' },
+    { month: 'Aug', sales: 30, target: 45, date: '2025-08-01' },
+    { month: 'Sep', sales: 28, target: 50, date: '2025-09-01' },
+    { month: 'Oct', sales: 35, target: 55, date: '2025-10-01' },
+    { month: 'Nov', sales: 40, target: 60, date: '2025-11-01' },
+    { month: 'Dec', sales: 45, target: 65, date: '2025-12-01' },
+  ];
+
+  const latestDateInData = rawMonthlyData[rawMonthlyData.length - 1].date;
+
   const categoryTitle = computed(() => products.value[0]?.category || 'Products');
   const chartData = computed(() => {
-    return {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      datasets: [
-        {
-          label: 'ยอดขายจริง (2025)',
-          data: [12, 19, 13, 15, 22, 18, 25, 30, 28, 35, 40, 45],
-          borderColor: '#A855F7', // สีม่วง
-          backgroundColor: 'rgba(168, 85, 247, 0.2)', // สีม่วงจางๆ (สำหรับพื้นที่ใต้เส้น)
-          fill: true,             // เติมสีใต้เส้น
-          tension: 0.4,           // ทำให้เส้นมีความโค้งมน
-          pointRadius: 4,         // ขนาดจุด
-        },
-        {
-          label: 'เป้าหมาย (2026)',
-          data: [15, 25, 20, 25, 30, 35, 40, 45, 50, 55, 60, 65],
-          borderColor: '#3b82f6', // สีฟ้า
-          backgroundColor: 'rgba(59, 130, 246, 0.2)', // สีฟ้าจางๆ
-          fill: true,
-          tension: 0.4,
-          borderDash: [5, 5],     // ทำให้เส้นที่สองเป็นเส้นประ (Optional)
-          pointRadius: 4,
-        },
-      ],
-    };
+  const filtered = rawMonthlyData.filter(item => {
+
+    const start = startDate.value ? new Date(startDate.value).getTime() : 0;
+
+    const end = endDate.value 
+      ? new Date(endDate.value).getTime() 
+      : new Date(latestDateInData).getTime();
+    
+    const itemTime = new Date(item.date).getTime();
+    
+    return itemTime >= start && itemTime <= end;
   });
+
+  // 2. แยก labels และ data ออกมาหลังจากกรองแล้ว
+  return {
+    labels: filtered.map(d => d.month),
+    datasets: [
+      {
+        label: 'ยอดขายจริง (2025)',
+        data: filtered.map(d => d.sales),
+        borderColor: '#A855F7',
+        backgroundColor: 'rgba(168, 85, 247, 0.2)',
+        fill: true,
+        tension: 0.4,
+        pointRadius: 4,
+      },
+      {
+        label: 'เป้าหมาย (2026)',
+        data: filtered.map(d => d.target),
+        borderColor: '#3b82f6',
+        backgroundColor: 'rgba(59, 130, 246, 0.2)',
+        fill: true,
+        tension: 0.4,
+        borderDash: [5, 5],
+        pointRadius: 4,
+      },
+    ],
+  };
+});
 
   const productDistribution = computed(() => {
     const brands = products.value.reduce((acc: Record<string, number>, curr) => {
