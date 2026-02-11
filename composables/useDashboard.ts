@@ -153,11 +153,28 @@ const bottomSales = [
   });
 
   const trendingProducts = computed(() => {
-    return products.value
-      .filter(p => p.isHot)
-      .slice(0, 5);             
-  });
-  
+  return products.value
+    .filter(p => p.isHot)
+    .slice(0, 5)
+    .map((p, index) => {
+      // จำลองส่วนลด
+      const discount = 500 + index * 200;
+      const oldPrice = p.price + discount;
+
+      return {
+        id: p.id,
+        image: p.image,
+        brand: p.brand,
+        name: p.name,
+        spec: p.specs,
+        price: p.price,
+        oldPrice: oldPrice,
+        discount: discount,
+        readyPoint: Math.floor(p.price / 20)
+      };
+    });
+});
+
   return {
     startDate, endDate, banner1, banner2, products, trendingProducts, newList, stats, categoryTitle, chartData, productDistribution, quickAccessItems, topSales, bottomSales 
   };
