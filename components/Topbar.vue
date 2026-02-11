@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
 const showSearchModal = ref(false);
 
 // mock user
-const firstName = 'Puck';
-const lastName = 'Sheres';
+const firstName = "Puck";
+const lastName = "Sheres";
 
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
@@ -15,7 +15,7 @@ const initials = computed(() => {
 
 <template>
   <header
-    class="w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm relative z-50"
+    class="w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm relative"
   >
     <NuxtLink to="/">
       <!-- Left : Logo -->
@@ -27,33 +27,23 @@ const initials = computed(() => {
     </NuxtLink>
     <!-- Center : Search -->
     <div class="flex-1 flex justify-center px-12 relative">
-      <!-- Search Bar -->
-      <div class="relative w-full max-w-3xl z-50">
+      <!-- Search Bar Wrapper -->
+      <div class="relative w-full max-w-3xl z-[100]">
+        <!-- Input -->
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
           class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
+          :class="showSearchModal ? 'bg-white' : ''"
           @click="showSearchModal = true"
         />
 
+        <!-- Search Button -->
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
         >
           🔍 ค้นหา
         </button>
-        <SearchModal
-          v-model="showSearchModal"
-          :trending-products="trendingProducts"
-          :banners="banner1"
-          :trending-keywords="[
-            'RTX 4090 AORUS MASTER',
-            'MacBook Air 2023',
-            'iPhone 14',
-            'คอมประกอบ Intel',
-            'งบจำกัด',
-          ]"
-          :search-history="['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080']"
-        />
       </div>
     </div>
 
@@ -155,4 +145,17 @@ const initials = computed(() => {
       </div>
     </div>
   </header>
+  <SearchModal
+    v-model="showSearchModal"
+    :trending-products="trendingProducts"
+    :banners="banner1"
+    :trending-keywords="[
+      'RTX 4090 AORUS MASTER',
+      'MacBook Air 2023',
+      'iPhone 14',
+      'คอมประกอบ Intel',
+      'งบจำกัด',
+    ]"
+    :search-history="['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080']"
+  />
 </template>

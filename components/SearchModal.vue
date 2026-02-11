@@ -1,16 +1,16 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed inset-0 z-50 flex items-start justify-center pt-22"
+    class="fixed inset-0 z-[90] flex items-start justify-center pt-22"
   >
     <!-- Overlay -->
-    <div class="absolute inset-0" @click="close" />
+    <div class="absolute inset-0 bg-black/40" @click="close" />
 
     <!-- Modal -->
     <div
       class="relative w-[1500px] max-w-[95vw] bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
     >
-      <div class="grid grid-cols-12 min-h-[420px] max-h-[80vh] overflow-y-auto">
+      <div class="grid grid-cols-12 min-h-[420px] max-h-[80vh]">
         <!-- Col 1 -->
         <div class="col-span-3 relative flex flex-col">
           <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"></div>
@@ -75,11 +75,13 @@
         </div>
 
         <!-- Col 2 : Products -->
-        <div class="col-span-5 col-start-4 relative">
+        <div class="col-span-5 col-start-4 relative flex flex-col max-h-[80vh]">
           <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"></div>
 
           <!-- Header -->
-          <div class="flex items-center justify-between px-6 pt-6 pb-4">
+          <div
+            class="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"
+          >
             <div class="text-[16px] font-bold text-gray-900">
               🔥 สินค้าที่เป็นเทรนด์ตอนนี้
             </div>
@@ -91,7 +93,7 @@
           </div>
 
           <!-- Product List -->
-          <div class="px-4 pb-6">
+          <div class="flex-1 overflow-y-auto px-4 pb-6">
             <div
               v-for="product in trendingProducts"
               :key="product.id"
@@ -132,8 +134,6 @@
                 <div
                   class="flex flex-col items-end justify-between text-right min-w-[170px]"
                 >
-                  <div></div>
-
                   <div class="flex flex-col items-end gap-1">
                     <!-- Current Price -->
                     <div class="text-[18px] font-bold text-gray-900">
@@ -148,7 +148,7 @@
                       <!-- Discount Oval -->
                       <div
                         v-if="product.discount"
-                        class="bg-red-500 text-white text-[11px] px-3 py-[2px] rounded-full"
+                        class="bg-red-700 text-white text-[11px] px-3 py-[2px] rounded-full"
                       >
                         -฿{{ product.discount.toLocaleString() }}
                       </div>
@@ -177,9 +177,9 @@
         </div>
 
         <!-- Col 3 : Banner -->
-        <div class="col-span-4 col-start-9 p-5">
+        <div class="col-span-4 col-start-9 p-5 flex flex-col max-h-[80vh]">
           <!-- Header -->
-          <div class="flex items-center justify-between mb-5">
+          <div class="flex items-center justify-between mb-5 shrink-0">
             <div class="text-[16px] font-bold text-gray-900 tracking-wide">
               📣 โปรโมชั่น
             </div>
@@ -190,25 +190,35 @@
               ดูทั้งหมด
             </button>
           </div>
-
-          <a
-            v-for="banner in banners"
-            :key="banner.id"
-            :href="banner.link"
-            target="_blank"
-            class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
-          >
-            <img :src="banner.image" class="w-full h-36 object-cover" />
-          </a>
-          <a
-            v-for="banner in banners"
-            :key="banner.id"
-            :href="banner.link"
-            target="_blank"
-            class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
-          >
-            <img :src="banner.image" class="w-full h-36 object-cover" />
-          </a>
+          <div class="overflow-y-auto space-y-3 pr-2">
+            <a
+              v-for="banner in banners"
+              :key="banner.id"
+              :href="banner.link"
+              target="_blank"
+              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
+            >
+              <img :src="banner.image" class="w-full h-36 object-cover" />
+            </a>
+            <a
+              v-for="banner in banners"
+              :key="banner.id"
+              :href="banner.link"
+              target="_blank"
+              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
+            >
+              <img :src="banner.image" class="w-full h-36 object-cover" />
+            </a>
+            <a
+              v-for="banner in banners"
+              :key="banner.id"
+              :href="banner.link"
+              target="_blank"
+              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
+            >
+              <img :src="banner.image" class="w-full h-36 object-cover" />
+            </a>
+          </div>
         </div>
       </div>
     </div>

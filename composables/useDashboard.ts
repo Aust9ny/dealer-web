@@ -155,7 +155,7 @@ const bottomSales = [
   const trendingProducts = computed(() => {
   return products.value
     .filter(p => p.isHot)
-    .slice(0, 5)
+    .slice(0, 7)
     .map((p, index) => {
       // จำลองส่วนลด
       const discount = 500 + index * 200;
