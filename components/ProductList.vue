@@ -3,18 +3,23 @@
 import { ref, computed, watch, onMounted, nextTick, onUnmounted } from 'vue';
 import type { Product } from '~/types/product';
 
-const props = defineProps<{
+// ใช้ withDefaults เพื่อกำหนดค่าเริ่มต้นให้ครบทุกตัวที่เป็น Optional
+const props = withDefaults(defineProps<{
   products: Product[];
   title?: string;
-}>();
+  viewMode?: 'list' | 'grid';
+}>(), {
+  title: '',      
+  viewMode: 'list'  
+});
 
 const sliderRef = ref<any>(null);
 const selectedCategory = ref('All');
 const indicatorStyle = ref({ width: '0px', left: '0px' });
 const buttonRefs = ref<any[]>([]);
 
-// ฟังก์ชันคำนวณตำแหน่งและขนาดของปุ่มที่เลือก
 const updateIndicator = () => {
+  if (props.viewMode === 'grid') return; // ไม่ต้องคำนวณถ้าอยู่ในโหมด grid
   const index = categories.value.indexOf(selectedCategory.value);
   const el = buttonRefs.value[index];
   if (el) {
@@ -35,14 +40,13 @@ const filteredProducts = computed(() => {
   return props.products.filter(p => p.category === selectedCategory.value);
 });
 
+// ปรับ Title ให้ซ่อนหรือเปลี่ยนตามความเหมาะสม
 const displayTitle = computed(() => {
-  if (selectedCategory.value === 'All') {
-    return 'รายการสินค้าแนะนำ';
-  }
+  if (props.viewMode === 'grid') return ''; // ซ่อน Title เมื่อเป็น Grid ตามคำขอ
+  if (selectedCategory.value === 'All') return 'รายการสินค้าแนะนำ';
   return `รายการสินค้าประเภท ${selectedCategory.value}`;
 });
 
-// เฝ้าดูการเปลี่ยนหมวดหมู่
 watch(selectedCategory, () => {
   nextTick(updateIndicator);
   if (sliderRef.value) {
@@ -55,8 +59,10 @@ const handleResize = () => {
 };
 
 onMounted(() => {
-  setTimeout(updateIndicator, 150);
-  window.addEventListener('resize', handleResize);
+  if (props.viewMode !== 'grid') {
+    setTimeout(updateIndicator, 150);
+    window.addEventListener('resize', handleResize);
+  }
 });
 
 onUnmounted(() => {
@@ -66,8 +72,10 @@ onUnmounted(() => {
 
 <template>
   <div class="product-list-section py-4">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mx-14 mb-4">
-      
+    <div 
+      v-if="props.viewMode !== 'grid'" 
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4 mx-14 mb-4"
+    >
       <h2 class="text-2xl font-bold text-slate-800 min-w-50">
         {{ displayTitle }}
       </h2>
@@ -78,30 +86,21 @@ onUnmounted(() => {
           class="hidden md:flex items-center gap-1 bg-white p-1 rounded-full border border-slate-300 relative overflow-hidden"
         >
           <div 
-            class="absolute bg-[#2196F3] rounded-full transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] shadow-sm"
-            :style="{
-              width: indicatorStyle.width,
-              left: indicatorStyle.left,
-              top: '4px',
-              bottom: '4px',
-              height: 'calc(100% - 8px)'
-            }"
+            class="absolute bg-[#2196F3] rounded-full transition-all duration-300 shadow-sm"
+            :style="{ width: indicatorStyle.width, left: indicatorStyle.left, top: '4px', bottom: '4px', height: 'calc(100% - 8px)' }"
           />
-          
           <button 
-            v-for="(cat, index) in categories" 
-            :key="cat"
+            v-for="(cat, index) in categories" :key="cat"
             :ref="(el) => (buttonRefs[index] = el)"
             type="button"
-            :class="[
-              'relative z-10 px-4 py-1.5 text-sm font-bold rounded-full transition-colors duration-300 whitespace-nowrap',
-              selectedCategory === cat ? 'text-white' : 'text-slate-400 hover:text-slate-800'
-            ]"
+            class="relative z-10 px-4 py-1.5 text-sm font-bold rounded-full transition-colors duration-300 whitespace-nowrap"
+            :class="[selectedCategory === cat ? 'text-white' : 'text-slate-400 hover:text-slate-800']"
             @click="selectedCategory = cat"
           >
             {{ cat }}
           </button>
         </div>
+
         <NuxtLink to="category">
           <button class="group flex items-center gap-2 px-4 py-2 text-md font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl border border-slate-300 hover:border-[#2196F3] transition-all whitespace-nowrap active:scale-95">
             <span>ดูทั้งหมด</span>
@@ -113,7 +112,16 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <div v-if="props.viewMode === 'grid'" class="mx-4">
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+        <div v-for="product in products" :key="product.id" class="transition-transform duration-300 hover:scale-[1.03]">
+          <ProductCard :product="product" view-mode="grid" />
+        </div>
+      </div>
+    </div>
+
     <BaseSlider
+      v-else
       ref="sliderRef"
       :items="filteredProducts" 
       :items-per-row="5"
@@ -130,11 +138,3 @@ onUnmounted(() => {
     </BaseSlider>
   </div>
 </template>
-
-<style scoped>
-/* ลบขอบสีฟ้าเวลาคลิกบนมือถือ */
-button {
-  -webkit-tap-highlight-color: transparent;
-  outline: none;
-}
-</style>
