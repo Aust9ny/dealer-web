@@ -1,15 +1,20 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Notification from '~/components/Notification.vue';
+import { ref } from "vue";
+import Notification from "~/components/Notification.vue";
+import SuccessModal from "~/components/SuccessModal.vue";
 
 const showNotification = ref(false);
+const showSuccessModal = ref(false);
 
-const onSubmitNotification = (data: {
-  email: string
-  phone: string
-}) => {
-  console.log('สมัครแจ้งเตือน:', data);
+const onSubmitNotification = (data: { email: string; phone: string }) => {
+  console.log("สมัครแจ้งเตือน:", data);
   // TODO: call API
+
+  // ✅ ปิดฟอร์ม
+  showNotification.value = false;
+
+  // ✅ เปิด success modal
+  showSuccessModal.value = true;
 };
 </script>
 
@@ -203,6 +208,7 @@ const onSubmitNotification = (data: {
           v-model="showNotification"
           @submit="onSubmitNotification"
         />
+        <SuccessModal v-model="showSuccessModal" />
       </div>
     </div>
   </div>
