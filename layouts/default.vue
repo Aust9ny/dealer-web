@@ -1,7 +1,13 @@
 <template>
-  <div>
+  <div class="min-h-screen">
+    <LoadingScreen />
+
     <Topbar />
-    <slot />
+    
+    <main>
+      <slot />
+    </main>
+
     <Footer />
   </div>
 </template>
