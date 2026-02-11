@@ -1,10 +1,14 @@
 <template>
   <div
-    v-if="modelValue"
-    class="fixed inset-0 z-50 flex items-start justify-center pt-22"
-  >
+  v-if="modelValue"
+  class="fixed inset-0 z-50 flex items-start justify-center pt-22"
+>
+
     <!-- Overlay -->
-    <div class="absolute inset-0" @click="close" />
+    <div
+      class="absolute inset-0"
+      @click="close"
+    />
 
     <!-- Modal -->
     <div
@@ -88,7 +92,10 @@
             target="_blank"
             class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
           >
-            <img :src="banner.image" class="w-full h-36 object-cover" />
+            <img
+              :src="banner.image"
+              class="w-full h-36 object-cover"
+            />
           </a>
           <a
             v-for="banner in banners"
@@ -97,7 +104,10 @@
             target="_blank"
             class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
           >
-            <img :src="banner.image" class="w-full h-36 object-cover" />
+            <img
+              :src="banner.image"
+              class="w-full h-36 object-cover"
+            />
           </a>
         </div>
       </div>
@@ -107,18 +117,18 @@
 
 <script setup lang="ts">
 defineProps<{
-  modelValue: boolean;
-  trendingProducts: any[];
-  banners: any[];
-  trendingKeywords: string[];
-  searchHistory: string[];
+  modelValue: boolean
+  trendingProducts: any[]
+  banners: any[]
+  trendingKeywords: string[]
+  searchHistory: string[]
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
+  (e: 'update:modelValue', value: boolean): void
 }>();
 
 const close = () => {
-  emit("update:modelValue", false);
+  emit('update:modelValue', false);
 };
 </script>
