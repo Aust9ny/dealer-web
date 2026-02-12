@@ -1,23 +1,3 @@
-<script setup lang="ts">
-import { ref } from "vue";
-import Notification from "~/components/Notification.vue";
-import SuccessModal from "~/components/SuccessModal.vue";
-
-const showNotification = ref(false);
-const showSuccessModal = ref(false);
-
-const onSubmitNotification = (data: { email: string; phone: string }) => {
-  console.log("สมัครแจ้งเตือน:", data);
-  // TODO: call API
-
-  // ✅ ปิดฟอร์ม
-  showNotification.value = false;
-
-  // ✅ เปิด success modal
-  showSuccessModal.value = true;
-};
-</script>
-
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto grid grid-cols-6 grid-rows-7 gap-4 p-3">
@@ -198,17 +178,6 @@ const onSubmitNotification = (data: { email: string; phone: string }) => {
         >
           🛒 เปิดสั่งซื้อสินค้าทันที
         </button>
-        <button
-          class="mx-auto mt-6 block px-6 py-2.5 rounded-full bg-[#00569C] hover:bg-[#004b86] text-sm font-semibold text-white"
-          @click="showNotification = true"
-        >
-          ลงทะเบียนรับการแจ้งเตือน
-        </button>
-        <Notification
-          v-model="showNotification"
-          @submit="onSubmitNotification"
-        />
-        <SuccessModal v-model="showSuccessModal" />
       </div>
     </div>
   </div>
