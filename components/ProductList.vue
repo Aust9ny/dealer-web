@@ -3,14 +3,11 @@
 import { ref, computed, watch, onMounted, nextTick, onUnmounted } from 'vue';
 import type { Product } from '~/types/product';
 
-// ใช้ withDefaults เพื่อกำหนดค่าเริ่มต้นให้ครบทุกตัวที่เป็น Optional
 const props = withDefaults(defineProps<{
   products: Product[];
   title?: string;
-  viewMode?: 'list' | 'grid';
 }>(), {
-  title: '',      
-  viewMode: 'list'  
+  title: ''
 });
 
 const sliderRef = ref<any>(null);
@@ -18,8 +15,8 @@ const selectedCategory = ref('All');
 const indicatorStyle = ref({ width: '0px', left: '0px' });
 const buttonRefs = ref<any[]>([]);
 
+// ฟังก์ชันคำนวณตำแหน่งและขนาดของปุ่มที่เลือก (สำหรับ Indicator เส้นสีฟ้า)
 const updateIndicator = () => {
-  if (props.viewMode === 'grid') return; // ไม่ต้องคำนวณถ้าอยู่ในโหมด grid
   const index = categories.value.indexOf(selectedCategory.value);
   const el = buttonRefs.value[index];
   if (el) {
@@ -40,13 +37,12 @@ const filteredProducts = computed(() => {
   return props.products.filter(p => p.category === selectedCategory.value);
 });
 
-// ปรับ Title ให้ซ่อนหรือเปลี่ยนตามความเหมาะสม
 const displayTitle = computed(() => {
-  if (props.viewMode === 'grid') return ''; // ซ่อน Title เมื่อเป็น Grid ตามคำขอ
   if (selectedCategory.value === 'All') return 'รายการสินค้าแนะนำ';
   return `รายการสินค้าประเภท ${selectedCategory.value}`;
 });
 
+// เฝ้าดูการเปลี่ยนหมวดหมู่ภายใน Slider
 watch(selectedCategory, () => {
   nextTick(updateIndicator);
   if (sliderRef.value) {
@@ -59,10 +55,8 @@ const handleResize = () => {
 };
 
 onMounted(() => {
-  if (props.viewMode !== 'grid') {
-    setTimeout(updateIndicator, 150);
-    window.addEventListener('resize', handleResize);
-  }
+  setTimeout(updateIndicator, 150);
+  window.addEventListener('resize', handleResize);
 });
 
 onUnmounted(() => {
@@ -72,56 +66,40 @@ onUnmounted(() => {
 
 <template>
   <div class="product-list-section py-4">
-    <div 
-      v-if="props.viewMode !== 'grid'" 
-      class="flex flex-col md:flex-row md:items-center justify-between gap-4 mx-14 mb-4"
-    >
-      <h2 class="text-2xl font-bold text-slate-800 min-w-50">
-        {{ displayTitle }}
-      </h2>
+<div class="flex flex-wrap items-start justify-between gap-x-6 gap-y-4 mx-4 md:mx-14 mb-8">
+      
+      <div class="w-full lg:w-100 shrink-0">
+        <h2 class="text-xl md:text-2xl font-bold text-slate-800 leading-tight">
+          {{ displayTitle }}
+        </h2>
+      </div>
 
-      <div class="flex items-center gap-4">
-        <div 
-          v-if="categories.length > 1" 
-          class="hidden md:flex items-center gap-1 bg-white p-1 rounded-full border border-slate-300 relative overflow-hidden"
+      <div v-if="categories.length > 1" class="flex flex-wrap items-start justify-between lg:justify-end gap-2 flex-1">
+        <button 
+          v-for="cat in categories" 
+          :key="cat"
+          type="button"
+          :class="[
+            'px-4 py-1.5 text-sm font-bold rounded-full transition-all duration-300 border shadow-sm active:scale-95 whitespace-nowrap',
+            selectedCategory === cat 
+              ? 'bg-[#2196F3] border-[#2196F3] text-white' 
+              : 'bg-white border-slate-300 text-slate-400 hover:text-slate-800 hover:border-slate-400'
+          ]"
+          @click="selectedCategory = cat"
         >
-          <div 
-            class="absolute bg-[#2196F3] rounded-full transition-all duration-300 shadow-sm"
-            :style="{ width: indicatorStyle.width, left: indicatorStyle.left, top: '4px', bottom: '4px', height: 'calc(100% - 8px)' }"
-          />
-          <button 
-            v-for="(cat, index) in categories" :key="cat"
-            :ref="(el) => (buttonRefs[index] = el)"
-            type="button"
-            class="relative z-10 px-4 py-1.5 text-sm font-bold rounded-full transition-colors duration-300 whitespace-nowrap"
-            :class="[selectedCategory === cat ? 'text-white' : 'text-slate-400 hover:text-slate-800']"
-            @click="selectedCategory = cat"
-          >
-            {{ cat }}
-          </button>
-        </div>
-
-        <NuxtLink to="category">
-          <button class="group flex items-center gap-2 px-4 py-2 text-md font-semibold text-slate-400 hover:text-[#2196F3] rounded-3xl border border-slate-300 hover:border-[#2196F3] transition-all whitespace-nowrap active:scale-95">
-            <span>ดูทั้งหมด</span>
-            <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        </NuxtLink>
+          {{ cat }}
+        </button>
       </div>
+              <NuxtLink to="category">
+                <button class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-full border border-slate-300 hover:border-[#2196F3] transition-all active:scale-95 whitespace-nowrap">
+                  <span>ดูทั้งหมด</span>
+                  <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                </button>
+              </NuxtLink>
     </div>
-
-    <div v-if="props.viewMode === 'grid'" class="mx-4">
-      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        <div v-for="product in products" :key="product.id" class="transition-transform duration-300 hover:scale-[1.03]">
-          <ProductCard :product="product" view-mode="grid" />
-        </div>
-      </div>
-    </div>
-
     <BaseSlider
-      v-else
       ref="sliderRef"
       :items="filteredProducts" 
       :items-per-row="5"
@@ -138,3 +116,16 @@ onUnmounted(() => {
     </BaseSlider>
   </div>
 </template>
+
+<style scoped>
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+</style>

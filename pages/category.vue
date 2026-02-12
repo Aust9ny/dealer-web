@@ -21,7 +21,7 @@
       <aside :class="[isSidebarOpen ? 'w-64' : 'w-20']" class="sticky top-4 h-[calc(100vh-60px)] bg-white text-black transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden">
         <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
           <span v-if="isSidebarOpen" class="font-bold truncate text-[#0D95DA]">Advice Catalog</span>
-          <button class="hover:bg-slate-100 p-1.5 rounded-lg transition-colors" @click="isSidebarOpen = !isSidebarOpen">
+          <button class="hover:bg-slate-100 p-1.5 rounded-lg transition-colors ml-1" @click="isSidebarOpen = !isSidebarOpen">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
             </svg>
@@ -29,7 +29,7 @@
         </div>
         <nav class="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
           <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
-            <div class="p-3 rounded-xl cursor-pointer flex items-center justify-between transition-all group" :class="[activeCategory === cat.id ? 'bg-blue-50 text-[#0D95DA]' : 'hover:bg-slate-50 text-slate-600']" @click="toggleCategory(cat.id)">
+            <div class="p-3 rounded-xl cursor-pointer flex items-center justify-between transition-all group m-1" :class="[activeCategory === cat.id ? 'bg-blue-50 text-[#0D95DA]' : 'hover:bg-slate-50 text-slate-600']" @click="toggleCategory(cat.id)">
               <div class="flex items-center gap-3">
                 <span class="text-xl">{{ cat.icon }}</span>
                 <span v-if="isSidebarOpen" class="font-medium whitespace-nowrap">{{ cat.name }}</span>
@@ -50,9 +50,9 @@
           <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
             <div class="flex items-baseline gap-2">
               <h2 class="text-xl font-bold text-slate-800">
-                {{ activeCategoryName }} <span v-if="activeSubCategory" class="text-[#0D95DA]">/ {{ activeSubCategory }}</span>
+                {{ activeCategoryName }} <span v-if="activeSubCategory" class="text-[#0D95DA]"/>
               </h2>
-              <span class="text-slate-400 text-xs">({{ products.length }} รายการ)</span>
+              <span class="text-slate-400 text-xs">({{ filteredProducts.length }} รายการ)</span>
             </div>
             
             <div class="flex items-center gap-3">
@@ -89,28 +89,57 @@
 
           <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="relative w-full max-w-md">
-              <input type="text" placeholder="ค้นหาชื่อสินค้า..." class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm">
+              <input 
+                v-model="searchQuery" 
+                type="text" 
+                placeholder="ค้นหาชื่อสินค้า " 
+                class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm"
+              >
               <Icon icon="mdi:magnify" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             </div>
             <div class="flex items-center gap-3">
               <span class="text-sm text-slate-600 font-medium">สถานะสินค้า:</span>
               <div class="relative min-w-35">
-                <select class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#0D95DA]"><option>ทั้งหมด</option><option>มีของ</option><option>ของหมด</option></select>
+                <select 
+                  v-model="stockStatus" 
+                  class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#0D95DA]"
+                >
+                  <option>ทั้งหมด</option>
+                  <option>มีของ</option>
+                  <option>ของหมด</option>
+                </select>
                 <Icon icon="mdi:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
             </div>
           </div>
         </header>
 
-<section class="mr-2 mt-2">
-  <div v-if="viewMode === 'list'" class="space-y-4">
-    <ProductDropdown :products="products" :view-mode="viewMode" />
-  </div>
+        <section class="mr-2 mt-2">
+          <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200 mr-2">
+            <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
+            <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ ลองเปลี่ยนคำค้นหาใหม่ดูนะ</p>
+            <button 
+            class="mt-4 text-[#0D95DA] text-sm font-bold hover:underline"
+            @click="resetFilters" 
+            >
+              ล้างการกรองทั้งหมด
+          </button>
+          </div>
 
-  <div v-else class="px-2">
-    <ProductList :products="products" :view-mode="viewMode" />
+         <template v-else>
+  <div class="space-y-4">
+    <div v-for="(taggedProducts, tagName) in productsBySubTag" :key="tagName">
+      <ProductDropdown 
+        :label="tagName" 
+        :products="taggedProducts" 
+        :view-mode="viewMode" 
+        :is-open="dropdownStates[tagName]" 
+        @toggle="toggleDropdown(tagName)"
+      />
+    </div>
   </div>
-</section>
+</template>
+        </section>
       </main>
     </div>
   </div>
@@ -119,10 +148,7 @@
 <script setup>
 import { Icon } from '@iconify/vue';
 
-// ข้อมูลจำลอง
-const { products } = useDashboard();
-
-// States
+// 🟢 2. UI STATES
 const isSidebarOpen = ref(true);
 const activeCategory = ref(undefined);
 const activeSubCategory = ref(undefined);
@@ -130,51 +156,88 @@ const activeSubTag = ref('ALL');
 const globalLoading = useState('global-loading', () => false);
 const viewMode = ref('list');
 
+// 🟢 3. FILTER STATES
+const searchQuery = ref('');
+const stockStatus = ref('ทั้งหมด');
 
-const baseCategories = [
-  { 
-    name: 'Apple Products', icon: '📱', 
-    subCats: ['iPhone', 'iPad', 'Mac', 'AirPods' , 'Apple watch'] 
-  },
-  { 
-    name: 'Laptops', icon: '💻', 
-    subCats: ['Gaming', 'Thin & Light', 'Workstation'] 
-  },
-  { 
-    name: 'PC Components', icon: '🔌', 
-    subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'] 
-  },
-  { 
-    name: 'Monitors', icon: '🖥️', 
-    subCats: ['Gaming Monitor', '4K UHD', 'Ultrawide', 'Office'] 
-  },
-  { 
-    name: 'Storage', icon: '💾', 
-    subCats: ['SSD', 'External HDD', 'NVMe', 'Flash Drive'] 
+// 🟢 4. COMPUTED FILTER PIPELINE (หัวใจสำคัญ)
+const { products } = useDashboard(); 
+
+// 2. ปรับการกรองให้รองรับชื่อหมวดหมู่ที่อาจจะไม่ตรงกันเป๊ะ (Case Insensitive)
+// 🟢 Update your filteredProducts in <script setup>
+const filteredProducts = computed(() => {
+  const allProducts = products.value; 
+  let result = [...allProducts];
+
+  // 1. Filter by Category/SubCategory
+  if (activeSubCategory.value) {
+    result = result.filter(p => 
+      p.category?.toLowerCase() === activeSubCategory.value.toLowerCase()
+    );
+  } else if (activeCategory.value) {
+    const catName = activeCategoryName.value;
+    if (catName === 'PC Components') {
+      result = result.filter(p => ['CPU', 'VGA', 'Mainboard'].includes(p.category));
+    }
   }
+
+  // 🟢 NEW: Filter by SubTag (Line 83 buttons)
+  if (activeSubTag.value !== 'ALL') {
+    result = result.filter(p => 
+      p.name.toLowerCase().includes(activeSubTag.value.toLowerCase())
+    );
+  }
+
+  // 3. Filter by Search
+  if (searchQuery.value) {
+    result = result.filter(p => p.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+  }
+
+  return result;
+});
+
+// 🟢 5. SIDEBAR DATA
+const baseCategories = [
+  { name: 'Apple Products', icon: '📱', subCats: ['iPhone', 'iPad', 'Mac', 'AirPods' , 'Apple watch'] },
+  { name: 'Laptops', icon: '💻', subCats: ['Gaming', 'Thin & Light', 'Workstation'] },
+  { name: 'PC Components', icon: '🔌', subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'] },
+  { name: 'Monitors', icon: '🖥️', subCats: ['Gaming Monitor', '4K UHD', 'Ultrawide', 'Office'] },
+  { name: 'Storage', icon: '💾', subCats: ['SSD', 'External HDD', 'NVMe', 'Flash Drive'] }
 ];
 
-// วนลูปเพื่อสร้างข้อมูลให้ครบ 100 รายการ
 const categories = Array.from({ length: 100 }, (_, index) => {
   const base = baseCategories[index % baseCategories.length];
-  return {
-    id: index + 1,
-    ...base
-  };
+  return { id: index + 1, ...base };
 });
-// Computed สำหรับแสดงชื่อ Category หลักที่เลือก
+
 const activeCategoryName = computed(() => {
   const cat = categories.find(c => c.id === activeCategory.value);
   return cat ? cat.name : 'Select Category';
 });
 
-// Computed สำหรับแสดง Sub-tags (ตัวอย่าง)
+// ใน category.vue
+// 🟢 Fixed currentSubCatTags in category.vue
 const currentSubCatTags = computed(() => {
-  if (activeSubCategory.value === 'iPhone') return ['iPhone 17', 'iPhone 16', 'iPhone 15', 'iPhone 14'];
-  if (activeSubCategory.value === 'iPad') return ['iPad Pro', 'iPad Air', 'iPad Mini'];
-  return ['Model A', 'Model B'];
+  // 1. Get products matching the current SubCategory
+  const relatedProducts = products.value.filter(p => 
+    p.category?.toLowerCase() === activeSubCategory.value?.toLowerCase()
+  );
+
+  // 2. Extract unique tags from these products
+  // Correct syntax: new Set<string>() without 'any' inside
+  const tags = new Set();
+  
+  relatedProducts.forEach(p => {
+    if (p.tag) {
+      tags.add(p.tag);
+    }
+  });
+
+  // 3. Return as a sorted array
+  return Array.from(tags).sort((a, b) => b.localeCompare(a)); 
 });
 
+// 🟢 6. ACTIONS
 const toggleCategory = (id) => {
   if (activeCategory.value === id) {
     activeCategory.value = null;
@@ -185,20 +248,77 @@ const toggleCategory = (id) => {
 };
 
 const selectSubCategory = async (subName) => {
-  // 2. เรียกใช้งานได้ทันที
   globalLoading.value = true;
   activeSubCategory.value = subName;
-  activeSubTag.value = 'ALL'; // Reset Tag เมื่อเปลี่ยนหมวดหมู่ย่อย
+  activeSubTag.value = 'ALL'; 
+  searchQuery.value = ''; // ล้างคำค้นหาเมื่อเปลี่ยนหมวดหมู่ใหม่ (Optional)
 
   try {
-    // จำลองการโหลดข้อมูล
     await new Promise(resolve => setTimeout(resolve, 500)); 
   } finally {
-    // 3. แก้ไขตัวสะกดจาก setTimdeout เป็น setTimeout
-    setTimeout(() => {
-      globalLoading.value = false;
-    }, 300);
+    setTimeout(() => { globalLoading.value = false; }, 300);
   }
 };
+
+const resetFilters = () => {
+  searchQuery.value = '';
+  stockStatus.value = 'ทั้งหมด';
+  activeSubTag.value = 'ALL';
+  activeCategory.value = '';
+  activeSubCategory.value = '';
+};
+
+// 🟢 Add this to your <script setup> in category.vue
+// 🟢 Update productsBySubTag in <script setup>
+const productsBySubTag = computed(() => {
+  const groups = {};
+  const currentTags = currentSubCatTags.value;
+  const allAvailableProducts = filteredProducts.value;
+
+  currentTags.forEach(tag => {
+    const matched = allAvailableProducts.filter(p => 
+      p.name.toLowerCase().includes(tag.toLowerCase())
+    );
+    
+    if (matched.length > 0) {
+      groups[tag] = matched;
+    }
+  });
+
+  // Optional: Add a "Others" group for products that didn't match any tag
+  const taggedIds = new Set(Object.values(groups).flat().map(p => p.id));
+  const others = allAvailableProducts.filter(p => !taggedIds.has(p.id));
+  
+  if (others.length > 0) {
+    groups['อื่นๆ'] = others;
+  }
+
+  return groups;
+});
+
+// 🟢 Update in <script setup>
+// Use an object to track the open state of each tag individually
+const dropdownStates = ref({});
+
+// Function to toggle a specific tag
+const toggleDropdown = (tagName) => {
+  dropdownStates.value[tagName] = !dropdownStates.value[tagName];
+};
+
+// Initialize all tags to 'open' by default when data changes
+watch(productsBySubTag, (newGroups) => {
+  Object.keys(newGroups).forEach(tag => {
+    if (dropdownStates.value[tag] === undefined) {
+      dropdownStates.value[tag] = true; 
+    }
+  });
+}, { immediate: true });
+
+// 🟢 Force open the specific dropdown when a SubTag is selected
+watch(activeSubTag, (newTag) => {
+  if (newTag !== 'ALL') {
+    dropdownStates.value[newTag] = true;
+  }
+});
 
 </script>
