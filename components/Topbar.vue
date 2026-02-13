@@ -24,7 +24,7 @@ const closeSearch = () => {
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[100]"
+    class="fixed top-0 left-0 w-full h-23 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[100]"
   >
     <div
       v-if="showSearchModal"

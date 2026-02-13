@@ -1,10 +1,10 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-20 z-[110] flex items-start justify-center pt-2"
+    class="fixed left-0 right-0 bottom-0 top-23 z-[110] flex items-start justify-center pt-2"
   >
     <!-- Overlay -->
-    <div class="absolute inset-0 bg-black/40" @click="close" />
+    <div class="absolute inset-0" @click="close" />
 
     <!-- Modal -->
     <div
