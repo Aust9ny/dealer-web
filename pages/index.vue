@@ -26,7 +26,7 @@ const { startDate, endDate, banner1, banner2, products, newList, stats, category
           </div>
         </aside>
 
-        <main class="col-span-12 lg:col-span-9 space-y-10">
+        <main class="col-span-12 lg:col-span-9 space-y-5">
           <header
             class="bg-white rounded-2xl p-4 shadow-sm border border-slate-300 flex items-center justify-between border-t-12 border-t-primary">
             <h2 class="font-bold text-xl text-slate-800">สรุปผลการดำเนินงาน</h2>
