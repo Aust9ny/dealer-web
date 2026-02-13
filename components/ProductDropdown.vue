@@ -33,6 +33,19 @@ const handleNotifySubmit = async () => {
     notifyForm.value = { email: '', tel: '', consent: false };
     isSuccess.value = true;
 };
+
+// Helper to create the SEO slug + ID
+const getProductUrl = (product: Product) => {
+  const slug = product.name
+    .toLowerCase()
+    .trim()
+    .replace(/[^\w\s-]/g, '') // Remove special characters
+    .replace(/[\s_-]+/g, '-')  // Replace spaces/underscores with -
+    .replace(/^-+|-+$/g, '');  // Remove leading/trailing -
+    
+  return `/product/${slug}-${product.id}`;
+};
+
 </script>
 
 <template>
@@ -80,7 +93,10 @@ const handleNotifySubmit = async () => {
                         <tbody class="text-[12px] bg-white">
                             <tr v-for="product in products" :key="product.id" class="hover:bg-slate-50 transition-colors group">
                                 <td class="p-2 sticky left-0 z-1 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100">
-                                    <img :src="product.image" class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm">
+                                    <NuxtLink :to="getProductUrl(product)" class="hover:scale-105 active:scale-95">
+                                        <img :src="product.image" class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm">
+                                    </NuxtLink>
+                                    
                                 </td>
 
                                 <td class="p-3 font-bold sticky left-30 z-1 bg-white group-hover:bg-slate-50 border-b border-r border-slate-200 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
