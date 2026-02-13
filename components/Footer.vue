@@ -2,24 +2,27 @@
 import { Icon } from '@iconify/vue';
 </script>
 <template>
-  <footer class="bg-white">
-    <!-- Top section -->
-    <div class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4 border-t border-t-slate-400">
+  <footer class="bg-white border-t border-slate-300">
+    <div
+      class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4"
+    >
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
-          Advice <br>
+          Advice <br />
           <span class="text-green-500 italic">Dealers</span>
         </div>
-        <div class="mt-2 h-0.5 w-85 bg-gray-200"/>
+        <div class="mt-2 h-0.5 w-85 bg-gray-200" />
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
-          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br> ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
+          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br />
+          ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
 
         <p class="text-gray-500 text-xs leading-relaxed">
-          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br> เพราะเราคือ
-          “Lifestyle IT Community” <br> มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online
-          จะซื้อ จะซ่อม จะขาย <br> พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
+          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br />
+          เพราะเราคือ “Lifestyle IT Community” <br />
+          มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online จะซื้อ จะซ่อม จะขาย <br />
+          พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
         </p>
       </div>
 
@@ -27,7 +30,7 @@ import { Icon } from '@iconify/vue';
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ระบบการสั่งซื้อ</h3>
-          <div class="h-0.5 w-full bg-gray-200"/>
+          <div class="h-0.5 w-full bg-gray-200" />
 
           <ul class="mt-3 space-y-2">
             <li>สั่งซื้อสินค้า</li>
@@ -38,7 +41,7 @@ import { Icon } from '@iconify/vue';
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">รายงาน</h4>
-          <div class="h-0.5 w-full bg-gray-200"/>
+          <div class="h-0.5 w-full bg-gray-200" />
 
           <ul class="mt-3 space-y-2">
             <li>รายงานยอดขาย</li>
@@ -48,10 +51,10 @@ import { Icon } from '@iconify/vue';
       </div>
 
       <!-- Column 3 -->
-      <div class="space-y-8 ">
+      <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">การเงินและชำระเงิน</h3>
-          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
+          <div class="mt-1 h-0.5 w-full bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>ชำระ / อัปโหลดหลักฐานโอน</li>
@@ -63,7 +66,7 @@ import { Icon } from '@iconify/vue';
           <h4 class="font-semibold mb-2 text-gray-900">
             สื่อการขายและโปรโมชั่น
           </h4>
-          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
+          <div class="mt-1 h-0.5 w-full bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>โปรโมชั่น Dealers</li>
@@ -74,10 +77,10 @@ import { Icon } from '@iconify/vue';
       </div>
 
       <!-- Column 4 -->
-      <div class="space-y-8 ">
+      <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ติดตามสถานะและเคลม</h3>
-          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
+          <div class="mt-1 h-0.5 w-full bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>ตรวจสอบสถานะการเคลม</li>
@@ -88,7 +91,7 @@ import { Icon } from '@iconify/vue';
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">เงื่อนไข</h4>
-          <div class="mt-1 h-0.5 w-full bg-gray-200"/>
+          <div class="mt-1 h-0.5 w-full bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>เงื่อนไขการจัดส่ง</li>
