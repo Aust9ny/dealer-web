@@ -19,5 +19,6 @@ export interface Product {
   isNew?: boolean;
   isSale?: boolean;
   stock?: number | 0;
+  isInStock? : boolean;
   tag?: string; // This is the key for your "Series" dropdowns
 }
