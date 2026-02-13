@@ -1,14 +1,14 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-20 z-[110] flex items-start justify-center pt-6"
+    class="fixed left-0 right-0 bottom-0 top-20 z-[110] flex items-start justify-center pt-2"
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/40" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-[1500px] max-w-[95vw] bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
+      class="relative w-[1700px] max-w-[98vw] h-[85vh] bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
     >
       <div class="grid grid-cols-12 min-h-[420px] max-h-[80vh]">
         <!-- Col 1 -->
