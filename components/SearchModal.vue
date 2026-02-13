@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed inset-0 z-[90] flex items-start justify-center pt-22"
+    class="fixed left-0 right-0 bottom-0 top-20 z-[80] flex items-start justify-center pt-6"
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/40" @click="close" />
@@ -136,11 +136,13 @@
                 >
                   <div class="flex flex-col items-end gap-1">
                     <!-- Current Price -->
+
                     <div class="text-[18px] font-bold text-gray-900">
                       ฿{{ product.price.toLocaleString() }}
                     </div>
 
                     <!-- Old price + Discount badge -->
+
                     <div
                       v-if="product.oldPrice"
                       class="flex items-center gap-2"
@@ -177,8 +179,10 @@
         </div>
 
         <!-- Col 3 : Banner -->
+
         <div class="col-span-4 col-start-9 p-5 flex flex-col max-h-[80vh]">
           <!-- Header -->
+
           <div class="flex items-center justify-between mb-5 shrink-0">
             <div class="text-[16px] font-bold text-gray-900 tracking-wide">
               📣 โปรโมชั่น
@@ -190,6 +194,7 @@
               ดูทั้งหมด
             </button>
           </div>
+
           <div class="overflow-y-auto space-y-3 pr-2">
             <a
               v-for="banner in banners"
@@ -200,6 +205,7 @@
             >
               <img :src="banner.image" class="w-full h-36 object-cover" />
             </a>
+
             <a
               v-for="banner in banners"
               :key="banner.id"
@@ -209,6 +215,7 @@
             >
               <img :src="banner.image" class="w-full h-36 object-cover" />
             </a>
+
             <a
               v-for="banner in banners"
               :key="banner.id"

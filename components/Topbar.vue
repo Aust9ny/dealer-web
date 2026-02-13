@@ -15,7 +15,7 @@ const initials = computed(() => {
 
 <template>
   <header
-    class="w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm relative"
+    class="fixed top-0 left-0 w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[90]"
   >
     <NuxtLink to="/">
       <!-- Left : Logo -->
@@ -29,15 +29,13 @@ const initials = computed(() => {
     <div class="flex-1 flex justify-center px-12 relative">
       <!-- Search Bar Wrapper -->
       <div class="relative w-full max-w-3xl z-[100]">
-        <!-- Input -->
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
-          class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-primary"
-          :class="showSearchModal ? 'bg-white' : ''"
+          class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none transition"
+          :class="showSearchModal ? 'ring-2 ring-primary border-primary' : ''"
           @click="showSearchModal = true"
         />
-
         <!-- Search Button -->
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
