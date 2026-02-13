@@ -9,7 +9,7 @@ import { Icon } from '@iconify/vue';
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
           Advice <br>
-          <span class="text-green-500">Dealers</span>
+          <span class="text-green-500 italic">Dealers</span>
         </div>
         <div class="mt-2 h-0.5 w-85 bg-gray-200"/>
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
