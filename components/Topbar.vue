@@ -2,7 +2,6 @@
 import { ref, computed } from "vue";
 const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
-const showSearchModal = ref(false);
 
 // mock user
 const firstName = "Puck";
@@ -11,12 +10,28 @@ const lastName = "Sheres";
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
 });
+
+const showSearchModal = ref(false);
+
+const activateSearch = () => {
+  showSearchModal.value = true;
+};
+
+const closeSearch = () => {
+  showSearchModal.value = false;
+};
 </script>
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[90]"
+    class="fixed top-0 left-0 w-full h-20 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[100]"
   >
+    <div
+      v-if="showSearchModal"
+      class="fixed inset-0 bg-black/40 z-[95]"
+      @click="closeSearch"
+    />
+
     <NuxtLink to="/">
       <!-- Left : Logo -->
       <div class="flex items-center select-none">
@@ -32,9 +47,13 @@ const initials = computed(() => {
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
-          class="w-full h-11 pl-5 pr-28 border border-gray-300 rounded-full focus:outline-none transition"
-          :class="showSearchModal ? 'ring-2 ring-primary border-primary' : ''"
-          @click="showSearchModal = true"
+          class="w-full h-11 pl-5 pr-28 border rounded-full transition focus:outline-none"
+          :class="
+            showSearchModal
+              ? 'ring-2 ring-primary border-primary bg-white shadow-xl'
+              : 'border-gray-300 bg-white'
+          "
+          @focus="activateSearch"
         />
         <!-- Search Button -->
         <button

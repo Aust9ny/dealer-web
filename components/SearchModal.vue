@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-20 z-[80] flex items-start justify-center pt-6"
+    class="fixed left-0 right-0 bottom-0 top-20 z-[110] flex items-start justify-center pt-6"
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/40" @click="close" />
