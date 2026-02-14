@@ -10,6 +10,8 @@ interface Props {
     activeSubTag?: string
 }
 
+const {getProductUrl} = useProductUrl();
+
 defineProps<Props>();
 const emit = defineEmits(['toggle']);
 
@@ -32,18 +34,6 @@ const handleNotifySubmit = async () => {
     isSubmitted.value = false;
     notifyForm.value = { email: '', tel: '', consent: false };
     isSuccess.value = true;
-};
-
-// Helper to create the SEO slug + ID
-const getProductUrl = (product: Product) => {
-  const slug = product.name
-    .toLowerCase()
-    .trim()
-    .replace(/[^\w\s-]/g, '') // Remove special characters
-    .replace(/[\s_-]+/g, '-')  // Replace spaces/underscores with -
-    .replace(/^-+|-+$/g, '');  // Remove leading/trailing -
-    
-  return `/product/${slug}-${product.id}`;
 };
 
 </script>
@@ -142,6 +132,14 @@ const getProductUrl = (product: Product) => {
                         </tbody>
                     </table>
                 </div>
+                <div v-else class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <ProductCard 
+                v-for="product in products" 
+                :key="product.id" 
+                :product="product"
+                view-mode="grid"
+          />
+        </div>
             </div>
         </Transition>
         <ModalStockNotify 
