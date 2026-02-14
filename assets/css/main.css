@@ -14,14 +14,17 @@ body {
   
 }
 
-::selection {
-  /* Remove the color property to keep original text color */
-  background: var(--color-secondary);
+*::selection {
+  background: var(--color-selection);
+  color: #000000;
 }
-
-/* For Firefox support, use the -moz prefix as well */
-::-moz-selection {
-  background: var(--color-secondary);
+*::-moz-selection {
+  background: var(--color-selection);
+  color: #000000;
+}
+*::-webkit-selection {
+  background: var(--color-selection);
+  color: #000000;
 }
 
 body.overflow-hidden-modal {
