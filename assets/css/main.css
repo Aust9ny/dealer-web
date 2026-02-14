@@ -6,11 +6,25 @@
   /* Set a stack: Inter first for English, IBM Plex for Thai fallback */
   --font-modern: "Inter", "IBM Plex Sans Thai", sans-serif;
   --color-primary: #00569C;
+  --color-selection :#BEF3CD;
 }
 
 body {
   font-family: var(--font-modern);
   
+}
+
+*::selection {
+  background: var(--color-selection);
+  color: #000000;
+}
+*::-moz-selection {
+  background: var(--color-selection);
+  color: #000000;
+}
+*::-webkit-selection {
+  background: var(--color-selection);
+  color: #000000;
 }
 
 body.overflow-hidden-modal {

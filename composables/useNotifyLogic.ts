@@ -3,6 +3,7 @@ import type { Product } from '~/types/product';
 
 export const useNotifyLogic = () => {
     const showNotifyModal = ref(false);
+    const isSuccess = ref(false); // 🟢 Track success state
     const targetProduct = ref<Product | null>(null);
     const isSubmitted = ref(false);
     const notifyForm = ref({
@@ -12,10 +13,20 @@ export const useNotifyLogic = () => {
     });
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const telRegex = /^0\d{7}$/; // Standard 10 digits
+    const telRegex = /^0\d{9}$/; // Standard 10 digits
 
     const isEmailValid = computed(() => emailRegex.test(notifyForm.value.email));
     const isTelValid = computed(() => !notifyForm.value.tel || telRegex.test(notifyForm.value.tel));
+
+    const resetNotifyState = () => {
+        isSuccess.value = false;
+        isSubmitted.value = false;
+        notifyForm.value = {
+            email: '',
+            tel: '',
+            consent: false,
+        };
+    };
     
     const openNotifyModal = (product: Product) => {
         targetProduct.value = product;
@@ -33,10 +44,12 @@ export const useNotifyLogic = () => {
         showNotifyModal,
         targetProduct,
         notifyForm,
+        isSuccess,
         isSubmitted,
         isEmailValid,
         isTelValid,
         openNotifyModal,
-        onlyNumeric
+        onlyNumeric,
+        resetNotifyState,
     };
 };

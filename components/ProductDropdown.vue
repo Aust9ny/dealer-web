@@ -10,19 +10,20 @@ interface Props {
     activeSubTag?: string
 }
 
+const {getProductUrl} = useProductUrl();
+
 defineProps<Props>();
 const emit = defineEmits(['toggle']);
 
 // 🟢 Logic from composables (Nuxt auto-imports these)
 const { 
     showNotifyModal, targetProduct, notifyForm, isSubmitted, 
-    isEmailValid, isTelValid, openNotifyModal, onlyNumeric 
+    isEmailValid, isTelValid, openNotifyModal, onlyNumeric,isSuccess,resetNotifyState
 } = useNotifyLogic();
 
 // 🟢 Scroll Lock
 useScrollLock(showNotifyModal);
 
-const showEmailError = computed(() => isSubmitted.value && !isEmailValid.value);
 const cartQuantities = ref<Record<number, number>>({});
 
 const handleNotifySubmit = async () => {
@@ -30,11 +31,11 @@ const handleNotifySubmit = async () => {
     if (!isEmailValid.value || !isTelValid.value || !notifyForm.value.consent) return;
     
     // Simulate API Call
-    showNotifyModal.value = false;
     isSubmitted.value = false;
     notifyForm.value = { email: '', tel: '', consent: false };
-    alert('บันทึกการแจ้งเตือนสำเร็จ!');
+    isSuccess.value = true;
 };
+
 </script>
 
 <template>
@@ -62,8 +63,8 @@ const handleNotifySubmit = async () => {
                     <table class="w-full text-left border-separate border-spacing-0 table-auto">
                         <thead class="bg-slate-50 sticky top-0 z-30">
                             <tr class="text-[12px] uppercase tracking-tighter text-slate-500 font-black">
-                                <th class="p-3 w-20 text-center sticky left-0 z-1 bg-slate-50 border-b border-r border-slate-200">รูปสินค้า</th>
-                                <th class="p-3 min-w-45 max-w-45 sticky left-14 z-1 bg-slate-50 border-b border-r border-slate-200 shadow-[2px_0_0_0_#e2e8f0]">ชื่อสินค้า</th>
+                                <th class="p-3 min-w-30 text-center sticky left-0 z-1 bg-slate-50 border-b border-r border-slate-200">รูปสินค้า</th>
+                                <th class="p-3 min-w-45 max-w-45 sticky left-30 z-1 bg-slate-50 border-b border-r border-slate-200 shadow-[2px_0_0_0_#e2e8f0]">ชื่อสินค้า</th>
                                 <th class="p-3 min-w-50 bg-slate-50 border-b border-r border-slate-200">รายละเอียด</th>
                                 <th class="p-3 min-w-45 text-center bg-slate-50 border-b border-r border-slate-200">ประกัน</th>
                                 <th class="p-3 text-center bg-blue-300/20 text-blue-900 border-b border-r border-slate-200">SRP</th>
@@ -82,10 +83,13 @@ const handleNotifySubmit = async () => {
                         <tbody class="text-[12px] bg-white">
                             <tr v-for="product in products" :key="product.id" class="hover:bg-slate-50 transition-colors group">
                                 <td class="p-2 sticky left-0 z-1 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100">
-                                    <img :src="product.image" class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm">
+                                    <NuxtLink :to="getProductUrl(product)" class="hover:scale-105 active:scale-95">
+                                        <img :src="product.image" class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm">
+                                    </NuxtLink>
+                                    
                                 </td>
 
-                                <td class="p-3 font-bold sticky left-14 z-1 bg-white group-hover:bg-slate-50 border-b border-r border-slate-200 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+                                <td class="p-3 font-bold sticky left-30 z-1 bg-white group-hover:bg-slate-50 border-b border-r border-slate-200 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                                     <div class="line-clamp-1 max-w-42.5">{{ product.name }}</div>
                                     <div class="gap-1 flex flex-wrap mt-1">
                                         <span v-if="product.stock && product.stock > 0" class="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-emerald-100 text-emerald-600 border border-emerald-200">In Stock</span>
@@ -128,9 +132,16 @@ const handleNotifySubmit = async () => {
                         </tbody>
                     </table>
                 </div>
+                <div v-else class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+            <ProductCard 
+                v-for="product in products" 
+                :key="product.id" 
+                :product="product"
+                view-mode="grid"
+          />
+        </div>
             </div>
         </Transition>
-
         <ModalStockNotify 
             v-model="showNotifyModal"
             v-model:form="notifyForm"
@@ -138,10 +149,12 @@ const handleNotifySubmit = async () => {
             :is-submitted="isSubmitted"
             :is-email-valid="isEmailValid"
             :is-tel-valid="isTelValid"
-            :show-email-error="showEmailError"
+            :is-success="isSuccess"
+            :show-email-error="isSubmitted && !isEmailValid"
             @submit="handleNotifySubmit"
             @keypress-numeric="onlyNumeric"
             @reset-submit="isSubmitted = false"
+            @reset-all="resetNotifyState"
         />
     </div>
 </template> 

@@ -32,9 +32,12 @@
         </div>
       </div>
 
-      <img 
-      :src="product.image" :alt="product.name"
-        class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 z-10 p-2">
+      <NuxtLink :to="getProductUrl(product)">
+        <img 
+          :src="product.image" :alt="product.name"
+          class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 z-10 p-2"
+        >
+      </NuxtLink>
     </div>
 
     <div class="space-y-1 grow">
@@ -105,4 +108,7 @@ defineProps<{
   product: Product;
   viewMode?: 'list' | 'grid';
 }>();
+
+const { getProductUrl } = useProductUrl();
+
 </script>
