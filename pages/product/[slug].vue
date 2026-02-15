@@ -7,13 +7,22 @@ const product = data.products;
 const route = useRoute();
 const slug = route.params.slug as string;
 
-// Extract ID and find product from your ref/mock data
+// 🟢 1. Logic from composables (Nuxt auto-imports these)
+const { 
+    showNotifyModal, targetProduct, notifyForm, isSubmitted, 
+    isEmailValid, isTelValid, openNotifyModal, onlyNumeric, isSuccess, resetNotifyState
+} = useNotifyLogic();
+
+// 🟢 2. Scroll Lock for Modal
+useScrollLock(showNotifyModal);
+
+// Extract ID and find product
 const productId = computed(() => Number(slug.split('-').pop()));
 const products = computed(() => product.value.find(p => p.id === productId.value));
 
-const quantity = ref('');
+const quantity = ref(''); 
 
-// Pricing Tiers Logic (Mocking your Franchise/Dealer structure) can be remove once get the api and real data
+// Pricing Tiers Logic
 const priceTiers = computed(() => [
     { label: 'SRP:', price: products.value?.price || 0, class: 'bg-white text-slate-900' },
     { label: 'Technician:', price: (products.value?.price || 0) * 0.96, class: 'bg-slate-50' },
@@ -26,13 +35,28 @@ const isOverStock = computed(() => {
     return Number(quantity.value) > products.value.stock;
 });
 
-const isAvailable = computed(() => {
-    if (!products.value) return false;
-    // Item must have stock and the requested quantity must not exceed it
-    const hasStock = typeof products.value.stock === 'number' && products.value.stock > 0;
-    return hasStock && !isOverStock.value;
-});
+// 🟢 3. Action Handler (Same as Dropdown)
+const handleActionClick = () => {
+    if (!products.value || isOverStock.value) return;
 
+    if (!products.value.stock || products.value.stock <= 0) {
+        // Now TS knows products.value is defined here
+        openNotifyModal(products.value);
+    } else {
+        // 🟢 ESLint no-console Fix: Removed the console statement or use a custom logger
+        // For production, usually we trigger a cart store action here
+    }
+};
+
+const handleNotifySubmit = async () => {
+    isSubmitted.value = true;
+    if (!isEmailValid.value || !isTelValid.value || !notifyForm.value.consent) return;
+    
+    // Simulate API Call
+    isSubmitted.value = false;
+    notifyForm.value = { email: '', tel: '', consent: false };
+    isSuccess.value = true;
+};
 </script>
 
 <template>
@@ -43,7 +67,6 @@ const isAvailable = computed(() => {
             <NuxtLink to="../category">
                 <span class="hover:text-blue-500 cursor-pointer">หมวดหมู่สินค้า</span>
             </NuxtLink>
-
             <Icon icon="mdi:chevron-right" class="w-4 h-4" />
             <span class="truncate font-bold text-slate-800">{{ products?.name }}</span>
         </div>
@@ -51,17 +74,12 @@ const isAvailable = computed(() => {
         <div class="max-w-300 mx-auto px-4">
             <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-
                     <div class="lg:col-span-5 space-y-6">
-                        <div class="aspect-square flex items-center justify-center p-4  rounded-lg group">
-                            <img 
-                                :src="products?.image"
-                                class="max-h-full object-contain transition-transform group-hover:scale-105">
+                        <div class="aspect-square flex items-center justify-center p-4 rounded-lg group">
+                            <img :src="products?.image" class="max-h-full object-contain transition-transform group-hover:scale-105">
                         </div>
                         <div class="flex gap-3 justify-center">
-                            <div 
-                                v-for="i in 5" :key="i"
-                                class="w-16 h-16 border rounded p-1 cursor-pointer hover:border-blue-500">
+                            <div v-for="i in 5" :key="i" class="w-16 h-16 border rounded p-1 cursor-pointer hover:border-blue-500">
                                 <img :src="products?.image" class="w-full h-full object-contain">
                             </div>
                         </div>
@@ -72,13 +90,12 @@ const isAvailable = computed(() => {
 
                     <div class="lg:col-span-7 space-y-4">
                         <div>
-                            <p class="text-[#0D95DA] font-bold uppercase text-xs tracking-wide">{{ products?.brand }}
-                            </p>
+                            <p class="text-[#0D95DA] font-bold uppercase text-xs tracking-wide">{{ products?.brand }}</p>
                             <h1 class="text-xl font-bold text-slate-800 mt-1 leading-tight">{{ products?.name }}</h1>
                             <p class="text-xs text-slate-400 mt-2">รหัสสินค้า : {{ products?.sku }}</p>
                         </div>
 
-                        <ul class="bg-slate-50 rounded-md p-4 space-y-1">
+                        <ul class="bg-slate-50 rounded-md p-4 space-y-1 border border-slate-100">
                             <li class="text-[11px] text-slate-500 flex gap-2">
                                 <span class="font-bold min-w-20">• Spec:</span> {{ products?.specs }}
                             </li>
@@ -87,15 +104,10 @@ const isAvailable = computed(() => {
                             </li>
                         </ul>
 
-                        <div class=" rounded-md overflow-hidden">
-                            <div 
-                                v-for="tier in priceTiers" :key="tier.label"
-                                class="flex justify-between items-center p-3 border-b last:border-0"
-                                :class="tier.class">
+                        <div class="rounded-md overflow-hidden border border-slate-100">
+                            <div v-for="tier in priceTiers" :key="tier.label" class="flex justify-between items-center p-3 border-b last:border-0" :class="tier.class">
                                 <span class="text-sm font-bold text-slate-600">{{ tier.label }}</span>
-                                <span 
-                                    class="text-lg font-black"
-                                    :class="tier.label === 'SRP:' ? 'text-slate-800' : 'text-blue-600'">
+                                <span class="text-lg font-black" :class="tier.label === 'SRP:' ? 'text-slate-800' : 'text-blue-600'">
                                     ฿{{ tier.price.toLocaleString() }}
                                 </span>
                             </div>
@@ -110,34 +122,39 @@ const isAvailable = computed(() => {
                                         class="w-20 p-2 border text-center rounded focus:ring-1 outline-none transition-all"
                                         :class="[
                                             isOverStock ? 'border-red-500 bg-red-50 ' : 'border-slate-300',
-                                            !products?.stock ? 'bg-slate-100 cursor-not-allowed' : 'bg-white'
-                                        ]" :disabled="!products?.stock || products.stock <= 0">
+                                            (!products?.stock || products.stock <= 0) ? 'bg-slate-100 cursor-not-allowed text-slate-400' : 'bg-white'
+                                        ]" 
+                                        :disabled="!products?.stock || products.stock <= 0"
+                                    >
                                 </div>
                             </div>
 
-                            <Transition 
-                                enter-active-class="transition duration-200 ease-out"
-                                enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0">
-                                <p v-if="isOverStock" class="text-[11px] font-bold text-red-500 ml-[85px]">
+                            <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0">
+                                <p v-if="isOverStock" class="text-[11px] font-bold text-red-500 ml-25.25">
                                     * จำนวนสินค้าตอนนี้มีเพียง {{ products?.stock }} ชิ้น
                                 </p>
                             </Transition>
                         </div>
 
                         <button 
-                            :disabled="!isAvailable"
-                            class="w-full py-4 rounded font-bold flex items-center justify-center gap-2 transition-all"
+                            :disabled="isOverStock"
+                            class="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
                             :class="[
-                                !isAvailable
-                                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
-                                    : 'bg-[#0D95DA] text-white hover:bg-[#0b7cb5] shadow-lg shadow-blue-500/20 active:scale-[0.98]'
-                            ]">
+                                isOverStock
+                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                                : (!products?.stock || products.stock <= 0)
+                                ? 'bg-white text-slate-500 border-2 border-slate-300 hover:bg-blue-50'
+                                : 'bg-[#0D95DA] text-white hover:bg-[#0b7cb5] shadow-lg shadow-blue-500/20 active:scale-[0.98]'
+                            ]"
+                            @click="handleActionClick"
+                            >
                             <template v-if="isOverStock">
                                 <Icon icon="mdi:alert-circle-outline" class="w-5 h-5" />
                                 <span>จำนวนสินค้าไม่พอ</span>
                             </template>
                             <template v-else-if="!products?.stock || products.stock <= 0">
-                                <span>สินค้าหมดชั่วคราว</span>
+                                <Icon icon="mdi:bell-outline" class="w-5 h-5" />
+                                <span class="underline hover-scale-103">รับแจ้งเตือนเมื่อมีสินค้าเข้า</span>
                             </template>
                             <template v-else>
                                 <Icon icon="mdi:cart-plus" class="w-5 h-5" />
@@ -150,10 +167,8 @@ const isAvailable = computed(() => {
 
             <div class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <div class="flex border-b">
-                    <button
-                        class="px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
-                    <button
-                        class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
+                    <button class="px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
+                    <button class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
                 </div>
                 <div class="p-8 space-y-6">
                     <h2 class="text-lg font-bold text-slate-800">รายละเอียดสินค้า {{ products?.name }}</h2>
@@ -162,8 +177,7 @@ const isAvailable = computed(() => {
                         Powered by high-performance components designed for speed and reliability.
                         This product includes standard manufacturer warranty coverage.
                     </p>
-
-                    <div class="pt-4 border-t">
+                    <div class="pt-4 border-t border-slate-100">
                         <h3 class="font-bold text-slate-800 mb-4">Feature Highlights:</h3>
                         <ul class="space-y-2 text-sm text-slate-600">
                             <li v-for="feature in 5" :key="feature" class="flex items-center gap-2">
@@ -175,5 +189,20 @@ const isAvailable = computed(() => {
                 </div>
             </div>
         </div>
+
+        <ModalStockNotify 
+            v-model="showNotifyModal"
+            v-model:form="notifyForm"
+            :product="targetProduct"
+            :is-submitted="isSubmitted"
+            :is-email-valid="isEmailValid"
+            :is-tel-valid="isTelValid"
+            :is-success="isSuccess"
+            :show-email-error="isSubmitted && !isEmailValid"
+            @submit="handleNotifySubmit"
+            @keypress-numeric="onlyNumeric"
+            @reset-submit="isSubmitted = false"
+            @reset-all="resetNotifyState"
+        />
     </div>
 </template>
