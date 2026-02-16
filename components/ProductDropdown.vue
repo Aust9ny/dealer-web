@@ -79,9 +79,9 @@ const handleNotifySubmit = async () => {
                                 <th class="p-3 min-w-50 bg-slate-50 border-b border-r border-slate-200">รายละเอียด</th>
                                 <th class="p-3 min-w-25 text-center bg-slate-50 border-b border-r border-slate-200">ประกัน</th>
                                 
-                                <th class="p-3 text-center bg-blue-100/30 text-blue-900 border-b border-r border-slate-200">SRP (ราคาแนะนำ)</th>
+                                <th class="p-3 text-center bg-blue-100/30 text-blue-900 border-b border-r border-slate-200">SRP</th>
                                 <th class="p-3 text-center bg-[#0D95DA]/10 text-[#0D95DA] border-b border-r border-slate-200">
-                                    ราคาของคุณ ({{ currentUser?.role || 'Guest' }})
+                                    {{ currentUser?.role || 'Guest' }}
                                 </th>
 
                                 <th class="p-3 text-center w-5 bg-slate-50 border-b border-r border-slate-200">จำนวน</th>
@@ -133,11 +133,11 @@ const handleNotifySubmit = async () => {
                                 </td>
 
                                 <td class="p-3 text-center border-b sticky right-0 z-1 bg-white group-hover:bg-slate-50 border-l-2 border-l-slate-300 shadow-[-4px_0_8px_-4px_rgba(0,0,0,0.1)]">
-                                    <button v-if="product.stock && product.stock > 0" class="group/btn bg-[#0D95DA] text-white p-2 rounded-lg hover:bg-[#004a85] transition-all flex items-center justify-center gap-1.5 mx-auto w-full max-w-[80px]">
+                                    <button v-if="product.stock && product.stock > 0" class="group/btn bg-[#0D95DA] text-white p-2 rounded-lg hover:bg-[#004a85] transition-all flex items-center justify-center gap-1.5 mx-auto w-full max-w-20">
                                         <Icon icon="mdi:cart-plus" class="w-4 h-4" />
                                         <span class="text-[10px] font-bold">เปิดบิล</span>
                                     </button>
-                                    <span v-else class="text-[10px] underline text-slate-400 hover:text-blue-500 cursor-pointer" @click="openNotifyModal(product)">แจ้งเตือน</span>
+                                    <span v-else class="text-[10px] underline text-slate-400 hover:text-blue-500 cursor-pointer" @click="openNotifyModal(product)">แจ้งเตือนเมื่อีสินค้าเข้า</span>
                                 </td>
                             </tr>
                         </tbody>
