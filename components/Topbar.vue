@@ -1,5 +1,26 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useMockPO } from "@/composables/useMockPO";
+
+const router = useRouter();
+
+const { getAllPO, getLatestPO } = useMockPO();
+
+const totalPO = computed(() => getAllPO().length);
+
+const goToLatestPO = () => {
+  const latest = getLatestPO();
+
+  if (!latest) {
+    router.push("/po"); // หน้า list
+    return;
+  }
+
+  router.push(`/po/${latest.id}`);
+};
+
+// dashboard
 const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
 
@@ -69,14 +90,13 @@ const closeSearch = () => {
       <!-- Orders -->
       <button
         class="flex items-center gap-2 px-5 h-10 rounded-full text-black bg-[#0D95DA]/10 border border-[#0D95DA] hover:bg-[#0D95DA]/20 transition"
+        @click="goToLatestPO"
       >
         📋 รายการการสั่งซื้อ
-
-        <!-- Notification (circle) -->
         <span
           class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full"
         >
-          0
+          {{ totalPO }}
         </span>
       </button>
 
@@ -126,7 +146,7 @@ const closeSearch = () => {
             <span
               class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
             >
-              9
+              {{ totalPO }}
             </span>
           </div>
 

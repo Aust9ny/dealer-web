@@ -4,11 +4,10 @@ import { computed } from 'vue';
 
 const route = useRoute();
 
-const isCategoryPage = computed(() => route.path === '/category');
+const showPOFooter = computed(() => {
+  return route.path.startsWith('/category') || route.path.startsWith('/po');
+});
 
-const showPOFooter = computed(() =>
-  isCategoryPage.value && route.query.id
-);
 </script>
 
 <template>
@@ -16,15 +15,12 @@ const showPOFooter = computed(() =>
     <LoadingScreen />
 
     <Topbar />
-    
+
     <main class="pt-23 pb-21">
       <slot />
     </main>
 
-     <!-- ✅ แสดง Footer ปกติ เฉพาะหน้าที่ไม่ใช่ category -->
-    <Footer v-if="!isCategoryPage" />
-
-    <!-- ✅ แสดง PO Footer เฉพาะหน้า category -->
+    <Footer v-if="!showPOFooter" />
     <SelectedPOFooter v-if="showPOFooter" />
   </div>
 </template>

@@ -246,6 +246,6 @@ const emit = defineEmits<{
 }>();
 
 const close = () => {
-  emit("update:modelValue", false);
+  emit('update:modelValue', false);
 };
 </script>

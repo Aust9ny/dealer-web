@@ -1,10 +1,17 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { useScrollLock } from '@/composables/useScrollLock';
-import type { PurchaseOrder } from '@/types/purchase-order';
 import { useRouter } from 'vue-router';
+import { useMockPO } from '@/composables/useMockPO';
 
 const router = useRouter();
+
+// ✅ ดึงข้อมูลจาก composable (แหล่งเดียว)
+const { getAllPO } = useMockPO();
+const purchaseOrders = getAllPO();
+
+// ✅ ป้องกันกรณี array ว่าง
+const selected = ref(purchaseOrders.length ? purchaseOrders[0] : null);
 
 const props = defineProps<{
   modelValue: boolean
@@ -30,6 +37,7 @@ const formatThaiTime = (value: string) => {
   }).format(new Date(value));
 };
 
+// ✅ format เงินไทย
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat('th-TH', {
     style: 'currency',
@@ -37,32 +45,12 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
-// ✅ ตัวอย่างข้อมูลแบบ ISO
-const purchaseOrders: PurchaseOrder[] = [
-  { id: 'PO123455', amount: 135185, createdAt: '2026-02-16T08:30:00Z' },
-  { id: 'PO123456', amount: 243510, createdAt: '2026-02-16T09:15:00Z' },
-  { id: 'PO123454', amount: 15200, createdAt: '2026-02-15T11:45:00Z' },
-  { id: 'PO123453', amount: 8900, createdAt: '2026-02-14T13:20:00Z' },
-  { id: 'PO123452', amount: 8900, createdAt: '2026-02-14T14:00:00Z' }
-];
-
-const selected = ref(purchaseOrders[0]);
-
-// ✅ ส่ง createdAt ไปหน้า category
 const handleContinue = () => {
-  router.push({
-    path: '/category',
-    query: {
-      id: selected.value.id,
-      amount: selected.value.amount.toString(),
-      createdAt: selected.value.createdAt
-    }
-  });
-
+  if (!selected.value) return;
+  router.push(`/category/${selected.value.id}`);
   close();
 };
 </script>
-
 
 <template>
   <div
@@ -87,14 +75,15 @@ const handleContinue = () => {
           :key="po.id"
           class="px-4 py-3 rounded-lg cursor-pointer text-sm transition flex justify-between items-center"
           :class="
-            selected.id === po.id
+            selected?.id === po.id
               ? 'bg-primary/10 text-primary font-medium'
               : 'hover:bg-slate-100 text-slate-700'
           "
           @click="selected = po"
         >
           <span>
-            #{{ po.id }} | {{ formatThaiTime(po.createdAt) }} |
+            #{{ po.id }} |
+            {{ formatThaiTime(po.createdAt) }} |
             {{ formatCurrency(po.amount) }}
           </span>
         </div>
@@ -108,8 +97,10 @@ const handleContinue = () => {
         >
           ยกเลิก
         </button>
+
         <button
-          class="w-full py-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition font-medium flex items-center justify-center gap-2"
+          class="w-full py-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
+          :disabled="!selected"
           @click="handleContinue"
         >
           ดำเนินการต่อ
