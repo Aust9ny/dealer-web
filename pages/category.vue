@@ -142,11 +142,13 @@
         </section>
       </main>
     </div>
+    <SelectedPOFooter />
   </div>
 </template>
 
 <script setup>
 import { Icon } from '@iconify/vue';
+import SelectedPOFooter from '@/components/SelectedPOFooter.vue';
 
 // 🟢 2. UI STATES
 const isSidebarOpen = ref(true);
