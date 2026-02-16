@@ -1,13 +1,15 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router';
-import { computed } from 'vue';
+import { useRoute } from "vue-router";
+import { computed } from "vue";
 
 const route = useRoute();
 
-const showPOFooter = computed(() => {
-  return route.path.startsWith('/category') || route.path.startsWith('/po');
+const footerType = computed(() => {
+  if (route.path.startsWith("/po")) return "address";
+  if (route.path.startsWith("/category")) return "selected";
+  if (route.path.startsWith("/checkout")) return "checkout";
+  return "default";
 });
-
 </script>
 
 <template>
@@ -20,7 +22,9 @@ const showPOFooter = computed(() => {
       <slot />
     </main>
 
-    <Footer v-if="!showPOFooter" />
-    <SelectedPOFooter v-if="showPOFooter" />
+    <Footer v-if="footerType === 'default'" />
+    <SelectedPOFooter v-if="footerType === 'selected'" />
+    <AddressPOFooter v-if="footerType === 'address'" />
+    <CheckoutPOFooter v-if="footerType === 'checkout'" />
   </div>
 </template>

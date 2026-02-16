@@ -212,4 +212,6 @@ const handleSidebarItemClick = (event: MouseEvent) => {
       </div>
     </Transition>
   </div>
+  <AddressPOFooter />
+</div>
 </template>
