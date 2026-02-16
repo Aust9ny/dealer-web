@@ -1,3 +1,6 @@
+<script setup lang="ts">
+const { currentUser } = useAuth();
+</script>
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto grid grid-cols-6 grid-rows-7 gap-4 p-3">
@@ -14,7 +17,7 @@
             >
               PS
             </div>
-            <p class="font-medium text-gray-800">สวัสดี, พัค แชร์อย</p>
+            <p class="font-medium text-gray-800">สวัสดี, {{ currentUser?.Fname}} {{ currentUser?.Lname }} </p>
           </div>
 
           <div class="my-3 border-t border-gray-200" />
@@ -22,11 +25,11 @@
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
               <span>Dealer ID:</span>
-              <span class="text-gray-700 font-medium">1234567890</span>
+              <span class="text-gray-700 font-medium">{{ currentUser?.DealerID }}</span>
             </div>
             <div class="flex justify-between text-gray-500">
               <span>Email:</span>
-              <span class="text-gray-700">yourmail@company.com</span>
+              <span class="text-gray-700">{{ currentUser?.email }}</span>
             </div>
           </div>
         </div>

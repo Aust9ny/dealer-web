@@ -1,6 +1,7 @@
 import type { User } from '~/types/user';
 
 export const useUser = () => {
+    //this will
     const user: User[] = [
     {
     id: 101,
@@ -9,7 +10,8 @@ export const useUser = () => {
     tel: '0812345678',
     role: 'Technician',
     email: 'somchai.t@advice-rep.com',
-    password: 'hashed_password_123'
+    password: 'hashed_password_123',
+    DealerID : 111234
   },
   {
     id: 202,
@@ -18,7 +20,8 @@ export const useUser = () => {
     tel: '0998887766',
     role: 'Dealer',
     email: 'first.dealer@shop.co.th',
-    password: 'hashed_password_456'
+    password: 'hashed_password_456',
+    DealerID : 112234
   },
   {
     id: 303,
@@ -27,7 +30,8 @@ export const useUser = () => {
     tel: '021112222',
     role: 'Franchise',
     email: 'vipada.f@franchise-hub.net',
-    password: 'hashed_password_789'
+    password: 'hashed_password_789',
+    DealerID : 113334
   }
 ];
 
