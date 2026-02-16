@@ -45,6 +45,6 @@ const formatThaiDateTime = (value: string) => {
   <div v-else class="p-8 text-red-500">
     ไม่พบใบสั่งซื้อ
   </div>
-  <SelectedPOFooter />
+  <AddressPOFooter />
 </div>
 </template>
