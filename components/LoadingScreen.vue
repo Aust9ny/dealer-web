@@ -2,7 +2,7 @@
   <transition name="fade">
     <div 
       v-if="loading" 
-      class="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"
+      class="fixed inset-0 z-9999 flex flex-col items-center justify-center bg-white/80 backdrop-blur-sm"
     >
       <svg xmlns="http://www.w3.org/2000/svg" width="60" height="60" viewBox="0 0 24 24">
         <circle cx="4" cy="12" r="3" fill="#0D95DA">

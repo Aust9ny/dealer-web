@@ -9,19 +9,19 @@ import { Icon } from '@iconify/vue';
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
-          Advice <br />
+          Advice <br>
           <span class="text-green-500 italic">Dealers</span>
         </div>
         <div class="mt-2 h-0.5 w-85 bg-gray-200" />
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
-          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br />
+          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br>
           ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
 
         <p class="text-gray-500 text-xs leading-relaxed">
-          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br />
-          เพราะเราคือ “Lifestyle IT Community” <br />
-          มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online จะซื้อ จะซ่อม จะขาย <br />
+          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br>
+          เพราะเราคือ “Lifestyle IT Community” <br>
+          มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online จะซื้อ จะซ่อม จะขาย <br>
           พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
         </p>
       </div>

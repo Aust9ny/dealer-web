@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed } from 'vue';
 const { trendingProducts, banner1 } = useDashboard();
 const showAccountMenu = ref(false);
 
 // mock user
-const firstName = "Puck";
-const lastName = "Sheres";
+const firstName = 'Puck';
+const lastName = 'Sheres';
 
 const initials = computed(() => {
   return firstName.charAt(0) + lastName.charAt(0);
@@ -24,11 +24,11 @@ const closeSearch = () => {
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full h-23 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-[100]"
+    class="fixed top-0 left-0 w-full h-23 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-100"
   >
     <div
       v-if="showSearchModal"
-      class="fixed inset-0 bg-black/40 z-[95]"
+      class="fixed inset-0 bg-black/40 z-95"
       @click="closeSearch"
     />
 
@@ -43,7 +43,7 @@ const closeSearch = () => {
     <!-- Center : Search -->
     <div class="flex-1 flex justify-center px-12 relative">
       <!-- Search Bar Wrapper -->
-      <div class="relative w-full max-w-3xl z-[100]">
+      <div class="relative w-full max-w-3xl z-100">
         <input
           type="text"
           placeholder="ค้นหาสินค้า, แบรนด์, รุ่น"
@@ -54,7 +54,7 @@ const closeSearch = () => {
               : 'border-gray-300 bg-white'
           "
           @focus="activateSearch"
-        />
+        >
         <!-- Search Button -->
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
