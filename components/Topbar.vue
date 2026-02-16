@@ -157,7 +157,7 @@ const handleLogout = () => {
              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
              <p class="text-sm font-bold text-slate-800">{{ currentUser.Fname }} {{ currentUser.Lname }}</p>
           </div>
-
+        </div>
           <div class="p-2">
             <p class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">สลับสิทธิ์การเข้าชม (Mock)</p>
             <div 
