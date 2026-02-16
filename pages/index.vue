@@ -2,6 +2,7 @@
 // Nuxt auto-imports these functions
 const { menuGroups } = useNavigation();
 const { startDate, endDate, banner1, banner2, products, newList, stats, categoryTitle, chartData, topSales, bottomSales, quickAccessItems} = useDashboard();
+const showModal = ref(false);
 </script>
 
 <template>
@@ -10,6 +11,9 @@ const { startDate, endDate, banner1, banner2, products, newList, stats, category
       <div class="grid grid-cols-12 gap-6">
         <aside class="col-span-12 lg:col-span-3 space-y-4">
           <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-300 border-t-12 border-t-primary">
+            <div class="mb-3 font-bold text-slate-800">เมนูจัดการ:</div>
+              <div class="block w-60 mx-auto bg-primary text-white py-2 rounded-md text-center hover:bg-primary/90 transition mb-6" @click="showModal = true">เปิดบิลสั่งซื้อสินค้า</div>
+              <SelectPurchaseOrderModal v-model="showModal" />
             <nav class="space-y-6">
               <div v-for="group in menuGroups" :key="group.title">
                 <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">

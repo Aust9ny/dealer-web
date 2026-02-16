@@ -1,4 +1,26 @@
 <script setup lang="ts">
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useMockPO } from "@/composables/useMockPO";
+
+const router = useRouter();
+
+const { getAllPO, getLatestPO } = useMockPO();
+
+const totalPO = computed(() => getAllPO().length);
+
+const goToLatestPO = () => {
+  const latest = getLatestPO();
+
+  if (!latest) {
+    router.push("/po"); // หน้า list
+    return;
+  }
+
+  router.push(`/po/${latest.id}`);
+};
+
+// dashboard
 import { ref, computed } from 'vue';
 import { Icon } from '@iconify/vue';
 
@@ -81,13 +103,14 @@ const handleLogout = () => {
 
     <div class="flex items-center gap-4">
       <button
-        class="flex items-center gap-2 px-5 h-10 rounded-full text-black bg-primary/10 border border-primary hover:bg-primary/20 transition"
+        class="flex items-center gap-2 px-5 h-10 rounded-full text-black bg-[#0D95DA]/10 border border-[#0D95DA] hover:bg-[#0D95DA]/20 transition"
+        @click="goToLatestPO"
       >
         📋 รายการการสั่งซื้อ
         <span
           class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full"
         >
-          0
+          {{ totalPO }}
         </span>
       </button>
 
@@ -120,6 +143,16 @@ const handleLogout = () => {
           v-if="showAccountMenu"
           class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120"
         >
+          <!-- การสั่งซื้อของฉัน -->
+          <div
+            class="flex items-center px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+          >
+            <span>การสั่งซื้อของฉัน</span>
+            <span
+              class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
+            >
+              {{ totalPO }}
+            </span>
           <div v-if="currentUser" class="p-4 bg-slate-50 border-b border-gray-100">
              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
              <p class="text-sm font-bold text-slate-800">{{ currentUser.Fname }} {{ currentUser.Lname }}</p>
