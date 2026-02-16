@@ -5,16 +5,22 @@ import { useMockPO } from "@/composables/useMockPO";
 import { useRouter } from "vue-router";
 
 const router = useRouter();
-
 const route = useRoute();
 const { getPOById } = useMockPO();
-
 const poId = computed(() => route.params.id as string);
-
 const po = computed(() => getPOById(poId.value));
 const goBack = () => {
-  router.back();
+  const from = route.query.from as string;
+
+  if (from && from.startsWith('/category')) {
+    router.push(from);
+  } else if (po.value?.id) {
+    router.push(`/category/${po.value.id}`);
+  } else {
+    router.push('/category');
+  }
 };
+
 
 const formatCurrency = (value: number) => {
   return new Intl.NumberFormat("th-TH", {
