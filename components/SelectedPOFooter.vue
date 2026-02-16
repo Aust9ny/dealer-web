@@ -2,7 +2,7 @@
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
-import { useRouter } from 'vue-router';
+
 
 const router = useRouter();
 
@@ -36,10 +36,10 @@ const formatThaiDateTime = (value: string) => {
 <template>
   <div
     v-if="po"
-    class="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-[120] border-t-4 border-t-primary"
+    class="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-120 border-t-4 border-t-primary"
   >
     <div
-      class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between"
+      class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
     >
       <!-- ซ้าย -->
       <div class="flex items-center gap-4">
@@ -66,7 +66,7 @@ const formatThaiDateTime = (value: string) => {
           </div>
         </div>
         <div class="text-xl font-bold text-primary">
-          {{ formatCurrency(po.amount) }}
+          {{ formatCurrency(po.totalAmount) }}
         </div>
         <button
           class="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition flex items-center gap-2 whitespace-nowrap"

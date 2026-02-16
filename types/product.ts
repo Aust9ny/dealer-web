@@ -11,8 +11,8 @@ export interface Product {
   specs: string;
   promotion?: string;
   warranty: string;
-  delivery: string;
-  views: string;
+  delivery?: string;
+  views?: string;
   isHot?: boolean;
   isDiscount?: boolean;
   discountPercentage?: number;

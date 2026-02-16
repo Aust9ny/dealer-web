@@ -17,7 +17,7 @@ const { currentUser } = useAuth();
             >
               PS
             </div>
-            <p class="font-medium text-gray-800">สวัสดี, {{ currentUser?.Fname}} {{ currentUser?.Lname }} </p>
+            <p class="font-medium text-gray-800">สวัสดี, {{ currentUser?.fname}} {{ currentUser?.lname }} </p>
           </div>
 
           <div class="my-3 border-t border-gray-200" />
@@ -25,7 +25,7 @@ const { currentUser } = useAuth();
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
               <span>Dealer ID:</span>
-              <span class="text-gray-700 font-medium">{{ currentUser?.DealerID }}</span>
+              <span class="text-gray-700 font-medium">{{ currentUser?.dealerID }}</span>
             </div>
             <div class="flex justify-between text-gray-500">
               <span>Email:</span>

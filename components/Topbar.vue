@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRouter } from "vue-router";
-import { useMockPO } from "@/composables/useMockPO";
+import { useRouter } from 'vue-router';
+import { useMockPO } from '@/composables/useMockPO';
+import { Icon } from '@iconify/vue';
 
 const router = useRouter();
 
@@ -13,16 +13,12 @@ const goToLatestPO = () => {
   const latest = getLatestPO();
 
   if (!latest) {
-    router.push("/po"); // หน้า list
+    router.push('/po'); // หน้า list
     return;
   }
 
   router.push(`/po/${latest.id}`);
 };
-
-// dashboard
-import { ref, computed } from 'vue';
-import { Icon } from '@iconify/vue';
 
 // 🟢 Auth & Dashboard Composables
 const { trendingProducts, banner1 } = useDashboard();
@@ -41,7 +37,7 @@ const roles = [
 // 🟢 Dynamic Initials from Auth State
 const initials = computed(() => {
   if (!currentUser.value) return '??';
-  return currentUser.value.Fname.charAt(0) + currentUser.value.Lname.charAt(0);
+  return currentUser.value.fname.charAt(0) + currentUser.value.lname.charAt(0);
 });
 
 const activateSearch = () => {
@@ -129,7 +125,7 @@ const handleLogout = () => {
 
           <div class="flex flex-col items-start leading-tight">
              <span class="text-[12px] font-bold text-white truncate max-w-25">
-                {{ currentUser?.Fname || 'เข้าสู่ระบบ' }}
+                {{ currentUser?.fname || 'เข้าสู่ระบบ' }}
              </span>
              <span v-if="currentUser" class="text-[8px] bg-white/20 px-1.5 rounded text-white font-black uppercase tracking-tighter">
                 {{ currentUser.role }}
@@ -155,9 +151,9 @@ const handleLogout = () => {
             </span>
           <div v-if="currentUser" class="p-4 bg-slate-50 border-b border-gray-100">
              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
-             <p class="text-sm font-bold text-slate-800">{{ currentUser.Fname }} {{ currentUser.Lname }}</p>
+             <p class="text-sm font-bold text-slate-800">{{ currentUser.fname }} {{ currentUser.lname }}</p>
           </div>
-
+        </div>
           <div class="p-2">
             <p class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">สลับสิทธิ์การเข้าชม (Mock)</p>
             <div 
