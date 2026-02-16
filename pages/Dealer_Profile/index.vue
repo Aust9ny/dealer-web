@@ -1,3 +1,6 @@
+<script setup lang="ts">
+const { currentUser } = useAuth();
+</script>
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto grid grid-cols-6 grid-rows-7 gap-4 p-3">
@@ -14,7 +17,7 @@
             >
               PS
             </div>
-            <p class="font-medium text-gray-800">สวัสดี, พัค แชร์อย</p>
+            <p class="font-medium text-gray-800">สวัสดี, {{ currentUser?.Fname}} {{ currentUser?.Lname }} </p>
           </div>
 
           <div class="my-3 border-t border-gray-200" />
@@ -22,11 +25,11 @@
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
               <span>Dealer ID:</span>
-              <span class="text-gray-700 font-medium">1234567890</span>
+              <span class="text-gray-700 font-medium">{{ currentUser?.DealerID }}</span>
             </div>
             <div class="flex justify-between text-gray-500">
               <span>Email:</span>
-              <span class="text-gray-700">yourmail@company.com</span>
+              <span class="text-gray-700">{{ currentUser?.email }}</span>
             </div>
           </div>
         </div>
@@ -61,7 +64,7 @@
               type="text"
               placeholder="ค้นหาสินค้า, แบรนด์, รุ่น หรือหมายเลขคำสั่งซื้อ"
               class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-primary outline-none"
-            />
+            >
           </div>
         </div>
       </div>
@@ -171,7 +174,7 @@
         <img
           src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
           class="w-40 opacity-70"
-        />
+        >
         <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
         <button
           class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"

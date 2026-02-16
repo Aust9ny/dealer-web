@@ -1,19 +1,19 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-23 z-[110] flex items-start justify-center pt-2"
+    class="fixed left-0 right-0 bottom-0 top-23 z-110 flex items-start justify-center pt-2"
   >
     <!-- Overlay -->
     <div class="absolute inset-0" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-[1700px] max-w-[98vw] h-[85vh] bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
+      class="relative w-425 max-w-[98vw] h-[85vh] bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
     >
-      <div class="grid grid-cols-12 min-h-[420px] max-h-[80vh]">
+      <div class="grid grid-cols-12 min-h-105 max-h-[80vh]">
         <!-- Col 1 -->
         <div class="col-span-3 relative flex flex-col">
-          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"></div>
+          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
 
           <!-- Trending -->
           <div class="p-5">
@@ -40,7 +40,7 @@
 
           <!-- เส้นคั่น -->
           <div class="px-5">
-            <div class="h-px w-4/4 bg-gray-400"></div>
+            <div class="h-px w-4/4 bg-gray-400"/>
           </div>
 
           <!-- History -->
@@ -76,7 +76,7 @@
 
         <!-- Col 2 : Products -->
         <div class="col-span-5 col-start-4 relative flex flex-col max-h-[80vh]">
-          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"></div>
+          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
 
           <!-- Header -->
           <div
@@ -103,7 +103,7 @@
               <div
                 class="w-24 h-24 flex items-center justify-center bg-gray-50 rounded-lg"
               >
-                <img :src="product.image" class="max-h-20 object-contain" />
+                <img :src="product.image" class="max-h-20 object-contain">
               </div>
 
               <!-- Content Wrapper -->
@@ -132,7 +132,7 @@
 
                 <!-- RIGHT : Price -->
                 <div
-                  class="flex flex-col items-end justify-between text-right min-w-[170px]"
+                  class="flex flex-col items-end justify-between text-right min-w-42.5"
                 >
                   <div class="flex flex-col items-end gap-1">
                     <!-- Current Price -->
@@ -150,7 +150,7 @@
                       <!-- Discount Oval -->
                       <div
                         v-if="product.discount"
-                        class="bg-red-700 text-white text-[11px] px-3 py-[2px] rounded-full"
+                        class="bg-red-700 text-white text-[11px] px-3 py-0.5 rounded-full"
                       >
                         -฿{{ product.discount.toLocaleString() }}
                       </div>
@@ -203,7 +203,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover" />
+              <img :src="banner.image" class="w-full h-36 object-cover">
             </a>
 
             <a
@@ -213,7 +213,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover" />
+              <img :src="banner.image" class="w-full h-36 object-cover">
             </a>
 
             <a
@@ -223,7 +223,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover" />
+              <img :src="banner.image" class="w-full h-36 object-cover">
             </a>
           </div>
         </div>
@@ -235,14 +235,17 @@
 <script setup lang="ts">
 defineProps<{
   modelValue: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   trendingProducts: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   banners: any[];
   trendingKeywords: string[];
   searchHistory: string[];
 }>();
 
 const emit = defineEmits<{
-  (e: "update:modelValue", value: boolean): void;
+  // eslint-disable-next-line no-unused-vars
+  (e: 'update:modelValue', value: boolean): void;
 }>();
 
 const close = () => {
