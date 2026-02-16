@@ -8,8 +8,9 @@ const route = useRoute();
 const slug = route.params.slug as string;
 
 // 🟢 1. Logic from composables (Nuxt auto-imports these)
-const { 
-    showNotifyModal, targetProduct, notifyForm, isSubmitted, 
+const { currentUser } = useAuth();
+const {
+    showNotifyModal, targetProduct, notifyForm, isSubmitted,
     isEmailValid, isTelValid, openNotifyModal, onlyNumeric, isSuccess, resetNotifyState
 } = useNotifyLogic();
 
@@ -20,15 +21,38 @@ useScrollLock(showNotifyModal);
 const productId = computed(() => Number(slug.split('-').pop()));
 const products = computed(() => product.value.find(p => p.id === productId.value));
 
-const quantity = ref(''); 
+const quantity = ref('');
 
 // Pricing Tiers Logic
-const priceTiers = computed(() => [
-    { label: 'SRP:', price: products.value?.price || 0, class: 'bg-white text-slate-900' },
-    { label: 'Technician:', price: (products.value?.price || 0) * 0.96, class: 'bg-slate-50' },
-    { label: 'Dealer:', price: (products.value?.price || 0) * 0.95, class: 'bg-slate-50' },
-    { label: 'Franchise:', price: (products.value?.price || 0) * 0.94, class: 'bg-slate-50' },
-]);
+const priceTiers = computed(() => {
+    const basePrice = products.value?.price || 0;
+    
+    const multipliers = {
+        Technician: 0.96,
+        Dealer: 0.95,
+        Franchise: 0.94
+    };
+
+    // Determine current user role price
+    const userRole = currentUser.value?.role as keyof typeof multipliers;
+    const roleMultiplier = multipliers[userRole] || 1;
+    const rolePrice = basePrice * roleMultiplier;
+
+    const tiers = [
+        { label: 'SRP (ราคาแนะนำ):', price: basePrice, class: 'bg-white text-slate-500' }
+    ];
+
+    // Only add the second tier if a user is logged in
+    if (currentUser.value) {
+        tiers.push({ 
+            label: `ราคาของคุณ (${currentUser.value.role}):`, 
+            price: rolePrice, 
+            class: 'bg-blue-50 text-[#0D95DA] border-2 border-blue-100' 
+        });
+    }
+
+    return tiers;
+});
 
 const isOverStock = computed(() => {
     if (!products.value || !products.value.stock) return false;
@@ -51,7 +75,7 @@ const handleActionClick = () => {
 const handleNotifySubmit = async () => {
     isSubmitted.value = true;
     if (!isEmailValid.value || !isTelValid.value || !notifyForm.value.consent) return;
-    
+
     // Simulate API Call
     isSubmitted.value = false;
     notifyForm.value = { email: '', tel: '', consent: false };
@@ -75,12 +99,39 @@ const handleNotifySubmit = async () => {
             <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
                 <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
                     <div class="lg:col-span-5 space-y-6">
-                        <div class="aspect-square flex items-center justify-center p-4 rounded-lg group">
-                            <img :src="products?.image" class="max-h-full object-contain transition-transform group-hover:scale-105">
-                        </div>
-                        <div class="flex gap-3 justify-center">
-                            <div v-for="i in 5" :key="i" class="w-16 h-16 border rounded p-1 cursor-pointer hover:border-blue-500">
-                                <img :src="products?.image" class="w-full h-full object-contain">
+                        <div class="lg:col-span-5 space-y-6">
+                            <div
+                                class="aspect-square flex items-center justify-center p-4 rounded-xl group relative bg-white border border-slate-100 overflow-hidden">
+
+                                <div 
+                                    v-if="!products?.stock || products.stock <= 0"
+                                    class="absolute inset-0 z-20 flex items-center justify-center bg-white/60 backdrop-blur-[2px]">
+                                    <div
+                                        class="flex flex-col items-center justify-center bg-slate-700/80 opacity-50 text-white px-6 py-3 rounded-full shadow-xl transform w-50 h-50">
+                                        <div class="flex gap-1 ">
+                                            <span class="font-black text-sm tracking-widest uppercase text-center">สินค้าหมด</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <img 
+                                    v-if="products?.image" :src="products?.image"
+                                    class="max-h-full object-contain transition-transform duration-500 group-hover:scale-110"
+                                    :class="{ 'grayscale opacity-50': !products?.stock || products.stock <= 0 }">
+
+                                <div v-else class="text-slate-300 flex flex-col items-center">
+                                    <Icon icon="mdi:image-off-outline" class="w-12 h-12" />
+                                    <span class="text-xs mt-2">No Image Available</span>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-3 justify-center">
+                                <div 
+                                    v-for="i in 5" :key="i"
+                                    class="w-16 h-16 border rounded-lg p-1 cursor-pointer hover:border-blue-500 transition-all"
+                                    :class="{ 'opacity-50 grayscale': !products?.stock || products.stock <= 0 }">
+                                    <img :src="products?.image" class="w-full h-full object-contain">
+                                </div>
                             </div>
                         </div>
                         <button class="flex items-center gap-2 mx-auto text-slate-400 text-sm hover:text-blue-500">
@@ -88,9 +139,10 @@ const handleNotifySubmit = async () => {
                         </button>
                     </div>
 
-                    <div class="lg:col-span-7 space-y-4">
+                    <div class="lg:col-span-7 space-y-4 ">
                         <div>
-                            <p class="text-[#0D95DA] font-bold uppercase text-xs tracking-wide">{{ products?.brand }}</p>
+                            <p class="text-[#0D95DA] font-bold uppercase text-xs tracking-wide">{{ products?.brand }}
+                            </p>
                             <h1 class="text-xl font-bold text-slate-800 mt-1 leading-tight">{{ products?.name }}</h1>
                             <p class="text-xs text-slate-400 mt-2">รหัสสินค้า : {{ products?.sku }}</p>
                         </div>
@@ -105,16 +157,21 @@ const handleNotifySubmit = async () => {
                         </ul>
 
                         <div class="rounded-md overflow-hidden border border-slate-100">
-                            <div v-for="tier in priceTiers" :key="tier.label" class="flex justify-between items-center p-3 border-b last:border-0" :class="tier.class">
+                            <div 
+                                v-for="tier in priceTiers" :key="tier.label"
+                                class="flex justify-between items-center p-3 border-b last:border-0"
+                                :class="tier.class">
                                 <span class="text-sm font-bold text-slate-600">{{ tier.label }}</span>
-                                <span class="text-lg font-black" :class="tier.label === 'SRP:' ? 'text-slate-800' : 'text-blue-600'">
+                                <span 
+                                    class="text-lg font-black"
+                                    :class="tier.label === 'SRP:' ? 'text-slate-800' : 'text-blue-600'">
                                     ฿{{ tier.price.toLocaleString() }}
                                 </span>
                             </div>
                         </div>
 
                         <div class="space-y-2">
-                            <div class="flex items-center gap-6">
+                            <div class="flex items-center gap-6 mt-32">
                                 <div class="flex items-center">
                                     <span class="text-sm font-bold mr-4">จำนวนสั่ง:</span>
                                     <input 
@@ -123,13 +180,13 @@ const handleNotifySubmit = async () => {
                                         :class="[
                                             isOverStock ? 'border-red-500 bg-red-50 ' : 'border-slate-300',
                                             (!products?.stock || products.stock <= 0) ? 'bg-slate-100 cursor-not-allowed text-slate-400' : 'bg-white'
-                                        ]" 
-                                        :disabled="!products?.stock || products.stock <= 0"
-                                    >
+                                        ]" :disabled="!products?.stock || products.stock <= 0">
                                 </div>
                             </div>
 
-                            <Transition enter-active-class="transition duration-200 ease-out" enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0">
+                            <Transition 
+                                enter-active-class="transition duration-200 ease-out"
+                                enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0">
                                 <p v-if="isOverStock" class="text-[11px] font-bold text-red-500 ml-25.25">
                                     * จำนวนสินค้าตอนนี้มีเพียง {{ products?.stock }} ชิ้น
                                 </p>
@@ -141,13 +198,11 @@ const handleNotifySubmit = async () => {
                             class="w-full py-4 rounded-xl font-bold flex items-center justify-center gap-2 transition-all"
                             :class="[
                                 isOverStock
-                                ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
-                                : (!products?.stock || products.stock <= 0)
-                                ? 'bg-white text-slate-500 border-2 border-slate-300 hover:bg-blue-50'
-                                : 'bg-[#0D95DA] text-white hover:bg-[#0b7cb5] shadow-lg shadow-blue-500/20 active:scale-[0.98]'
-                            ]"
-                            @click="handleActionClick"
-                            >
+                                    ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
+                                    : (!products?.stock || products.stock <= 0)
+                                        ? 'bg-white text-slate-500 border-2 border-slate-300 hover:bg-blue-50'
+                                        : 'bg-[#0D95DA] text-white hover:bg-[#0b7cb5] shadow-lg shadow-blue-500/20 active:scale-[0.98]'
+                            ]" @click="handleActionClick">
                             <template v-if="isOverStock">
                                 <Icon icon="mdi:alert-circle-outline" class="w-5 h-5" />
                                 <span>จำนวนสินค้าไม่พอ</span>
@@ -167,8 +222,10 @@ const handleNotifySubmit = async () => {
 
             <div class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
                 <div class="flex border-b">
-                    <button class="px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
-                    <button class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
+                    <button
+                        class="px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
+                    <button
+                        class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
                 </div>
                 <div class="p-8 space-y-6">
                     <h2 class="text-lg font-bold text-slate-800">รายละเอียดสินค้า {{ products?.name }}</h2>
@@ -191,18 +248,17 @@ const handleNotifySubmit = async () => {
         </div>
 
         <ModalStockNotify 
-            v-model="showNotifyModal"
-            v-model:form="notifyForm"
+            v-model="showNotifyModal" 
+            v-model:form="notifyForm" 
             :product="targetProduct"
-            :is-submitted="isSubmitted"
-            :is-email-valid="isEmailValid"
+            :is-submitted="isSubmitted" 
+            :is-email-valid="isEmailValid" 
             :is-tel-valid="isTelValid"
-            :is-success="isSuccess"
-            :show-email-error="isSubmitted && !isEmailValid"
+            :is-success="isSuccess" 
+            :show-email-error="isSubmitted && !isEmailValid" 
             @submit="handleNotifySubmit"
-            @keypress-numeric="onlyNumeric"
-            @reset-submit="isSubmitted = false"
-            @reset-all="resetNotifyState"
-        />
+            @keypress-numeric="onlyNumeric" 
+            @reset-submit="isSubmitted = false" 
+            @reset-all="resetNotifyState" />
     </div>
 </template>
