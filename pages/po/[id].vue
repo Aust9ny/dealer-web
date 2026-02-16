@@ -4,6 +4,7 @@ import { useMockPO } from '@/composables/useMockPO';
 
 // 🟢 1. STATES & DATA
 const route = useRoute();
+const router = useRouter();
 const { getPOById, userOrders } = useMockPO();
 const isSidebarOpen = ref(true);
 const isQuickSelectOpen = ref(false);
@@ -43,13 +44,25 @@ const handleSidebarItemClick = (event: MouseEvent) => {
     isQuickSelectOpen.value = true;
   }
 };
+
+const goBack = () => {
+  const from = route.query.from as string;
+
+  if (from && from.startsWith('/category')) {
+    router.push(from);
+  } else if (po.value?.id) {
+    router.push(`/category/${po.value.id}`);
+  } else {
+    router.push('/category');
+  }
+};
 </script>
 
 <template>
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4 pt-24">
     <nav class="flex items-center gap-2 mb-4 px-4 text-sm font-medium">
       <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300 rotate-180" />
-      <NuxtLink to="/category" class="text-slate-500 hover:text-[#0D95DA]">เลือกสินค้าเพิ่ม</NuxtLink>
+      <button class="text-slate-500 hover:text-[#0D95DA]" @click="goBack">เลือกสินค้าเพิ่ม</button>
     </nav>
 
     <div class="flex flex-1 gap-3 items-start overflow-visible">
@@ -213,5 +226,4 @@ const handleSidebarItemClick = (event: MouseEvent) => {
     </Transition>
   </div>
   <AddressPOFooter />
-</div>
 </template>

@@ -71,7 +71,7 @@ const formatThaiDateTime = (value: string) => {
           </div>
         </div>
         <div class="text-xl font-bold text-primary">
-          {{ formatCurrency(po.amount) }}
+          {{ formatCurrency(po.totalAmount) }}
         </div>
         <div class="flex flex-col gap-3">
           <!-- ปุ่มหลัก -->
