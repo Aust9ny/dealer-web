@@ -234,8 +234,8 @@ import { Icon } from '@iconify/vue';
 
 // 🟢 1. STATES
 const isSidebarOpen = ref(true);
-const activeCategory = ref(undefined);
-const activeSubCategory = ref(undefined);
+const activeCategory = ref(1);
+const activeSubCategory = ref('iPhone');
 const activeSubTag = ref('ALL');
 const globalLoading = useState('global-loading', () => false);
 const viewMode = ref('list');
@@ -325,7 +325,11 @@ const handleModalSelect = (subName) => {
 };
 
 const resetFilters = () => {
-  searchQuery.value = ''; stockStatus.value = 'ทั้งหมด'; activeSubTag.value = 'ALL'; activeCategory.value = ''; activeSubCategory.value = '';
+  searchQuery.value = ''; 
+  stockStatus.value = 'ทั้งหมด';
+  activeSubTag.value = 'ALL'; 
+  activeCategory.value = ''; 
+  activeSubCategory.value = '';
 };
 
 // 🟢 5. DROPDOWN LOGIC

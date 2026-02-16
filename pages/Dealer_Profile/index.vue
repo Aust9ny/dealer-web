@@ -61,7 +61,7 @@
               type="text"
               placeholder="ค้นหาสินค้า, แบรนด์, รุ่น หรือหมายเลขคำสั่งซื้อ"
               class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-primary outline-none"
-            />
+            >
           </div>
         </div>
       </div>
@@ -171,7 +171,7 @@
         <img
           src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
           class="w-40 opacity-70"
-        />
+        >
         <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
         <button
           class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
