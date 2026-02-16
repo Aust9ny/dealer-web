@@ -5,33 +5,33 @@ export const useUser = () => {
     const user: User[] = [
     {
     id: 101,
-    Fname: 'Somchai',
-    Lname: 'TechService',
+    fname: 'Somchai',
+    lname: 'TechService',
     tel: '0812345678',
     role: 'Technician',
     email: 'somchai.t@advice-rep.com',
     password: 'hashed_password_123',
-    DealerID : 111234
+    dealerID : 111234
   },
   {
     id: 202,
-    Fname: 'Sippakorn',
-    Lname: 'First',
+    fname: 'Sippakorn',
+    lname: 'First',
     tel: '0998887766',
     role: 'Dealer',
     email: 'first.dealer@shop.co.th',
     password: 'hashed_password_456',
-    DealerID : 112234
+    dealerID : 112234
   },
   {
     id: 303,
-    Fname: 'Vipada',
-    Lname: 'Success',
+    fname: 'Vipada',
+    lname: 'Success',
     tel: '021112222',
     role: 'Franchise',
     email: 'vipada.f@franchise-hub.net',
     password: 'hashed_password_789',
-    DealerID : 113334
+    dealerID : 113334
   }
 ];
 

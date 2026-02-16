@@ -231,7 +231,7 @@
 
 <script setup>
 import { Icon } from '@iconify/vue';
-import SelectedPOFooter from '@/components/SelectedPOFooter.vue';
+
 
 // 🟢 1. STATES
 const isSidebarOpen = ref(true);

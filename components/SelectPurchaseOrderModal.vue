@@ -18,6 +18,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
+  // eslint-disable-next-line no-unused-vars
   (e: 'update:modelValue', value: boolean): void
 }>();
 
@@ -55,21 +56,21 @@ const handleContinue = () => {
 <template>
   <div
     v-if="modelValue"
-    class="fixed inset-0 z-[120] flex items-start justify-center pt-20"
+    class="fixed inset-0 z-120 flex items-start justify-center pt-20"
   >
     <!-- Overlay -->
     <div class="absolute inset-0 bg-black/40" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-[640px] max-w-[95vw] bg-white rounded-2xl shadow-2xl p-6 border border-slate-300 border-t-10 border-t-primary"
+      class="relative w-160 max-w-[95vw] bg-white rounded-2xl shadow-2xl p-6 border border-slate-300 border-t-10 border-t-primary"
     >
       <h2 class="text-lg font-bold text-center mb-6">
         เลือกใบสั่งซื้อ ({{ purchaseOrders.length }})
       </h2>
 
       <!-- List -->
-      <div class="p-3 max-h-[500px] overflow-y-auto">
+      <div class="p-3 max-h-125 overflow-y-auto">
         <div
           v-for="po in purchaseOrders"
           :key="po.id"
@@ -84,7 +85,7 @@ const handleContinue = () => {
           <span>
             #{{ po.id }} |
             {{ formatThaiTime(po.createdAt) }} |
-            {{ formatCurrency(po.amount) }}
+            {{ formatCurrency(po.totalAmount) }}
           </span>
         </div>
       </div>
