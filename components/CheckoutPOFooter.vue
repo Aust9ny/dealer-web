@@ -46,8 +46,8 @@ const formatThaiDateTime = (value: string) => {
         </div>
 
         <div>
-          <div class="font-semibold text-slate-800">#{{ po.id }}</div>
-          <div class="text-xs text-slate-500">
+          <div class="font-semibold text-lg text-slate-800">#{{ po.id }}</div>
+          <div class="text-sm text-slate-500">
             {{ formatThaiDateTime(po.createdAt) }}
           </div>
         </div>
@@ -62,9 +62,9 @@ const formatThaiDateTime = (value: string) => {
           </div>
         </div>
         <div class="text-xl font-bold text-primary">
-          {{ formatCurrency(po.amount) }}
+          {{ formatCurrency(po.totalAmount) }}
         </div>
-        <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-2">
           <!-- ปุ่มหลัก -->
           <button
             class="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition flex items-center justify-center gap-2"
