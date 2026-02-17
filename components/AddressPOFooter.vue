@@ -95,7 +95,7 @@ const formatThaiDateTime = (value: string) => {
 <template>
   <div
     v-if="po"
-    class="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-[150] border-t-4 border-t-[#0D95DA]"
+    class="fixed bottom-0 left-0 right-0 bg-white shadow-[0_-10px_30px_rgba(0,0,0,0.05)] z-[99] border-t-4 border-t-[#0D95DA]"
   >
     <div class="max-w-[1400px] mx-auto px-6 py-4 flex items-center justify-between">
       
