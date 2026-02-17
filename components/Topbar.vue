@@ -108,7 +108,7 @@ const handleLogout = () => {
 
     <NuxtLink to="/">
       <div class="flex items-center select-none">
-        <div class="text-3xl font-bold text-primary">
+        <div class="text-3xl font-bold text-[#0D95DA]">
           Advice <span class="text-green-500 italic">Dealers</span>
         </div>
       </div>
