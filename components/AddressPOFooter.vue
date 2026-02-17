@@ -44,8 +44,11 @@ const handleSecondaryAction = () => {
   } else {
     // If on Step 1, navigate back to the product catalog
     const from = route.query.from as string;
+
     if (from && from.startsWith('/category')) {
       router.push(from);
+    } else if (po.value?.id) {
+      router.push(`/category/${po.value.id}`);
     } else {
       router.push('/category');
     }
