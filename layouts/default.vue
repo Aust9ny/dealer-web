@@ -1,14 +1,14 @@
 <script setup lang="ts">
-import { useRoute } from "vue-router";
-import { computed } from "vue";
+import { useRoute } from 'vue-router';
+import { computed } from 'vue';
 
 const route = useRoute();
 
 const footerType = computed(() => {
-  if (route.path.startsWith("/po")) return "address";
-  if (route.path.startsWith("/category")) return "selected";
-  if (route.path.startsWith("/checkout")) return "checkout";
-  return "default";
+  if (route.path.startsWith('/po')) return 'address';
+  if (route.path.startsWith('/category')) return 'selected';
+  if (route.path.startsWith('/checkout')) return 'checkout';
+  return 'default';
 });
 </script>
 
