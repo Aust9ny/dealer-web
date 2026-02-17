@@ -3,7 +3,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
 import { Icon } from '@iconify/vue';
+import { useLoading } from '@/composables/useLoading';
 
+const { isLoading, startLoading, stopLoading } = useLoading();
 const router = useRouter();
 const route = useRoute();
 const { getPOById } = useMockPO();
@@ -25,11 +27,21 @@ const po = computed(() => getPOById(poId.value));
  */
 const handleMainAction = () => {
   if (currentStep.value < 3) {
+    startLoading();
     // Progresses the UI from Table -> Address -> Payment
-    nextStep(); 
+      setTimeout(() => {
+      nextStep();
+      stopLoading();
+    }, 500);
+    return;
   } else {
     // This is where you will eventually trigger the final API call
     console.log('Final Payment Triggered');
+    startLoading();
+    setTimeout(() => {
+    console.log('Final Payment Triggered (Frontend Mock)');
+    stopLoading();
+  }, 1500);
   }
 };
 
@@ -40,11 +52,19 @@ const handleMainAction = () => {
 const handleSecondaryAction = () => {
   if (currentStep.value > 1) {
     // 🟢 ALLOW GO BACK: Moves from Payment back to Address, or Address to Table
-    prevStep();
-  } else {
-    // If on Step 1, navigate back to the product catalog
-    const from = route.query.from as string;
+    startLoading();
 
+    setTimeout(() => {
+      prevStep();
+      stopLoading();
+    }, 200);
+
+    return;
+  } else {
+    // If on Step 1, navigate back to the product 
+    startLoading();
+
+    const from = route.query.from as string;
     if (from && from.startsWith('/category')) {
       router.push(from);
     } else if (po.value?.id) {
@@ -103,16 +123,31 @@ const formatThaiDateTime = (value: string) => {
         </div>
         
         <div class="flex flex-col gap-2 min-w-[220px]">
-          <button
-            class="px-8 py-3 bg-[#2D5A9E] text-white rounded-xl font-black hover:bg-[#1A3D6E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20"
+                    <button
+            class="px-8 py-3 bg-[#2D5A9E] text-white rounded-xl font-black 
+                  hover:bg-[#1A3D6E] transition-all 
+                  flex items-center justify-center gap-2 
+                  shadow-lg shadow-blue-500/20
+                  disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="isLoading"
             @click="handleMainAction"
           >
-            {{ currentStep === 3 ? 'ยืนยันการชำระเงิน' : currentStep === 2 ? 'ชำระเงินทันที' : 'ดำเนินการต่อ' }}
-            <Icon icon="mdi:chevron-right" class="w-5 h-5" />
-          </button>
+            <template v-if="isLoading">
+              <Icon icon="mdi:loading" class="w-5 h-5 animate-spin" />
+              กำลังดำเนินการ...
+            </template>
 
+            <template v-else>
+              {{ currentStep === 3 ? 'ยืนยันการชำระเงิน' : currentStep === 2 ? 'ชำระเงินทันที' : 'ดำเนินการต่อ' }}
+              <Icon icon="mdi:chevron-right" class="w-5 h-5" />
+            </template>
+          </button>
           <button
-            class="px-4 py-2 text-xs font-bold bg-white text-[#0D95DA] border border-[#0D95DA] rounded-xl hover:bg-blue-50 transition uppercase"
+            class="px-4 py-2 text-xs font-bold bg-white text-[#0D95DA] 
+                  border border-[#0D95DA] rounded-xl 
+                  hover:bg-blue-50 transition uppercase
+                  disabled:opacity-60 disabled:cursor-not-allowed"
+            :disabled="isLoading"
             @click="handleSecondaryAction"
           >
             {{ currentStep > 1 ? 'ย้อนกลับ' : 'เลือกสินค้าเพิ่มเติม' }}

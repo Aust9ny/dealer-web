@@ -1,7 +1,21 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { useRoute , useRouter } from "vue-router";
+const route = useRoute();
+const router = useRouter();
 
-defineProps<{
+const goBack = () => {
+  const from = route.query.from as string;
+
+  if (from && from.startsWith('/category')) {
+    router.push(from);
+  } else if (props.po?.id) {
+    router.push(`/category/${props.po?.id}`);
+  } else {
+    router.push('/category');
+  }
+};
+const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   po: any;
   subtotal: number;
@@ -24,9 +38,9 @@ const timeLeft = ref('14:59');
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center gap-1">
             <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300 rotate-180" />
-            <NuxtLink to="/category" class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold">
+            <button class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold" @click="goBack">
               เลือกสินค้าเพิ่ม
-            </NuxtLink>
+            </button>
           </div>
           
           <div class="flex items-center justify-end">

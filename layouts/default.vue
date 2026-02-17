@@ -7,9 +7,15 @@ const route = useRoute();
 const footerType = computed(() => {
   if (route.path.startsWith('/po')) return 'address';
   if (route.path.startsWith('/category')) return 'selected';
-  if (route.path.startsWith('/checkout')) return 'checkout';
   return 'default';
 });
+
+const mainPaddingClass = computed(() => {
+  if (footerType.value === 'address') return 'pb-32';
+  if (footerType.value === 'selected') return 'pb-20';
+  return 'pb-24';
+});
+
 </script>
 
 <template>
@@ -18,13 +24,12 @@ const footerType = computed(() => {
 
     <Topbar />
 
-    <main class="pt-23 pb-21">
+    <main :class="['pt-23', mainPaddingClass]">
       <slot />
     </main>
 
     <Footer v-if="footerType === 'default'" />
     <SelectedPOFooter v-if="footerType === 'selected'" />
     <AddressPOFooter v-if="footerType === 'address'" />
-    <CheckoutPOFooter v-if="footerType === 'checkout'" />
   </div>
 </template>

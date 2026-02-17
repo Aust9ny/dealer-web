@@ -1,6 +1,20 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { useMockPO } from '@/composables/useMockPO';
+import { useRoute , useRouter } from "vue-router";
+import { computed } from "vue";
+const router = useRouter();
+const goBack = () => {
+  const from = route.query.from as string;
+
+  if (from && from.startsWith('/category')) {
+    router.push(from);
+  } else if (po.value?.id) {
+    router.push(`/category/${po.value.id}`);
+  } else {
+    router.push('/category');
+  }
+};
 
 // 🟢 1. STATES & DATA
 const route = useRoute();
@@ -126,9 +140,9 @@ const handleSidebarItemClick = (event: MouseEvent) => {
         <div class="flex items-center justify-between w-full">
           <div class="flex items-center gap-1">
             <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300 rotate-180" />
-            <NuxtLink to="/category" class="text-slate-500 hover:text-[#0D95DA] transition-colors">
+            <button class="text-slate-500 hover:text-[#0D95DA] transition-colors" @click="goBack">
               เลือกสินค้าเพิ่ม
-            </NuxtLink>
+            </button>
           </div>
           <div class="flex items-center justify-end">
             <POStepper />
