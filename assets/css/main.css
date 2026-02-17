@@ -31,3 +31,13 @@ body.overflow-hidden-modal {
   overflow: hidden !important;
   height: 100vh;
 }
+.StyledReceipt {
+  background: white;
+  width: auto;
+  border-bottom: black;
+  padding: 1rem 1rem 2rem;
+  --mask: conic-gradient(from -45deg at bottom,#0000,#000 1deg 89deg,#0000 90deg) 50%/30px 100%;
+  -webkit-mask: var(--mask);
+          mask: var(--mask);
+
+}
