@@ -1,12 +1,50 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useMockPO } from '@/composables/useMockPO';
 import { Icon } from '@iconify/vue';
+import { watch, ref, onMounted, onBeforeUnmount } from 'vue';
+
+const route = useRoute();
+const dropdownRef = ref<HTMLElement | null>(null);
+
+// 1️⃣ ปิดเมื่อเปลี่ยนหน้า
+watch(
+  () => route.fullPath,
+  () => {
+    showAccountMenu.value = false;
+  }
+);
+
+// 2️⃣ ปิดเมื่อกดข้างนอก
+const handleClickOutside = (event: MouseEvent) => {
+  if (
+    showAccountMenu.value &&
+    dropdownRef.value &&
+    !dropdownRef.value.contains(event.target as Node)
+  ) {
+    showAccountMenu.value = false;
+  }
+};
+
+// 3️⃣ ปิดเมื่อกด ESC
+const handleEscape = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    showAccountMenu.value = false;
+  }
+};
+
+onMounted(() => {
+  document.addEventListener('mousedown', handleClickOutside);
+  document.addEventListener('keydown', handleEscape);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('mousedown', handleClickOutside);
+  document.removeEventListener('keydown', handleEscape);
+});
 
 const router = useRouter();
-
 const { getAllPO, getLatestPO } = useMockPO();
-
 const totalPO = computed(() => getAllPO().length);
 
 const goToLatestPO = () => {
@@ -112,7 +150,7 @@ const handleLogout = () => {
 
       <div class="h-6 w-px bg-gray-300" />
 
-      <div class="relative">
+      <div ref="dropdownRef" class="relative">
         <button
           class="flex items-center gap-3 pl-2 pr-4 h-11 rounded-full bg-primary hover:bg-[#004a85] transition min-w-40"
           @click="showAccountMenu = !showAccountMenu"
@@ -134,26 +172,12 @@ const handleLogout = () => {
 
           <Icon icon="mdi:chevron-down" class="w-4 h-4 text-white transition-transform" :class="{'rotate-180': showAccountMenu}" />
         </button>
-
-        <div
-          v-if="showAccountMenu"
-          class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120"
-        >
-          <!-- การสั่งซื้อของฉัน -->
-          <div
-            class="flex items-center px-3 py-2.5 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-          >
-            <span>การสั่งซื้อของฉัน</span>
-            <span
-              class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
-            >
-              {{ totalPO }}
-            </span>
-          <div v-if="currentUser" class="p-4 bg-slate-50 border-b border-gray-100">
-             <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
-             <p class="text-sm font-bold text-slate-800">{{ currentUser.fname }} {{ currentUser.lname }}</p>
-          </div>
-        </div>
+        <div v-if="showAccountMenu" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120">
+            <!-- ชื่อผู้ใช้งาน -->
+            <div v-if="currentUser" class="px-4 py-3 bg-slate-50 border-b border-gray-100">
+              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
+              <p class="text-sm font-bold text-slate-800">{{ currentUser.fname }} {{ currentUser.lname }}</p>
+            </div>
           <div class="p-2">
             <p class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">สลับสิทธิ์การเข้าชม (Mock)</p>
             <div 
@@ -172,13 +196,11 @@ const handleLogout = () => {
           </div>
 
           <div class="h-px bg-gray-100 mx-3 mt-1" />
-
           <div class="py-1">
-            <div class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
+            <div class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition" @click="goToLatestPO">
               <span>การสั่งซื้อของฉัน</span>
-              <span class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">9</span>
+              <span class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">{{ totalPO }}</span>
             </div>
-
             <div class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
               การเงินเเละการชำระเงิน
             </div>
