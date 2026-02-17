@@ -2,8 +2,10 @@
 import { useRoute } from 'vue-router';
 import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
+import { Icon } from '@iconify/vue';
+import { useLoading } from '@/composables/useLoading';
 
-
+const { isLoading, startLoading } = useLoading();
 const router = useRouter();
 
 const route = useRoute();
@@ -14,7 +16,12 @@ const poId = computed(() => route.params.id as string);
 const po = computed(() => getPOById(poId.value));
 const goToPO = () => {
   if (!po.value) return;
-  router.push(`/po/${po.value.id}`);
+
+  startLoading();
+
+  setTimeout(() => {
+    router.push(`/po/${po.value?.id}`);
+  }, 1500);
 };
 
 const formatCurrency = (value: number) => {
@@ -43,15 +50,12 @@ const formatThaiDateTime = (value: string) => {
     >
       <!-- ซ้าย -->
       <div class="flex items-center gap-4">
-        <div
-          class="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center"
-        >
-          📄
+        <div class="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100">
+          <Icon icon="mdi:file-document-check" class="w-7 h-7 text-[#0D95DA]" />
         </div>
-
         <div>
-          <div class="font-semibold text-slate-800">#{{ po.id }}</div>
-          <div class="text-xs text-slate-500">
+          <div class="font-black text-lg text-slate-800 uppercase tracking-tight">#{{ po.id }}</div>
+          <div class="text-sm text-slate-400 font-medium lowercase">
             {{ formatThaiDateTime(po.createdAt) }}
           </div>
         </div>
@@ -59,22 +63,34 @@ const formatThaiDateTime = (value: string) => {
 
       <!-- ขวา -->
       <div class="flex items-center gap-8">
-        <div class="text-right">
-          <div class="text-2xl text-slate-600">ยอดรวมสุทธิทั้งหมด:</div>
-          <div class="text-xs text-slate-400">
+        <div class="text-right leading-tight">
+          <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">ยอดรวมสุทธิทั้งหมด:</div>
+          <div class="text-3xl font-black text-[#2D5A9E]">
+            {{ formatCurrency(po.totalAmount) }}
+          </div>
+          <div class="text-[10px] text-slate-400 font-medium">
             (ราคานี้รวมภาษีมูลค่าเพิ่ม / Vat แล้ว)
           </div>
         </div>
-        <div class="text-xl font-bold text-primary">
-          {{ formatCurrency(po.totalAmount) }}
-        </div>
         <button
-          class="px-6 py-3 bg-primary text-white rounded-xl hover:bg-primary/90 transition flex items-center gap-2 whitespace-nowrap"
-          @click="goToPO"
-        >
+        class="px-8 py-3 bg-[#2D5A9E] text-white rounded-xl font-black 
+              hover:bg-[#1A3D6E] transition-all 
+              flex items-center justify-center gap-2 
+              shadow-lg shadow-blue-500/20
+              disabled:opacity-60 disabled:cursor-not-allowed"
+        :disabled="isLoading"
+        @click="goToPO"
+      >
+        <template v-if="isLoading">
+          <Icon icon="mdi:loading" class="w-5 h-5 animate-spin" />
+          กำลังโหลด...
+        </template>
+
+        <template v-else>
           ตรวจสอบรายการ
-          <span>›</span>
-        </button>
+          <Icon icon="mdi:chevron-right" class="w-5 h-5" />
+        </template>
+      </button>
       </div>
     </div>
   </div>
