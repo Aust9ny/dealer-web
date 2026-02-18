@@ -23,7 +23,7 @@
         class="sticky top-4 h-[calc(100vh-60px)] bg-white text-black transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden"
       >
         <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
-          <span v-if="isSidebarOpen" class="font-bold truncate text-[#0D95DA]">Advice Catalog</span>
+          <span v-if="isSidebarOpen" class="font-bold truncate text-black">หมวดหมู่สินค้า</span>
           <button class="hover:bg-slate-100 p-1.5 rounded-lg transition-colors ml-1" @click="isSidebarOpen = !isSidebarOpen">
             <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
           </button>
@@ -32,15 +32,37 @@
         <nav class="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
           <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
             <div 
-              class="p-3 rounded-xl cursor-pointer flex items-center justify-between transition-all group m-1"
-              :class="[activeCategory === cat.id ? 'bg-primary text-[#0D95DA]' : 'hover:bg-slate-50 text-slate-600']"
+              class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1"
+              :class="[
+                activeCategory === cat.id ? 'text-primary font-bold' : ' text-slate-900',
+                !isSidebarOpen ? 'justify-center p-2' : 'justify-between'
+              ]"
               @click="toggleCategory(cat, $event)" 
             >
-              <div class="flex items-center gap-3">
-                <span class="text-xl">{{ cat.icon }}</span>
+              <div 
+                class="flex items-center w-full"
+                :class="[!isSidebarOpen ? 'justify-center' : 'gap-3']"
+              >
+                <div 
+                  class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full transition-all duration-300 "
+                  :class="[
+                    activeCategory === cat.id 
+                      ? 'bg-primary text-white shadow-blue-500/20' 
+                      : ' text-slate-400 group-hover:bg-slate-100'
+                  ]"
+                >
+                  <span class="text-xl">{{ cat.icon }}</span>
+                </div>
+
                 <span v-if="isSidebarOpen" class="font-medium whitespace-nowrap">{{ cat.name }}</span>
               </div>
-              <Icon v-if="isSidebarOpen" icon="mdi:chevron-down" class="w-4 h-4 transition-transform duration-200 opacity-50" :class="{ 'rotate-180': activeCategory === cat.id }" />
+
+              <Icon 
+                v-if="isSidebarOpen" 
+                icon="mdi:chevron-down" 
+                class="w-4 h-4 transition-transform duration-200 opacity-50" 
+                :class="{ 'rotate-180': activeCategory === cat.id }" 
+              />
             </div>
             
             <transition 
@@ -49,11 +71,11 @@
               leave-active-class="transition-all duration-200 ease-in"
               leave-from-class="max-h-64 opacity-100" leave-to-class="max-h-0 opacity-0"
             >
-              <div v-if="activeCategory === cat.id && isSidebarOpen" class="overflow-hidden bg-white rounded-b-xl mb-2">
+              <div v-if="activeCategory === cat.id && isSidebarOpen" class="overflow-hidden bg-white mb-2">
                 <div 
                   v-for="sub in cat.subCats" :key="sub"
-                  class="py-2.5 pl-12 pr-4 text-sm transition-colors relative cursor-pointer text-slate-400 hover:text-black hover:bg-slate-50"
-                  :class="{ 'text-[#0D95DA]  bg-blue-50/50': activeSubCategory === sub }"
+                  class="py-2.5 pl-12 pr-4 text-sm transition-colors font-semibold relative cursor-pointer hover:text-black hover:bg-slate-50"
+                  :class="{ 'text-primary bg-bg-active': activeSubCategory === sub, 'text-slate-400': activeSubCategory !== sub }"
                   @click="selectSubCategory(cat.id, sub)"
                 >
                   {{ sub }}
@@ -95,7 +117,7 @@
           </div>
 
           <div class="space-y-4">
-            <div class="flex items-center gap-2"><span class=" text-slate-800 text-sm">รุ่น / ซีรีส์:</span></div>
+            <div class="flex items-center gap-2"><span class=" text-slate-800 text-md text-semibold">รุ่น / ซีรีส์:</span></div>
             <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
               <button
                 :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500 hover:bg-slate-50']"
@@ -173,8 +195,7 @@
             <div class="flex items-center gap-3">
               <span class="text-xl">{{ tempCategory?.icon }}</span>
               <div>
-                <h3 class="text-slate-800 text-xs">{{ tempCategory?.name }}</h3>
-                <p class="text-[9px] text-[#0D95DA] font-black uppercase">Quick Select</p>
+                <h3 class="text-slate-800 text-xs text-semibold">{{ tempCategory?.name }}</h3>
               </div>
             </div>
             <button class="p-1 hover:bg-white rounded-lg text-slate-400" @click="isQuickSelectOpen = false">
@@ -182,7 +203,7 @@
             </button>
           </div>
 
-          <div class="p-2 max-h-[45vh] overflow-y-auto space-y-1 scrollbar-thin">
+          <div class="p-2 max-h-[45vh] overflow-y-auto space-y-1 scrollbar-thin text-semibold">
             <button
               v-for="sub in tempCategory?.subCats" :key="sub"
               class="w-full p-3 rounded-xl text-left flex items-center justify-between group transition-all hover:bg-slate-50"

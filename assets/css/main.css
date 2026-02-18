@@ -7,6 +7,7 @@
   --font-modern: "Inter", "IBM Plex Sans Thai", sans-serif;
   --color-primary: #00569C;
   --color-selection :#BEF3CD;
+  --color-bg-active : #E6F4FB
 }
 
 body {
