@@ -46,7 +46,14 @@ const formatCurrency = (value: number) => {
   }).format(value);
 };
 
+// มี PO ไหม
+const hasPO = computed(() => purchaseOrders.length > 0);
 const handleContinue = () => {
+  if (!hasPO.value) {
+    router.push('/category'); // หรือ path ที่ใช้สร้าง PO ใหม่
+    close();
+    return;
+  }
   if (!selected.value) return;
   router.push(`/category/${selected.value.id}`);
   close();
@@ -101,11 +108,11 @@ const handleContinue = () => {
 
         <button
           class="w-full py-3 rounded-xl bg-primary text-white hover:bg-primary/90 transition font-medium flex items-center justify-center gap-2 disabled:opacity-50"
-          :disabled="!selected"
+          :disabled="hasPO && !selected"
           @click="handleContinue"
         >
-          ดำเนินการต่อ
-          <span>›</span>
+          {{ hasPO ? 'ดำเนินการต่อ' : 'สร้างใบสั่งซื้อใหม่' }}
+          <span v-if="hasPO">›</span>
         </button>
       </div>
     </div>
