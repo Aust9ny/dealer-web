@@ -21,6 +21,13 @@ const { currentStep, nextStep, prevStep } = usePOFlow();
 const poId = computed(() => route.params.id as string);
 const po = computed(() => getPOById(poId.value));
 
+const subtotal = computed(() => {
+  if (!po.value) return 0;
+  return po.value.items.reduce((sum, item) => sum + (item.priceAtPurchase * item.quantity), 0);
+});
+const vat = computed(() => subtotal.value * 0.07);
+const grandTotal = computed(() => subtotal.value + vat.value);
+
 /**
  * 🟢 PRIMARY ACTION HANDLER
  * This handles the logic for the main blue button.
@@ -115,7 +122,7 @@ const formatThaiDateTime = (value: string) => {
         <div class="text-right leading-tight">
           <div class="text-[10px] font-black text-slate-400 uppercase tracking-widest">ยอดรวมสุทธิทั้งหมด:</div>
           <div class="text-3xl font-black text-[#2D5A9E]">
-            {{ formatCurrency(po.totalAmount) }}
+            {{ formatCurrency(grandTotal) }}
           </div>
           <div class="text-[10px] text-slate-400 font-medium">
             (ราคานี้รวมภาษีมูลค่าเพิ่ม / Vat แล้ว)

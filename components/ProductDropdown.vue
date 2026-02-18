@@ -65,10 +65,9 @@ const handleNotifySubmit = async () => {
         <button
             class="sticky top-23 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-4 py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
             @click="emit('toggle')">
-            <div class="flex space-x-1 w-full text-sm">
-                <span class="text-slate-500">รายการสินค้าในหมวดหมู่</span>
+            <div class="flex space-x-1 w-full text-sm items-center">
                 <span class="text-slate-800 font-bold">{{ label || activeSubTag }}</span>
-                <span class="text-[#0D95DA] font-bold">({{ products.length }})</span>
+                <span class="text-slate-400 font-bold text-xs">({{ products.length }} รายการ)</span>
             </div>
             <Icon
                 icon="mdi:chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300"
