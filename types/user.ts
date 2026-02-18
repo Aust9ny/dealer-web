@@ -1,4 +1,5 @@
 import type { UserCart } from './cart';
+import type { Address } from './address';
 
 export interface User {
   id: number;
@@ -12,4 +13,5 @@ export interface User {
   dealerID: number;
   address?: string;
   carts?: UserCart[]; // 🟢 The list of all user's carts
+  addresses: Address[],
 }
