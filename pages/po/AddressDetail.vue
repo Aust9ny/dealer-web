@@ -28,6 +28,32 @@ const selectedAddressId = ref(1);
 const selectedMethod = ref('tgm'); // Mocked selected method
 const selectedPayment = ref('bank'); // Default to 'bank' or null
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getStockStatus = (item: any) => {
+  const stock = item.product.stock || 0;
+  const quantity = item.quantity;
+
+  if (stock <= 0) {
+    return {
+      text: 'สินค้าหมด (Out of Stock)',
+      colorClass: 'text-red-500',
+      bgClass: 'bg-red-50'
+    };
+  } else if (stock < quantity) {
+    return {
+      text: `สินค้าไม่พอ (เหลือเพียง ${stock} ชิ้น)`,
+      colorClass: 'text-orange-500',
+      bgClass: 'bg-orange-50'
+    };
+  } else {
+    return {
+      text: 'ได้รับสินค้าครบทุกชิ้น',
+      colorClass: 'text-emerald-600',
+      bgClass: 'bg-emerald-50'
+    };
+  }
+};
+
 const currentAddress = computed(() => 
   savedAddresses.value.find(a => a.id === selectedAddressId.value) || savedAddresses.value[0]
 );
@@ -257,8 +283,15 @@ const handleAddressAdd = (newAddr: any) => {
             <div class="flex justify-between items-center">
               <span class="text-sm text-slate-400 font-bold">x{{ item.quantity }}</span>
               <div class="text-right">
-                <p class="text-sm font-black text-slate-800">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
-                <p class="text-[10px] text-emerald-600 font-bold uppercase tracking-tighter">ได้รับสินค้าครบทุกชิ้น</p>
+                <p class="text-[10px] font-black text-slate-800">
+                   ฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}
+                </p>
+                <p 
+                  class="text-[9px] font-black uppercase tracking-tighter mt-1 px-1.5 py-0.5 rounded"
+                  :class="[getStockStatus(item).colorClass, getStockStatus(item).bgClass]"
+                >
+                  {{ getStockStatus(item).text }}
+                </p>
               </div>
             </div>
           </div>
