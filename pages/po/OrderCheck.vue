@@ -68,19 +68,25 @@ const isAllSelected = computed({
 
 
 // Sync data when route changes
+// Sync data when route changes
 watch(
   () => poId.value,
   (newId) => {
     const data = getPOById(newId);
     if (data) {
+      // Create a local deep copy to avoid direct mutation of the source
       po.value = JSON.parse(JSON.stringify(data));
+      
+      // 🟢 FIX: Only set checkedItems to true if the item HAS stock
       data.items.forEach((item) => {
-        checkedItems.value[item.product.id] = true;
+        const hasStock = (item.product.stock ?? 0) > 0;
+        checkedItems.value[item.product.id] = hasStock;
       });
     }
   },
   { immediate: true },
 );
+
 const vat = computed(() => subtotal.value * 0.07);
 
 
