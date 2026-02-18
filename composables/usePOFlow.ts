@@ -1,6 +1,6 @@
+// composables/usePOFlow.ts
 export const usePOFlow = () => {
-  // 1 = ตรวจสอบรายการ, 2 = ที่อยู่ในการจัดส่ง, 3 = ชำระเงิน
-  const currentStep = useState('order-step', () => 1);
+  const currentStep = useState<number>('order-step', () => 1); 
 
   const steps = [
     { id: 1, label: 'ตรวจสอบรายการ', icon: 'mdi:check-circle-outline' },

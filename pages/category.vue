@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4">
     <nav class="flex items-center gap-2 mb-4 px-4 text-sm font-medium">
@@ -222,102 +223,136 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import type { Product } from '@/types/product'; // 🟢 Use real interface
 
-// 🟢 STATES
+// 🟢 1. REFINED STATES
 const isSidebarOpen = ref(true);
-const activeCategory = ref(1);
-const activeSubCategory = ref('iPhone');
-const activeSubTag = ref('ALL');
+const activeCategory = ref<number>(1);
+const activeSubCategory = ref<string>('iPhone');
+const activeSubTag = ref<string>('ALL');
 const globalLoading = useState('global-loading', () => false);
-const viewMode = ref('list');
+const viewMode = ref<'grid' | 'list'>('list');
 
-// Flyout States
+// UI States
 const isQuickSelectOpen = ref(false);
-const tempCategory = ref(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const tempCategory = ref<any>(null);
 const flyoutOffset = ref(0);
 const isFlipped = ref(false);
 
 const searchQuery = ref('');
-const stockStatus = ref('ทั้งหมด');
+const stockStatus = ref<'ทั้งหมด' | 'มีของ' | 'ของหมด'>('ทั้งหมด');
 
-// Mock Data / Composables
-const { products } = useDashboard();
+// 🟢 2. DATA SOURCE
+const { products } = useDashboard(); // Assuming this returns Ref<Product[]>
 
-// 🟢 COMPUTED FILTERS
+// 🟢 3. REFACTORED SEARCH & FILTER ENGINE
 const filteredProducts = computed(() => {
   let result = [...products.value];
+
+  // 1. Filter by Sub-Category (e.g., 'iPhone', 'CPU')
   if (activeSubCategory.value) {
-    result = result.filter(p => p.category?.toLowerCase() === activeSubCategory.value.toLowerCase());
+    result = result.filter(p => 
+      p.category?.toLowerCase() === activeSubCategory.value.toLowerCase()
+    );
   }
+
+  // 2. Filter by Series Tag (e.g., 'iPhone 15', 'Ryzen 7')
   if (activeSubTag.value !== 'ALL') {
     result = result.filter(p => p.tag === activeSubTag.value);
   }
+
+  // 3. Multi-Field Real Search
   if (searchQuery.value) {
-    result = result.filter(p => p.name.toLowerCase().includes(searchQuery.value.toLowerCase()));
+    const query = searchQuery.value.toLowerCase();
+    result = result.filter(p => 
+      p.name.toLowerCase().includes(query) || 
+      p.sku.toLowerCase().includes(query) || 
+      p.brand.toLowerCase().includes(query) ||
+      p.specs.toLowerCase().includes(query)
+    );
   }
+
+  // 4. Stock Status Filter using real 'stock' property
   if (stockStatus.value !== 'ทั้งหมด') {
-    const isStocked = stockStatus.value === 'มีของ';
-    result = result.filter(p => (p.stock > 0) === isStocked);
+    if (stockStatus.value === 'มีของ') {
+      result = result.filter(p => (p.stock ?? 0) > 0);
+    } else {
+      result = result.filter(p => (p.stock ?? 0) === 0);
+    }
   }
+
   return result;
 });
 
+// 🟢 4. DYNAMIC GROUPING BY TAG
+const productsBySubTag = computed(() => {
+  const groups: Record<string, Product[]> = {};
+  
+  // If a specific tag is selected, only show that group
+  if (activeSubTag.value !== 'ALL') {
+    groups[activeSubTag.value] = filteredProducts.value;
+    return groups;
+  }
+  
+  // Group by existing tags within the filtered result
+  filteredProducts.value.forEach(p => {
+    const key = p.tag || 'อื่นๆ';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(p);
+  });
+  
+  return groups;
+});
+
+// 🟢 5. CATEGORY & TAG GENERATION
+const currentSubCatTags = computed(() => {
+  if (!activeSubCategory.value) return [];
+  // Get unique tags from all products belonging to this sub-category
+  const tags = new Set<string>();
+  products.value
+    .filter(p => p.category?.toLowerCase() === activeSubCategory.value.toLowerCase())
+    .forEach(p => p.tag && tags.add(p.tag));
+  
+  return Array.from(tags).sort();
+});
+
+// Category Data (Should eventually come from an API)
 const baseCategories = [
   { name: 'Apple Products', icon: '📱', subCats: ['iPhone', 'iPad', 'Mac', 'AirPods', 'Apple watch'] },
   { name: 'Laptops', icon: '💻', subCats: ['Gaming', 'Thin & Light', 'Workstation'] },
   { name: 'PC Components', icon: '🔌', subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'] }
 ];
 const categories = Array.from({ length: 15 }, (_, i) => ({ id: i + 1, ...baseCategories[i % baseCategories.length] }));
-
 const activeCategoryName = computed(() => categories.find(c => c.id === activeCategory.value)?.name || 'Categories');
 
-const currentSubCatTags = computed(() => {
-  if (!activeSubCategory.value) return [];
-  const tags = new Set();
-  products.value
-    .filter(p => p.category?.toLowerCase() === activeSubCategory.value?.toLowerCase())
-    .forEach(p => p.tag && tags.add(p.tag));
-  return Array.from(tags).sort();
-});
-
-// 🟢 ACTIONS
-const toggleCategory = (cat, event) => {
+// 🟢 6. ACTIONS
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toggleCategory = (cat: any, event: MouseEvent) => {
   if (!isSidebarOpen.value) {
-    const rect = event.currentTarget.getBoundingClientRect();
+    const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     const viewportHeight = window.innerHeight;
-    const menuHeight = 350;
-    
-    if (rect.top + menuHeight > viewportHeight) {
-      isFlipped.value = true;
-      flyoutOffset.value = viewportHeight - rect.bottom; 
-    } else {
-      isFlipped.value = false;
-      flyoutOffset.value = rect.top;
-    }
-    
+    isFlipped.value = rect.top + 350 > viewportHeight;
+    flyoutOffset.value = isFlipped.value ? viewportHeight - rect.bottom : rect.top;
     tempCategory.value = cat;
     isQuickSelectOpen.value = true;
   } else {
-    activeCategory.value = activeCategory.value === cat.id ? null : cat.id;
+    activeCategory.value = activeCategory.value === cat.id ? 0 : cat.id;
   }
 };
 
-const selectSubCategory = async (catId, subName) => {
+const selectSubCategory = async (catId: number, subName: string) => {
   globalLoading.value = true;
-  activeCategory.value = catId; // 🟢 FIX: Sync main category highlight
+  activeCategory.value = catId;
   activeSubCategory.value = subName;
   activeSubTag.value = 'ALL';
   isQuickSelectOpen.value = false;
-  
-  try { await new Promise(r => setTimeout(r, 400)); } 
-  finally { globalLoading.value = false; }
+  try { await new Promise(r => setTimeout(r, 400)); } finally { globalLoading.value = false; }
 };
 
-const handleModalSelect = (catId, subName) => {
-  selectSubCategory(catId, subName);
-};
+const handleModalSelect = (catId: number, subName: string) => selectSubCategory(catId, subName);
 
 const resetFilters = () => {
   searchQuery.value = ''; 
@@ -325,26 +360,9 @@ const resetFilters = () => {
   activeSubTag.value = 'ALL';
 };
 
-// 🟢 DROPDOWN LOGIC
-const productsBySubTag = computed(() => {
-  const groups = {};
-  if (activeSubTag.value !== 'ALL') {
-    groups[activeSubTag.value] = filteredProducts.value;
-    return groups;
-  }
-  
-  currentSubCatTags.value.forEach(tag => {
-    const matched = filteredProducts.value.filter(p => p.tag === tag);
-    if (matched.length > 0) groups[tag] = matched;
-  });
-  
-  const others = filteredProducts.value.filter(p => !p.tag);
-  if (others.length > 0) groups['อื่นๆ'] = others;
-  return groups;
-});
-
-const dropdownStates = ref({});
-const toggleDropdown = (tagName) => dropdownStates.value[tagName] = !dropdownStates.value[tagName];
+// Dropdown Toggles
+const dropdownStates = ref<Record<string, boolean>>({});
+const toggleDropdown = (tagName: string) => dropdownStates.value[tagName] = !dropdownStates.value[tagName];
 
 watch(productsBySubTag, (newGroups) => {
   Object.keys(newGroups).forEach(tag => { 

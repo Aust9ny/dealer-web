@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import { useRoute , useRouter } from "vue-router";
+import { useRoute , useRouter } from 'vue-router';
 const route = useRoute();
 const router = useRouter();
 
@@ -131,17 +131,16 @@ const props = defineProps<{
             <h4 class="text-[10px] font-black text-slate-400 uppercase tracking-widest border-b border-dashed pb-2">สรุปรายการสั่งซื้อ:</h4>
             
             <div class="space-y-4 max-h-75 overflow-y-auto scrollbar-thin pr-2">
-              <div v-for="item in po?.items" :key="item.product.id" class="flex gap-3">
-                <img :src="item.product.image" class="w-10 h-10 object-contain border p-1 rounded-lg bg-white shrink-0">
-                <div class="flex-1 min-w-0">
-                  <p class="text-[10px] font-bold text-slate-800 line-clamp-1 truncate uppercase">{{ item.product.name }}</p>
-                  <div class="flex justify-between items-center mt-1">
-                    <span class="text-[10px] text-slate-400 font-bold">x{{ item.quantity }}</span>
-                    <span class="text-[10px] font-black text-emerald-600">ได้รับสินค้าทุกชิ้น</span>
-                  </div>
-                  <p class="text-[10px] font-black text-slate-800 text-right mt-1">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
+            <div v-for="item in po?.items" :key="item.product.id" class="flex gap-3">
+              <img :src="item.product.image" class="w-10 h-10 object-contain border p-1 rounded-lg bg-white shrink-0">
+              <div class="flex-1 min-w-0">
+                <p class="text-[10px] font-bold text-slate-800 truncate uppercase">{{ item.product.name }}</p>
+                <div class="flex justify-between items-center mt-1">
+                  <span class="text-[10px] text-slate-400 font-bold">x{{ item.quantity }}</span>
+                  <p class="text-[10px] font-black text-slate-800">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
                 </div>
               </div>
+            </div>
             </div>
 
             <div class="pt-4 border-t border-dashed space-y-2">

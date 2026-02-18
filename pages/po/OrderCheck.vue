@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { useMockPO } from '@/composables/useMockPO';
-import { useRoute , useRouter } from "vue-router";
-import { computed } from "vue";
+import { useRoute , useRouter } from 'vue-router';
+import { computed } from 'vue';
 const router = useRouter();
 const goBack = () => {
   const from = route.query.from as string;
@@ -18,7 +18,7 @@ const goBack = () => {
 
 // 🟢 1. STATES & DATA
 const route = useRoute();
-const { getPOById, userOrders } = useMockPO();
+const { getPOById, userOrders  , updatePOItemQuantity } = useMockPO();
 const isSidebarOpen = ref(true);
 const isQuickSelectOpen = ref(false);
 const flyoutOffset = ref(0);
@@ -37,16 +37,35 @@ const checkedItems = ref<Record<number, boolean>>({});
 const isAllSelected = computed({
   get: () => {
     if (!po.value || po.value.items.length === 0) return false;
-    return po.value.items.every((item) => checkedItems.value[item.product.id]);
+
+    // 🟢 Filter for items that actually HAVE stock
+    const orderableItems = po.value.items.filter(
+      (item) => (item.product.stock ?? 0) > 0
+    );
+
+    // If there are no orderable items at all, return false
+    if (orderableItems.length === 0) return false;
+
+    // Return true only if EVERY orderable item is checked
+    return orderableItems.every((item) => checkedItems.value[item.product.id]);
   },
   set: (val) => {
     if (po.value) {
       po.value.items.forEach((item) => {
-        checkedItems.value[item.product.id] = val;
+        const hasStock = (item.product.stock ?? 0) > 0;
+        
+        // 🟢 Only toggle the checkbox if the item is in stock
+        // If out of stock, we force it to remain unchecked (false)
+        if (hasStock) {
+          checkedItems.value[item.product.id] = val;
+        } else {
+          checkedItems.value[item.product.id] = false;
+        }
       });
     }
   },
 });
+
 
 // Sync data when route changes
 watch(
@@ -62,21 +81,8 @@ watch(
   },
   { immediate: true },
 );
-
-
-// 🟢 4. CALCULATIONS (Only for checked items)
-const subtotal = computed(() => {
-  if (!po.value) return 0;
-  return po.value.items.reduce((sum, item) => {
-    if (checkedItems.value[item.product.id]) {
-      return sum + item.priceAtPurchase * item.quantity;
-    }
-    return sum;
-  }, 0);
-});
-
 const vat = computed(() => subtotal.value * 0.07);
-const grandTotal = computed(() => subtotal.value + vat.value);
+
 
 // 🟢 5. ACTIONS
 const removeProduct = (productId: number) => {
@@ -130,6 +136,42 @@ const handleSidebarItemClick = (event: MouseEvent) => {
     isQuickSelectOpen.value = true;
   }
 };
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const validateQuantity = (item: any) => {
+  // 🟢 1. Check if it's actually a number (don't use !item.quantity because 0 is a valid input)
+  if (item.quantity === null || isNaN(item.quantity)) {
+    item.quantity = 0; 
+  }
+
+  // 🟢 2. Handle Stock (Ensure it's a number)
+  const safeStock = Number(item.product.stock ?? 0);
+
+  // 🟢 3. Clamp the value (Max at stock, Min at 0)
+  if (item.quantity > safeStock) {
+    item.quantity = safeStock;
+  }
+  if (item.quantity < 0) {
+    item.quantity = 0;
+  }
+
+  // 🟢 4. Sync back to source
+  updatePOItemQuantity(poId.value, item.product.id, item.quantity);
+};
+
+const subtotal = computed(() => {
+  if (!po.value) return 0;
+  return po.value.items.reduce((sum, item) => {
+    // Only calculate if the item is checked
+    if (checkedItems.value[item.product.id]) {
+      return sum + (item.priceAtPurchase * item.quantity);
+    }
+    return sum;
+  }, 0);
+});
+
+
+const grandTotal = computed(() => subtotal.value + vat.value);
 
 </script>
 
@@ -259,7 +301,12 @@ const handleSidebarItemClick = (event: MouseEvent) => {
                     }">
                     <td
                       class="p-4 text-center sticky left-0 z-10 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100">
-                      <input v-model="checkedItems[item.product.id]" type="checkbox" class="rounded cursor-pointer">
+                      <input 
+                        v-model="checkedItems[item.product.id]" 
+                        type="checkbox" 
+                        :disabled="(item.product.stock ?? 0) <= 0"
+                        class="rounded cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                      >
                     </td>
                     <td class="p-4 text-center border-b border-r border-slate-100">
                       <img 
@@ -279,8 +326,16 @@ const handleSidebarItemClick = (event: MouseEvent) => {
                     </td>
                     <td class="p-4 text-center border-b border-r border-slate-100">
                       <input 
-                        v-model.number="item.quantity" type="number" min="1"
-                        class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black">
+                        :value="item.quantity ?? 0" 
+                        type="number" 
+                        :min="0"
+                        :max="item.product.stock ?? 0"
+                        :disabled="(item.product.stock ?? 0) <= 0"
+                        class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black transition-opacity"
+                        :class="{ 'opacity-50 cursor-not-allowed bg-slate-100': (item.product.stock ?? 0) <= 0 }"
+                        @input="item.quantity = Number(($event.target as HTMLInputElement).value) || 0"
+                        @change="validateQuantity(item)"
+                      >
                     </td>
                     <td class="p-4 text-right font-bold text-slate-500 border-b border-r border-slate-100">
                       ฿{{ formatPrice(item.priceAtPurchase) }}
