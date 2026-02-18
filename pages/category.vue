@@ -220,14 +220,6 @@
         </div>
       </div>
     </Transition>
-      <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 shadow-[0_-8px_30px_rgba(0,0,0,0.06)] z-[999]">
-        <div class="max-w-screen-2xl mx-auto px-8 py-5 flex items-center justify-center gap-10">
-          <div class="text-center">
-            <p class="text-slate-800 text-lg font-semibold">หากต้องการสั่งสินค้าให้กดปุ่ม <span class="text-[#0D95DA] font-bold">เปิดบิล</span> ตรงตารางสินค้า</p>
-            <p class="text-sm text-slate-400 mt-1">จะถูกนำไปยังการสร้างใบสั่งซื้อใหม่ ที่เป็นเหมือนตะกร้าใส่สินค้า</p>
-          </div>
-        </div>
-      </div>
   </div>
 </template>
 
