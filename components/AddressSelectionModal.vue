@@ -10,6 +10,7 @@ defineProps<{
     selectedId: number | string;
     isSubmitted: boolean;
     isTelValid: boolean;
+    mode: 'shipping' | 'tax';
     form: {
         addressDetail: typeof newAddress;
     }
