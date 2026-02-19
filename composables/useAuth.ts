@@ -1,19 +1,23 @@
-import type { User } from '~/types/user';
+
 import type { Product } from '~/types/product';
 import type { CartItem } from '~/types/cart';
 
 export const useAuth = () => {
-  // 1. Shared Global Session
-  const currentUser = useState<User | null>('user-session', () => null);
+const currentUserId = useState<number | null>('active-user-id', () => 202); 
   
-  const { user: allUsers } = useUser();
+  const { users: allUsers } = useUser();
 
-  // 2. Auth Actions
+  // 🟢 2. ดึงข้อมูล User จริงๆ จาก useUser เสมอ (Reactivity Link)
+  const currentUser = computed(() => 
+    allUsers.value.find(u => u.id === currentUserId.value) || null
+  );
+
   const login = (role: 'Technician' | 'Dealer' | 'Franchise') => {
-    const foundUser = allUsers.find(u => u.role === role);
-    
+    const foundUser = allUsers.value.find(u => u.role === role);
     if (foundUser) {
-      // Ensure the user has a carts array initialized
+      currentUserId.value = foundUser.id; // 🟢 เปลี่ยนแค่ ID เดี๋ยวทุกหน้าจะเปลี่ยนตามเอง
+      
+      // Initialize cart if needed
       if (!foundUser.carts) {
         foundUser.carts = [{
           id: `cart-default-${foundUser.id}`,
@@ -23,13 +27,10 @@ export const useAuth = () => {
           createdAt: new Date().toISOString()
         }];
       }
-      currentUser.value = foundUser;
     }
   };
 
-  const logout = () => {
-    currentUser.value = null;
-  };
+  const logout = () => { currentUserId.value = null; };
 
   // 3. Cart Actions (Integrated into Auth)
   const activeCart = computed(() => {

@@ -1,23 +1,21 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <!-- eslint-disable no-unused-vars -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import { useRoute, useRouter } from 'vue-router';
 import { ref, computed } from 'vue';
-import { useAddress } from '@/composables/useAddress';
 import AddressSelectionModal from '~/components/AddressSelectionModal.vue';
 
-const { savedAddresses, getFullAddress } = useAddress();
+const {  getFullAddress } = useUser();
+const { currentUser } = useAuth();
 const router = useRouter();
 const route = useRoute();
 
-// 🟢 1. PROPS
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   po: any;
   subtotal: number;
   vat: number;
   grandTotal: number;
-  // eslint-disable-next-line no-unused-vars
   formatPrice: (_: number) => string;
   formatDate: (_: string) => string;
 }>();
@@ -27,6 +25,19 @@ const isAddressModalOpen = ref(false);
 const selectedAddressId = ref(1);
 const selectedMethod = ref('tgm'); // Mocked selected method
 const selectedPayment = ref('bank'); // Default to 'bank' or null
+
+// 🟢 Form state for AddressSelectionModal
+const isSubmitted = ref(false);
+const isTelValid = ref(true);
+const addressForm = {
+  addressDetail: ref({ label: '', recipientName: '', phone: '', addressDetail: '', subDistrict: '', district: '', province: '', postalCode: '', isDefault: false, isTaxAddress: false })
+};
+
+const savedAddresses = computed(() => currentUser.value?.addresses || []);
+
+const currentAddress = computed(() => 
+  savedAddresses.value.find(a => a.id === selectedAddressId.value) || savedAddresses.value[0]
+);
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getStockStatus = (item: any) => {
@@ -53,10 +64,6 @@ const getStockStatus = (item: any) => {
     };
   }
 };
-
-const currentAddress = computed(() => 
-  savedAddresses.value.find(a => a.id === selectedAddressId.value) || savedAddresses.value[0]
-);
 
 // Must have fix later
 const openTaxAddressModal = () => {
@@ -94,6 +101,14 @@ const handleAddressAdd = (newAddr: any) => {
   selectedAddressId.value = id;
   isAddressModalOpen.value = false;
 };
+
+watch(savedAddresses, (newAddrs) => {
+  if (newAddrs.length > 0 && !selectedAddressId.value) {
+    const def = newAddrs.find(a => a.isDefault);
+    selectedAddressId.value = def ? def.id : newAddrs[0].id;
+  }
+}, { immediate: true });
+
 </script>
 
 <template>
@@ -361,6 +376,9 @@ const handleAddressAdd = (newAddr: any) => {
       :is-open="isAddressModalOpen"
       :addresses="savedAddresses"
       :selected-id="selectedAddressId"
+      :is-submitted="isSubmitted"
+      :is-tel-valid="isTelValid"
+      :form="addressForm"
       @close="isAddressModalOpen = false"
       @select="handleAddressSelect"
       @add="handleAddressAdd"
