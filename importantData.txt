@@ -1,0 +1,5 @@
+user's phone number is variable named 'tel' for stock notify and everything else
+
+
+user's phone number for shipping named 'phone' is now use only in address detail page 
+
