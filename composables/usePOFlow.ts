@@ -1,15 +1,22 @@
 // composables/usePOFlow.ts
 export const usePOFlow = () => {
-  const currentStep = useState<number>('order-step', () => 1); 
+  const route = useRoute();
 
   const steps = [
-    { id: 1, label: 'ตรวจสอบรายการ', icon: 'mdi:check-circle-outline' },
-    { id: 2, label: 'ที่อยู่ในการจัดส่ง', icon: 'mdi:map-marker-outline' },
+    { id: 1, label: 'ตรวจสอบรายการ', icon: 'mdi:format-list-checks' },
+    { id: 2, label: 'ที่อยู่และการจัดส่ง', icon: 'mdi:map-marker-outline' },
     { id: 3, label: 'ชำระเงิน', icon: 'mdi:credit-card-outline' }
   ];
 
-  const nextStep = () => { if (currentStep.value < 3) currentStep.value++; };
-  const prevStep = () => { if (currentStep.value > 1) currentStep.value--; };
+  const currentStep = computed(() => {
+    const path = route.path;
+    if (path.endsWith('/payment')) return 3;
+    if (path.endsWith('/address')) return 2;
+    return 1;
+  });
 
-  return { currentStep, steps, nextStep, prevStep };
+  return {
+    steps,
+    currentStep
+  };
 };
