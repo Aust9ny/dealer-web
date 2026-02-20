@@ -7,11 +7,23 @@ const { getPOById } = useMockPO();
 // 🟢 1. ดึงข้อมูล PO จาก ID ใน URL
 const poId = computed(() => route.params.id as string);
 const po = ref(getPOById(poId.value));
-// 🟢 2. คำนวณราคากลาง (Shared Calculations)
+
+// 🟢 2. คำนวณราคากลาง (Shared Calculations) - ปรับปรุงใหม่
 // หน้าลูก (index, address, payment) จะใช้ค่าชุดเดียวกันจากที่นี่
 const subtotal = computed(() => {
   if (!po.value) return 0;
-  return po.value.items.reduce((sum, item) => sum + (item.priceAtPurchase * item.quantity), 0);
+  
+  return po.value.items.reduce((sum, item) => {
+    const price = item.priceAtPurchase;
+    const orderQty = item.quantity || 0;
+    const stockQty = item.product.stock || 0;
+    
+    // 💡 Logic: ใช้จำนวนที่น้อยกว่าระหว่าง "จำนวนที่สั่ง" กับ "จำนวนที่มีในสต็อก"
+    // ถ้าสต็อกเป็น 0 หรือติดลบ (สินค้าหมด) ยอดจะเป็น 0 ทันที
+    const actualQty = Math.max(0, Math.min(orderQty, stockQty));
+    
+    return sum + (price * actualQty);
+  }, 0);
 });
 
 const vat = computed(() => subtotal.value * 0.07);
@@ -19,11 +31,16 @@ const grandTotal = computed(() => subtotal.value + vat.value);
 
 // 🟢 3. Helper Functions สำหรับจัดการ Format
 const formatPrice = (val: number) => new Intl.NumberFormat('th-TH').format(val);
-const formatDate = (dateStr: string) => {
+
+const formatDate = (dateStr: string , timeStr: boolean) => {
   if (!dateStr) return '';
-  return new Intl.DateTimeFormat('th-TH', { 
+  if (!timeStr) return new Intl.DateTimeFormat('th-TH', { 
     dateStyle: 'short', 
-    timeStyle: 'short' 
+    // timeStyle: 'short' 
+  }).format(new Date(dateStr));
+  if (timeStr) return new Intl.DateTimeFormat('th-TH', { 
+    dateStyle: 'short', 
+    timeStyle: 'medium' 
   }).format(new Date(dateStr));
 };
 

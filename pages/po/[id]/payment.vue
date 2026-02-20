@@ -10,7 +10,7 @@ const props = defineProps<{
   vat: number;
   grandTotal: number;
   formatPrice: (val: number) => string;
-  formatDate: (dateStr: string) => string;
+  formatDate: (dateStr: string , showTime?: boolean) => string;
 }>();
 
 const getStockStatus = (item: any) => {
@@ -94,7 +94,7 @@ const goBack = () => {
     <div class="grid grid-cols-12 gap-6 items-start">
       <div class="col-span-8 space-y-6">
         <div
-          class="bg-white rounded-3xl p-10 border border-slate-200 shadow-sm text-center"
+          class="bg-white rounded-xl p-10 border border-t-10 border-t-primary border-slate-200 shadow-sm text-center"
         >
           <div class="max-w-sm mx-auto">
             <h2
@@ -175,7 +175,7 @@ const goBack = () => {
             class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt"
           >
             <div
-              class="p-6 border-b border-slate-100 flex justify-between items-center bg-white"
+              class="p-6 border-b border-slate-100 flex justify-between items-center bg-white border-t-10 border-t-primary"
             >
               <div class="flex items-center gap-4">
                 <div
@@ -195,7 +195,7 @@ const goBack = () => {
                   <p
                     class="text-[12px] text-slate-400 font-bold uppercase tracking-widest"
                   >
-                    {{ formatDate(po?.createdAt || "") }}
+                    {{ formatDate(po?.createdAt || "",true) }}
                   </p>
                 </div>
               </div>
