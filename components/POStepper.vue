@@ -19,7 +19,7 @@ const { currentStep, steps } = usePOFlow();
                 </div>
 
                 <span 
-                    class="text-xs font-bold tracking-tighter transition-colors whitespace-nowrap"
+                    class="text-xs  tracking-tighter transition-colors whitespace-nowrap"
                     :class="currentStep >= step.id ? 'text-[#0D95DA]' : 'text-slate-400'"
                 >
                     {{ step.label }}
