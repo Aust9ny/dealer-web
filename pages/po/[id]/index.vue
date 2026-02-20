@@ -13,7 +13,7 @@ const props = defineProps<{
   // eslint-disable-next-line no-unused-vars
   formatPrice: (val: number) => string;
   // eslint-disable-next-line no-unused-vars
-  formatDate: (dateStr: string) => string;
+  formatDate: (dateStr: string , showTime?: boolean) => string;
 }>();
 
 const router = useRouter();
@@ -59,8 +59,6 @@ const goBack = () => {
 // 4. Validation Logic
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateQuantity = (item: any) => {
-  const safeStock = Number(item.product.stock ?? 0);
-  if (item.quantity > safeStock) item.quantity = safeStock;
   if (item.quantity < 0 || !item.quantity) item.quantity = 0;
   updatePOItemQuantity(props.po.id, item.product.id, item.quantity);
 };
@@ -111,14 +109,14 @@ const getReadyToShipStatus = (item: any) => {
 
     <div class="flex gap-3 items-start overflow-visible">
       <aside
-        :class="[isSidebarOpen ? 'w-64' : 'w-20']"
-        class="sticky top-24 h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden"
+        :class="[isSidebarOpen ? 'w-64 hover:w-80' : 'w-20']"
+        class="sticky top-24 h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-10 border-t-primary shadow-md shrink-0 "
       >
         <div
           class="p-4 flex justify-between items-center border-b h-16 shrink-0"
         >
-          <span v-if="isSidebarOpen" class="font-bold truncate text-[#0D95DA]"
-            >รายการอื่น ({{ userOrders.length }})</span
+          <span v-if="isSidebarOpen" class="font-bold  text-[#0D95DA]"
+            >เลือกใบสั่งซื้อ ({{ userOrders.length }})</span
           >
           <button
             class="hover:bg-slate-100 p-1.5 rounded-lg"
@@ -139,8 +137,8 @@ const getReadyToShipStatus = (item: any) => {
                 : 'hover:bg-slate-50 text-slate-600',
             ]"
           >
-            <p v-if="isSidebarOpen" class="font-bold text-[10px] truncate">
-              #{{ order.id }} | {{ formatPrice(order.totalAmount) }}
+            <p v-if="isSidebarOpen" class="font-bold text-[14px] truncate">
+              #{{ order.id }} | {{ formatDate(order.createdAt,false) }} | ฿ {{ formatPrice(order.totalAmount) }}
             </p>
           </NuxtLink>
         </nav>
@@ -149,7 +147,7 @@ const getReadyToShipStatus = (item: any) => {
       <main class="flex-1 flex flex-col min-w-0 gap-3 pb-32">
         <div v-if="currentStep === 1">
           <header
-            class="bg-white border-b border-slate-200 p-6 shadow-sm rounded-2xl border-t-6 border-t-[#0D95DA] mb-3"
+            class="bg-white border-b border-slate-200 p-6 shadow-sm rounded-2xl border-t-10 border-t-primary mb-3"
           >
             <div v-if="po" class="flex justify-between items-center">
               <div class="flex items-center gap-4">
@@ -296,7 +294,6 @@ const getReadyToShipStatus = (item: any) => {
                         :value="item.quantity ?? 0"
                         type="number"
                         :min="0"
-                        :max="item.product.stock ?? 0"
                         :disabled="(item.product.stock ?? 0) <= 0"
                         class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black transition-opacity"
                         :class="{
@@ -344,7 +341,7 @@ const getReadyToShipStatus = (item: any) => {
             </div>
 
             <div
-              class="p-8 border-t border-slate-100 flex justify-end bg-white"
+              class="p-8 border-t border-slate-100 flex justify-end bg-white "
             >
               <div class="w-full max-w-md space-y-3 bg-white">
                 <div
@@ -405,23 +402,6 @@ const getReadyToShipStatus = (item: any) => {
               </div>
             </div>
           </section>
-        </div>
-
-        <div
-          class="p-20 bg-white rounded-3xl border border-t-6 border-t-[#0D95DA] text-center shadow-md"
-        >
-          <Icon
-            icon="mdi:map-marker-radius"
-            class="w-16 h-16 text-slate-200 mx-auto"
-          />
-          <h2
-            class="text-xl font-bold mt-4 text-slate-800 uppercase tracking-tight"
-          >
-            ที่อยู่ในการจัดส่ง
-          </h2>
-          <p class="text-slate-400 text-sm mt-1 font-medium italic">
-            กรุณาเลือกที่อยู่สำหรับการจัดส่งสินค้า
-          </p>
         </div>
       </main>
     </div>

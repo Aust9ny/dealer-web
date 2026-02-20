@@ -11,7 +11,7 @@ const props = defineProps<{
   vat: number;
   grandTotal: number;
   formatPrice: (val: number) => string;
-  formatDate: (dateStr: string) => string;
+  formatDate: (dateStr: string , showTime?: boolean) => string;
 }>();
 
 const { getFullAddress } = useUser();
@@ -155,21 +155,21 @@ watch(
 
     <div class="grid grid-cols-12 gap-6 items-start">
       <div class="col-span-8 space-y-6">
-        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+        <div class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm border-t-primary border-t-10">
           <h2
             class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tight"
           >
-            ที่อยู่จัดส่ง / วิธีการจัดส่ง
+            เลือกที่อยู่ในการจัดส่งสินค้า / วิธีการจัดส่ง
           </h2>
           <div class="grid grid-cols-2 gap-4">
             <div
               v-if="currentAddress"
-              class="border-2 border-[#0D95DA] rounded-2xl p-6 bg-blue-50/50 relative"
+              class="border border-slate-300 rounded-2xl p-6 bg-white relative"
             >
               <div class="flex justify-between items-center mb-4">
                 <span
                   class="font-bold text-slate-500 text-xs uppercase tracking-widest"
-                  >ที่อยู่จัดส่ง:</span
+                  >ที่อยู่จัดส่งสินค้า:</span
                 >
                 <button
                   class="text-[#0D95DA] text-xs font-black underline hover:text-blue-700"
@@ -178,20 +178,26 @@ watch(
                   แก้ไข
                 </button>
               </div>
-              <p class="font-black text-slate-800 text-sm">
-                {{ currentAddress.recipientName }}
-              </p>
-              <p class="text-xs text-slate-500 mt-1">
-                {{ currentAddress.phone }}
-              </p>
-              <p
-                class="text-xs text-slate-400 mt-2 leading-relaxed line-clamp-2"
-              >
-                {{ getFullAddress(currentAddress) }}
-              </p>
+              <div class=" p-3 rounded-2xl bg-secondary">
+                <p class=" text-sm font-semibold text-primary">
+                  {{ currentAddress.recipientName }}
+                </p>
+                <p class="text-sm text-slate-500 mt-1">
+                  {{ currentAddress.phone }}
+                </p>
+                <p
+                  class="text-sm text-slate-400 mt-2 leading-relaxed line-clamp-2"
+                >
+                  {{ getFullAddress(currentAddress) }}
+                </p>
+                <p v-if="currentAddress.isDefault" class="text-xs mt-2 text-slate-400 bg-slate-200 w-fit rounded-xl p-1">
+                    ค่าเริ่มต้น
+                </p>
+              </div>
             </div>
 
-            <div class="border rounded-2xl p-6 bg-slate-50/50 relative">
+            <div class="border border-slate-300 rounded-2xl p-6 bg-white relative">
+
               <div class="flex justify-between items-center mb-4">
                 <span
                   class="font-bold text-slate-500 text-xs uppercase tracking-widest"
@@ -203,25 +209,46 @@ watch(
                   แก้ไข
                 </button>
               </div>
-              <p class="font-black text-[#0D95DA] text-sm">
-                TGM Dealer Delivery
+
+              <div class="bg-secondary p-3 rounded-2xl">
+                <p class=" text-primary text-sm font-semibold">
+                  TGM Dealer Delivery
+                </p>
+                <div class="w-full border border-b mt-1 border-slate-300"/>
+                <span class="text-sm text-primary  mt-1">
+                  ส่งด่วนวันถัดไปก่อน 17:00 น.
+                </span>
+                <span class="text-sm text-[#12B76A]  mt-1 ml-1">
+                  ฟรี
+                </span>
+                <p class="text-xs mt-1 text-slate-400">
+                  โอนชำระ + แนบสลิปก่อน 12.00 น.
+                </p>
+                <p class="text-xs mt-1 text-slate-400">
+                  *ส่งภายในวันถัดไปก่อน 17:00 น.
+                </p>
+              </div>
+            </div>
+            <div>
+              <p class="text-sm text-nowrap  text-red-500 ml-2">
+                * กรณีสั่งซื้อสินค้าครบ 3 รายการ "มีมูลค่ารวม 10,000 บาทขึ้นไป" ต่อ 1 บิลสามารถเลือกจัดส่งภายในวันได้ <br>
               </p>
-              <p class="text-[10px] text-emerald-600 font-black mt-2 italic">
-                จัดส่งฟรี (Next Day)
+              <p class="text-sm  text-red-500 ml-2">
+                ** กรณีที่ตรงกับวันหยุดนักขัตฤกษ์ของบริษัท จัดส่งในวันเปิดทำการ
               </p>
             </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+        <div class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
           <h2
             class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tight"
           >
-            ข้อมูลใบกำกับภาษี
+            เลือกที่อยู่ในการออกใบกำกับภาษี
           </h2>
           <div
             v-if="currentTaxAddress"
-            class="border rounded-2xl p-6 bg-slate-50/50 relative"
+            class="border border-slate-200 rounded-2xl p-6 bg-white relative"
           >
             <div class="flex justify-between items-center mb-4">
               <span
@@ -235,56 +262,78 @@ watch(
                 แก้ไข
               </button>
             </div>
-            <p class="font-black text-slate-800 text-sm">
-              {{ currentTaxAddress.recipientName }}
-            </p>
-            <p class="text-[10px] text-slate-400 mt-1">
-              {{ getFullAddress(currentTaxAddress) }}
-            </p>
-            <p
-              class="text-[10px] text-slate-400 mt-2 font-bold uppercase tracking-tight"
-            >
-              Tax ID: 0107565000XXX
-            </p>
+            <div class="bg-secondary p-3 rounded-xl">
+              <p class="font-black text-sm text-primary">
+                {{ currentTaxAddress.recipientName }}
+              </p>
+              <p class="text-sm mt-1 text-slate-400">
+                {{ currentTaxAddress.phone }}
+              </p>
+              <p class="text-[10px] text-slate-400 mt-1">
+                {{ getFullAddress(currentTaxAddress) }}
+              </p>
+            </div>
           </div>
         </div>
 
-        <div class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm">
+        <div class="bg-white rounded-xl p-8 border border-slate-200 shadow-sm">
           <h2
             class="text-xl font-black text-slate-800 mb-6 uppercase tracking-tight"
           >
             วิธีการชำระเงิน
           </h2>
           <div class="grid grid-cols-2 gap-4">
-            <button
-              v-for="method in ['bank', 'qr']"
-              :key="method"
-              class="relative border-2 rounded-2xl p-6 text-sm font-black flex flex-col items-center gap-2 transition-all"
-              :class="
-                selectedPayment === method
-                  ? 'border-[#0D95DA] bg-blue-50/50 text-[#0D95DA]'
-                  : 'border-slate-100 text-slate-500'
-              "
-              @click="selectedPayment = method"
+          <button
+            v-for="method in ['bank', 'qr']"
+            :key="method"
+            class="relative border-2 rounded-2xl p-6 text-sm font-black flex items-center gap-4 transition-all w-full group"
+            :class="
+              selectedPayment === method
+                ? 'border-[#0D95DA] bg-blue-50/50 text-[#0D95DA]'
+                : 'border-slate-100 text-slate-500 hover:border-slate-200'
+            "
+            @click="selectedPayment = method"
+          >
+            <div 
+              class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all"
+              :class="selectedPayment === method ? 'border-[#0D95DA]' : 'border-slate-300'"
             >
+              <div 
+                v-if="selectedPayment === method"
+                class="w-2.5 h-2.5 rounded-full bg-[#0D95DA] animate-in zoom-in duration-200"
+              />
+            </div>
+
+            <div class="flex items-center gap-3">
               <Icon
-                :icon="
-                  method === 'bank' ? 'mdi:bank-outline' : 'mdi:qrcode-scan'
-                "
+                :icon="method === 'bank' ? 'mdi:bank-outline' : 'mdi:qrcode-scan'"
                 class="w-8 h-8"
               />
-              <span>{{ method === "bank" ? "โอนผ่านธนาคาร" : "QR Code" }}</span>
-            </button>
+              <span class=" tracking-tight">
+                {{ method === "bank" ? "โอนผ่านธนาคาร" : "QR Code / PromptPay" }}
+              </span>
+            </div>
+
+          </button>
+          </div>
+          
+          <div class="bg-[#FFFCED] mt-4 gap-3 ">
+            <div class="flex items-center mr-3 gap-3 pl-3">
+              <Icon icon="zondicons:exclamation-outline" width="16" height="16"  style="color: #DBAA00" />
+              <span class="text-[#DBAA00] pt-2 text-sm text-center pb-2 ">
+                กรุณาทำรายการชำระเงินภายในเวลา 24 ชั่วโมง หากท่านไม่ดำเนินการตามเวลาที่กำหนด คำสั่งซื้อจะถูกยกเลิกอัตโนมัติ
+              </span>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="col-span-4 sticky top-24">
         <div
-          class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt"
+          class="bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt"
         >
           <div
-            class="p-6 border-b border-slate-100 flex justify-between items-center bg-white"
+            class="p-6 border-b border-slate-100 flex justify-between items-center bg-white border-t-10 border-t-primary rounded-xl"
           >
             <div class="flex items-center gap-4">
               <div
@@ -304,7 +353,7 @@ watch(
                 <p
                   class="text-[12px] text-slate-400 font-bold uppercase tracking-widest"
                 >
-                  {{ formatDate(po?.createdAt || "") }}
+                  {{ formatDate(po?.createdAt || "" , true) }}
                 </p>
               </div>
             </div>
