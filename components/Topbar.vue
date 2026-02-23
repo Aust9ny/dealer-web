@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from "vue-router";
-import { useMockPO } from "@/composables/useMockPO";
-import { Icon } from "@iconify/vue";
-import { watch, ref, onMounted, onBeforeUnmount } from "vue";
+import { useRouter, useRoute } from 'vue-router';
+import { useMockPO } from '@/composables/useMockPO';
+import { Icon } from '@iconify/vue';
+import { watch, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const route = useRoute();
 const dropdownRef = ref<HTMLElement | null>(null);
@@ -34,19 +34,19 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // 3️⃣ ปิดเมื่อกด ESC
 const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
+  if (event.key === 'Escape') {
     showAccountMenu.value = false;
   }
 };
 
 onMounted(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  document.addEventListener("keydown", handleEscape);
+  document.addEventListener('mousedown', handleClickOutside);
+  document.addEventListener('keydown', handleEscape);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("mousedown", handleClickOutside);
-  document.removeEventListener("keydown", handleEscape);
+  document.removeEventListener('mousedown', handleClickOutside);
+  document.removeEventListener('keydown', handleEscape);
 });
 
 const router = useRouter();
@@ -57,7 +57,7 @@ const goToLatestPO = () => {
   const latest = getLatestPO();
 
   if (!latest) {
-    router.push("/po"); // หน้า list
+    router.push('/po'); // หน้า list
     return;
   }
 
@@ -73,18 +73,18 @@ const showSearchModal = ref(false);
 
 // 🟢 Role List for Switcher
 const roles = [
-  { name: "Technician", icon: "mdi:tools", color: "text-amber-500" },
-  { name: "Dealer", icon: "mdi:storefront-outline", color: "text-primary" },
+  { name: 'Technician', icon: 'mdi:tools', color: 'text-amber-500' },
+  { name: 'Dealer', icon: 'mdi:storefront-outline', color: 'text-primary' },
   {
-    name: "Franchise",
-    icon: "mdi:office-building-marker-outline",
-    color: "text-emerald-500",
+    name: 'Franchise',
+    icon: 'mdi:office-building-marker-outline',
+    color: 'text-emerald-500',
   },
 ] as const;
 
 // 🟢 Dynamic Initials from Auth State
 const initials = computed(() => {
-  if (!currentUser.value) return "??";
+  if (!currentUser.value) return '??';
   return currentUser.value.fname.charAt(0) + currentUser.value.lname.charAt(0);
 });
 
@@ -96,7 +96,7 @@ const closeSearch = () => {
   showSearchModal.value = false;
 };
 
-const handleSwitchRole = (role: "Technician" | "Dealer" | "Franchise") => {
+const handleSwitchRole = (role: 'Technician' | 'Dealer' | 'Franchise') => {
   login(role);
 };
 
@@ -133,7 +133,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         <Icon icon="mdi:magnify" class="w-6 h-6 text-gray-700" />
       </button>
 
-      <button @click="goToLatestPO" class="relative">
+      <button class="relative" @click="goToLatestPO">
         <Icon icon="mdi:clipboard-text-outline" class="w-6 h-6 text-gray-700" />
         <span
           v-if="totalPO"
@@ -159,8 +159,8 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
           <!-- MOBILE DROPDOWN -->
           <div
             v-if="showAccountMenu"
-            @click.stop
             class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-[200]"
+            @click.stop
           >
             <!-- ชื่อผู้ใช้งาน -->
             <div
@@ -269,7 +269,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
               : 'border-gray-300 bg-white'
           "
           @focus="activateSearch"
-        />
+        >
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
         >
