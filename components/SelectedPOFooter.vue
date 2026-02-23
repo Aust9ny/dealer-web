@@ -58,10 +58,10 @@ const formatThaiDateTime = (value: string) => {
         </div>
         <div v-if="hasPO">
           <div class="font-black text-lg text-slate-800 uppercase tracking-tight">
-            #{{ po.id }}
+            #{{ po?.id }}
           </div>
           <div class="text-sm text-slate-400 font-medium lowercase">
-            {{ formatThaiDateTime(po.createdAt) }}
+            {{ formatThaiDateTime(po?.createdAt ?? '') }}
           </div>
         </div>
 
@@ -82,7 +82,7 @@ const formatThaiDateTime = (value: string) => {
             ยอดรวมสุทธิทั้งหมด:
           </div>
           <div class="text-3xl font-black text-[#2D5A9E]">
-            {{ formatCurrency(po.totalAmount) }}
+            {{ formatCurrency(po?.totalAmount ?? 0) }}
           </div>
           <div class="text-[10px] text-slate-400 font-medium">
             (ราคานี้รวมภาษีมูลค่าเพิ่ม / Vat แล้ว)

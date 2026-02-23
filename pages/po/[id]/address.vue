@@ -134,7 +134,7 @@ watch(
     <div class="w-full mb-6">
       <nav class="flex items-center text-sm font-medium w-full">
         <div class="flex items-center justify-between w-full">
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-1 border border-slate-400 bg-white  p-2 rounded-lg">
             <Icon
               icon="mdi:chevron-right"
               class="w-4 h-4 text-slate-300 rotate-180"
@@ -449,7 +449,7 @@ watch(
               >
                 <span>สินค้าทั้งหมด ({{ po?.items.length }} ชิ้น):</span>
                 <span class="text-slate-800 font-black"
-                  >฿{{ formatPrice(subtotal + 4110) }}</span
+                  >฿{{ formatPrice(subtotal - 4110) }}</span
                 >
               </div>
 
@@ -473,7 +473,7 @@ watch(
               >
                 <span>ยอดก่อน Vat:</span>
                 <span class="text-slate-800 font-black"
-                  >฿{{ formatPrice(subtotal - vat) }}</span
+                  >฿{{ formatPrice(subtotal )}}</span
                 >
               </div>
 

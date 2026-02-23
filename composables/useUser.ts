@@ -17,11 +17,11 @@ export const useUser = () => {
     },
     {
       id: 202,
-      fname: 'Sippakorn',
-      lname: 'Kanhareuk',
+      fname: 'Elon',
+      lname: 'Musk',
       tel: '0998887766',
       role: 'Dealer',
-      email: 'first.dealer@shop.co.th',
+      email: 'spaceX.dealer@shop.co.th',
       dealerID: 112234,
       // 🟢 2. Integrated Mock Addresses here
       addresses: [

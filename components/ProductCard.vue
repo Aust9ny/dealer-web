@@ -54,6 +54,13 @@
           {{ product.promotion }}... <span class="font-bold underline cursor-pointer">ดูเพิ่มเติม</span>
         </p>
       </div>
+      
+      <div v-else class="mt-3 border-2 border-dashed border-[#3b82f6]/30 rounded-lg p-2 bg-[#f0f7ff]">
+        <p class="text-[#1e40af] text-[10px] font-medium truncate">
+          ส่งฟรีภายใน 3 ชั่วโมง... <span class="font-bold underline cursor-pointer">ดูเพิ่มเติม</span>
+        </p>
+      </div>
+      
     </div>
 
     <div class="mt-4 pt-4 border-t border-slate-50 relative">

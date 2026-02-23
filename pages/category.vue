@@ -1,7 +1,7 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <template>
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4">
-    <nav class="flex items-center gap-2 mb-4 px-4 text-sm font-medium">
+    <nav class="flex items-center gap-2 mb-10 px-4 text-sm font-medium">
       <NuxtLink to="/" class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors">
         <Icon icon="mdi:home-outline" class="w-4 h-4" />
         หน้าแรก
@@ -30,7 +30,7 @@
           </button>
         </div>
         
-        <nav class="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
+        <nav class="flex-1 overflow-y-auto p-3 pb-50 space-y-1 scrollbar-thin ">
           <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
             <div 
               class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1"
@@ -164,7 +164,7 @@
           <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
             <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
             <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ</p>
-            <button class="mt-2 text-[#0D95DA] text-sm font-bold" @click="resetFilters">ล้างการกรอง</button>
+            <button class="mt-2 text-[#0D95DA] text-sm font-bold underline decoration-dashed hover:cursor-pointer hover:text-primary" @click="resetFilters">ล้างการกรอง</button>
           </div>
 
           <template v-else>
@@ -291,20 +291,33 @@ const filteredProducts = computed(() => {
 const productsBySubTag = computed(() => {
   const groups: Record<string, Product[]> = {};
   
-  // If a specific tag is selected, only show that group
   if (activeSubTag.value !== 'ALL') {
     groups[activeSubTag.value] = filteredProducts.value;
     return groups;
   }
   
-  // Group by existing tags within the filtered result
+  // 1. จัดกลุ่มเหมือนเดิม
   filteredProducts.value.forEach(p => {
     const key = p.tag || 'อื่นๆ';
     if (!groups[key]) groups[key] = [];
     groups[key].push(p);
   });
-  
-  return groups;
+
+  // 2. แปลงเป็น Array เพื่อให้เรา Sort ลำดับได้เป๊ะๆ
+  // เราจะเรียงตามชื่อ Tag (เช่น "iPhone 16" จะมาก่อน "iPhone 15")
+  return Object.entries(groups)
+    .sort(([tagA], [tagB]) => {
+      // จัดการกรณี 'อื่นๆ' ให้ไปอยู่ท้ายสุดเสมอ
+      if (tagA === 'อื่นๆ') return 1;
+      if (tagB === 'อื่นๆ') return -1;
+      
+      // เรียงจากมากไปน้อย (Descending) เพื่อให้รุ่นใหม่ขึ้นก่อน
+      return tagB.localeCompare(tagA, undefined, { numeric: true, sensitivity: 'base' });
+    })
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {} as Record<string, Product[]>);
 });
 
 // 🟢 5. CATEGORY & TAG GENERATION
@@ -358,6 +371,7 @@ const resetFilters = () => {
   searchQuery.value = ''; 
   stockStatus.value = 'ทั้งหมด';
   activeSubTag.value = 'ALL';
+  activeSubCategory.value = 'iPhone';
 };
 
 // Dropdown Toggles
