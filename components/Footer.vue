@@ -4,8 +4,14 @@ import { Icon } from '@iconify/vue';
 <template>
   <footer class="bg-white border-t border-slate-300">
     <div
-      class="max-w-screen-2xl mx-auto px-6 lg:px-12 py-12 grid grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-4"
-    >
+        class="max-w-screen-2xl mx-auto
+       pl-8 pr-4 md:px-6 lg:px-12
+       py-12
+       grid grid-cols-1 
+       md:grid-cols-2
+       xl:grid-cols-[3fr_2fr_2fr_2fr_2fr]
+       gap-8"
+              >
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
@@ -30,7 +36,7 @@ import { Icon } from '@iconify/vue';
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ระบบการสั่งซื้อ</h3>
-          <div class="h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="mt-3 space-y-2">
             <li>สั่งซื้อสินค้า</li>
@@ -41,7 +47,7 @@ import { Icon } from '@iconify/vue';
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">รายงาน</h4>
-          <div class="h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="mt-3 space-y-2">
             <li>รายงานยอดขาย</li>
@@ -54,7 +60,7 @@ import { Icon } from '@iconify/vue';
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">การเงินและชำระเงิน</h3>
-          <div class="mt-1 h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>ชำระ / อัปโหลดหลักฐานโอน</li>
@@ -66,7 +72,7 @@ import { Icon } from '@iconify/vue';
           <h4 class="font-semibold mb-2 text-gray-900">
             สื่อการขายและโปรโมชั่น
           </h4>
-          <div class="mt-1 h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>โปรโมชั่น Dealers</li>
@@ -80,7 +86,7 @@ import { Icon } from '@iconify/vue';
       <div class="space-y-8">
         <div>
           <h3 class="font-semibold mb-2 text-gray-900">ติดตามสถานะและเคลม</h3>
-          <div class="mt-1 h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>ตรวจสอบสถานะการเคลม</li>
@@ -91,7 +97,7 @@ import { Icon } from '@iconify/vue';
 
         <div>
           <h4 class="font-semibold mb-2 text-gray-900">เงื่อนไข</h4>
-          <div class="mt-1 h-0.5 w-full bg-gray-200" />
+          <div class="mt-2 h-0.5 w-full max-w-xs bg-gray-200" />
 
           <ul class="space-y-2 mt-4">
             <li>เงื่อนไขการจัดส่ง</li>
@@ -101,7 +107,7 @@ import { Icon } from '@iconify/vue';
 
       <!-- Column 5 -->
       <div class="space-y-3">
-        <div class="flex flex-col space-y-3 lg:pl-10">
+        <div class="flex flex-col space-y-3 xl:pl-10">
           <h3 class="font-semibold text-gray-900">สอบถามข้อมูลเพิ่มเติม</h3>
 
           <p
