@@ -3,6 +3,7 @@ import { Icon } from '@iconify/vue';
 
 const data = useDashboard();
 const product = data.products;
+const isExpanded = ref(false);
 
 const route = useRoute();
 const slug = route.params.slug as string;
@@ -163,8 +164,8 @@ const handleNotifySubmit = async () => {
                                 :class="tier.class">
                                 <span class="text-sm font-bold text-slate-600">{{ tier.label }}</span>
                                 <span 
-                                    class="text-lg font-black"
-                                    :class="tier.label === 'SRP:' ? 'text-slate-800' : 'text-blue-600'">
+                                    class="text-lg font-black text-slate-900"
+                                >
                                     ฿{{ tier.price.toLocaleString() }}
                                 </span>
                             </div>
@@ -201,7 +202,7 @@ const handleNotifySubmit = async () => {
                                     ? 'bg-slate-200 text-slate-400 cursor-not-allowed shadow-none'
                                     : (!products?.stock || products.stock <= 0)
                                         ? 'bg-white text-slate-500 border-2 border-slate-300 hover:bg-blue-50'
-                                        : 'bg-[#0D95DA] text-white hover:bg-[#0b7cb5] shadow-lg shadow-blue-500/20 active:scale-[0.98]'
+                                        : 'bg-primary text-white hover:cursor-pointer shadow-lg shadow-blue-500/20 active:scale-[0.98]'
                             ]" @click="handleActionClick">
                             <template v-if="isOverStock">
                                 <Icon icon="mdi:alert-circle-outline" class="w-5 h-5" />
@@ -227,22 +228,41 @@ const handleNotifySubmit = async () => {
                     <button
                         class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
                 </div>
-                <div class="p-8 space-y-6">
-                    <h2 class="text-lg font-bold text-slate-800">รายละเอียดสินค้า {{ products?.name }}</h2>
-                    <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-                        {{ products?.specs }} <br><br>
-                        Powered by high-performance components designed for speed and reliability.
-                        This product includes standard manufacturer warranty coverage.
-                    </p>
-                    <div class="pt-4 border-t border-slate-100">
-                        <h3 class="font-bold text-slate-800 mb-4">Feature Highlights:</h3>
-                        <ul class="space-y-2 text-sm text-slate-600">
-                            <li v-for="feature in 5" :key="feature" class="flex items-center gap-2">
-                                <span class="w-1.5 h-1.5 bg-slate-300 rounded-full" />
-                                High-performance technology built for professional standards.
-                            </li>
-                        </ul>
+
+                <div 
+                    class="relative transition-all duration-500 ease-in-out"
+                    :class="[isExpanded ? 'max-h-500' : 'max-h-100 overflow-hidden']">
+
+                    <div class="p-8 space-y-6">
+                        <h2 class="text-lg font-bold text-slate-800">รายละเอียดสินค้า {{ products?.name }}</h2>
+                        <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+                            {{ products?.specs }} <br><br>
+                            Powered by high-performance components designed for speed and reliability.
+                            This product includes standard manufacturer warranty coverage.
+                        </p>
+
+                        <div class="pt-4 border-t border-slate-100">
+                            <h3 class="font-bold text-slate-800 mb-4">Feature Highlights:</h3>
+                            <ul class="space-y-2 text-sm text-slate-600">
+                                <li v-for="feature in 8" :key="feature" class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 bg-slate-300 rounded-full" />
+                                    High-performance technology built for professional standards.
+                                </li>
+                            </ul>
+                        </div>
                     </div>
+
+                    <div
+                        v-if="!isExpanded"
+                        class="absolute bottom-0 left-0 right-0 h-32 bg-linear-to-t from-white via-white/80 to-transparent z-10" />
+                </div>
+
+                <div class="p-4 flex justify-center bg-transparent">
+                    <button
+                        class="flex items-center gap-2  border border-slate-300 p-4 bg-slate-100 rounded-3xl text-slate-500 font-bold text-sm hover:text-[#0678B4] transition-colors"
+                        @click="isExpanded = !isExpanded">
+                        {{ isExpanded ? 'แสดงน้อยลง' : 'ดูรายละเอียดเพิ่มเติม' }}
+                    </button>
                 </div>
             </div>
         </div>
