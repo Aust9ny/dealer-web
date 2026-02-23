@@ -11,9 +11,9 @@ const footerType = computed(() => {
 });
 
 const mainPaddingClass = computed(() => {
-  if (footerType.value === 'address') return 'pb-32';
-  if (footerType.value === 'selected') return 'pb-22';
-  return 'pb-24';
+  if (footerType.value === 'address') return 'pb-44 md:pb-32';
+  if (footerType.value === 'selected') return 'pb-36 md:pb-22';
+  return 'pb-28 md:pb-24';
 });
 
 </script>
@@ -24,7 +24,7 @@ const mainPaddingClass = computed(() => {
 
     <Topbar />
 
-    <main :class="['pt-23', mainPaddingClass]">
+    <main :class="['pt-40 md:pt-23', mainPaddingClass]">
       <slot />
     </main>
 

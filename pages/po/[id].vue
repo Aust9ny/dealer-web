@@ -57,7 +57,7 @@ if (!po.value) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-100 p-2 md:p-4 pt-24 pb-32">
+  <div class="min-h-screen bg-slate-100 p-2 md:p-4 pt-2 md:pt-4 pb-40 md:pb-32">
     <div class="max-w-350 mx-auto w-full">
 
       <NuxtPage 
@@ -71,7 +71,5 @@ if (!po.value) {
       />
 
     </div>
-    
-    <AddressPOFooter :po-id="poId" />
   </div>
 </template>

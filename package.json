@@ -26,6 +26,7 @@
     "dotenv": "^17.2.3",
     "eslint": "^9.39.2",
     "nuxt": "^3.21.0",
+    "nuxt-viewport": "^2.4.0",
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "vue": "^3.5.27",
@@ -36,5 +37,8 @@
     "@nuxt/fonts": "^0.13.0",
     "@tailwindcss/vite": "^4.1.18",
     "@types/node": "^25.2.0"
+  },
+  "engines": {
+    "node": ">=20 <24"
   }
 }

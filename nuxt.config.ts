@@ -17,6 +17,17 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@nuxt/scripts',
     '@nuxt/test-utils',
-    '@nuxt/fonts'
-  ]
+    '@nuxt/fonts',
+    'nuxt-viewport'
+  ],
+  viewport: {
+    // ตั้งค่า breakpoints ตามที่คุณต้องการ (หรือใช้ค่าเริ่มต้น)
+    breakpoints: {
+      xs: 320,
+      sm: 640,
+      md: 768,
+      lg: 1024,
+      xl: 1280,
+    },
+  },
 });

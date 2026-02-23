@@ -1,41 +1,42 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { Icon } from '@iconify/vue';
 
 const props = defineProps<{
   items: unknown[];
   title?: string;
-  itemsPerRow?: number; 
+  itemsPerRow?: number;
   autoPlay?: boolean;
   showArrows?: boolean;
-  interval?: number | 5000;
+  interval?: number;
 }>();
 
 const visibleItems = ref(1);
 const currentIndex = ref(0);
 const isPaused = ref(false);
-const autoSlideTimer = ref<NodeJS.Timeout | null>(null);
+const autoSlideTimer = ref<ReturnType<typeof setInterval> | null>(null);
+const touchStart = ref(0);
+const touchEnd = ref(0);
+
 const shouldShowArrows = computed(() => props.showArrows !== false);
-// 1. Guard totalPages against undefined items
+
 const totalPages = computed(() => {
   if (!props.items) return 0;
   return Math.ceil(props.items.length / visibleItems.value);
 });
 
-// 2. Guard currentPage
 const currentPage = computed(() => {
   if (visibleItems.value === 0) return 0;
   return Math.floor(currentIndex.value / visibleItems.value);
 });
 
-// 3. Guard transformOffset
 const transformOffset = computed(() => {
   if (visibleItems.value === 0) return 0;
   return -(currentIndex.value * (100 / visibleItems.value));
 });
 
-// 4. Update next function to handle undefined
 const next = () => {
-  if (!props.items?.length) return; 
+  if (!props.items?.length) return;
   if (currentIndex.value + visibleItems.value < props.items.length) {
     currentIndex.value += visibleItems.value;
   } else {
@@ -43,7 +44,6 @@ const next = () => {
   }
 };
 
-// 5. Update prev function to handle undefined
 const prev = () => {
   if (!props.items?.length) return;
   if (currentIndex.value - visibleItems.value >= 0) {
@@ -53,8 +53,14 @@ const prev = () => {
   }
 };
 
+const handleTouchStart = (e: TouchEvent) => {
+  touchStart.value = e.targetTouches[0].clientX;
+  touchEnd.value = touchStart.value;
+  isPaused.value = true;
+};
 
 const updateVisibleItems = () => {
+  if (typeof window === 'undefined') return;
   const width = window.innerWidth;
   if (props.itemsPerRow === 1) {
     visibleItems.value = 1;
@@ -68,12 +74,26 @@ const updateVisibleItems = () => {
   }
 };
 
+const handleTouchMove = (e: TouchEvent) => {
+  touchEnd.value = e.targetTouches[0].clientX;
+};
+
+const handleTouchEnd = () => {
+  const swipeDistance = touchStart.value - touchEnd.value;
+  const threshold = 50;
+
+  if (swipeDistance > threshold) next();
+  else if (swipeDistance < -threshold) prev();
+
+  isPaused.value = false;
+};
+
 const startTimer = () => {
   if (!props.autoPlay) return;
   stopTimer();
   autoSlideTimer.value = setInterval(() => {
     if (!isPaused.value) next();
-  }, props.interval || 5000); 
+  }, props.interval || 5000);
 };
 
 const stopTimer = () => {
@@ -81,8 +101,8 @@ const stopTimer = () => {
 };
 
 const resetSlider = () => {
-  currentIndex.value = 0; // Reset to page 1
-  startTimer(); // Restart the 5s countdown
+  currentIndex.value = 0;
+  startTimer();
 };
 
 defineExpose({
@@ -103,25 +123,36 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div>
-    <div class="flex items-center justify-between mb-4 mx-14 ">
+  <div class="carousel-container">
+    <div class="flex items-center justify-between mb-4 md:mx-14 px-4 md:px-0">
       <slot name="header-action" />
     </div>
 
-    <div class="relative group" @mouseenter="isPaused = true" @mouseleave="isPaused = false">
-      <button v-if="totalPages > 1 && shouldShowArrows" class="nav-btn left-0" @click="prev()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M15 19l-7-7 7-7" /></svg>
+    <div
+      class="relative group"
+      @mouseenter="isPaused = true"
+      @mouseleave="isPaused = false"
+      @touchstart="handleTouchStart"
+      @touchmove="handleTouchMove"
+      @touchend="handleTouchEnd"
+    >
+      <button
+        v-if="totalPages > 1 && shouldShowArrows"
+        class="nav-btn left-0 hidden md:flex"
+        @click="prev()"
+      >
+        <Icon icon="mdi:chevron-left" class="w-6 h-6" />
       </button>
 
-      <div :class="['overflow-hidden rounded-2xl', visibleItems > 1 ? 'px-12' : 'px-0']">
-        <div 
+      <div :class="['overflow-hidden rounded-2xl transition-all', visibleItems > 1 ? 'md:px-12 px-2' : 'px-0']">
+        <div
           class="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
           :style="{ transform: `translateX(${transformOffset}%)` }"
         >
-          <div 
-            v-for="(item, index) in items" 
+          <div
+            v-for="(item, index) in items"
             :key="index"
-            class="flex-none p-2"
+            class="flex-none p-1 md:p-2"
             :style="{ width: `${100 / visibleItems}%` }"
           >
             <slot :item="item" />
@@ -129,16 +160,20 @@ onUnmounted(() => {
         </div>
       </div>
 
-      <button v-if="totalPages > 1 && shouldShowArrows" class="nav-btn right-0" @click="next()">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7" /></svg>
+      <button
+        v-if="totalPages > 1 && shouldShowArrows"
+        class="nav-btn right-0 hidden md:flex"
+        @click="next()"
+      >
+        <Icon icon="mdi:chevron-right" class="w-6 h-6" />
       </button>
     </div>
 
-    <div v-if="totalPages > 1 " class="flex justify-center gap-2 mt-8">
-      <button 
+    <div v-if="totalPages > 1" class="flex justify-center gap-1.5 mt-6 md:mt-8">
+      <button
         v-for="(_, i) in totalPages" :key="i"
         class="h-1.5 transition-all duration-300 rounded-full"
-        :class="currentPage === i ? 'w-10 bg-[#2196F3]' : 'w-2 bg-slate-300'"
+        :class="currentPage === i ? 'w-8 md:w-10 bg-[#2196F3]' : 'w-1.5 md:w-2 bg-slate-300'"
         @click="currentIndex = i * visibleItems"
       />
     </div>
@@ -150,23 +185,32 @@ onUnmounted(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 50;
-  padding: 1rem;
+  z-index: 30;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
   border-radius: 9999px;
   background-color: white;
-  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   color: #1e293b;
   opacity: 0;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
+
 .nav-btn:hover {
   background-color: #2196F3;
   color: white;
+  border-color: #2196F3;
 }
-.group:hover .nav-btn {
-  opacity: 1;
+
+@media (min-width: 768px) {
+  .group:hover .nav-btn {
+    opacity: 1;
+  }
 }
+
 .flex {
   backface-visibility: hidden;
   will-change: transform;

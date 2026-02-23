@@ -85,32 +85,39 @@ const getReadyToShipStatus = (item: any) => {
 
 <template>
   <div class="flex flex-col w-full min-h-screen">
-    <div class="w-full mb-6 px-1">
-      <nav class="flex items-center text-sm font-medium w-full">
-        <div class="flex items-center justify-between w-full">
-          <div class="flex items-center gap-1 border border-slate-200 bg-white p-3 rounded-lg">
-            <Icon
-              icon="mdi:chevron-right"
-              class="w-4 h-4 text-slate-300 rotate-180"
-            />
+<div class="w-full mb-4 md:mb-8 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl shadow-sm md:shadow-none">
+      <nav class="flex flex-col gap-4 w-full">
+        <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
+          
+          <div class="flex items-center gap-1 group">
+            <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
+              <Icon
+                icon="mdi:chevron-left"
+                class="w-5 h-5 text-slate-400 group-hover:text-[#0D95DA] transition-all"
+              />
+            </div>
             <button
-              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold uppercase  tracking-tight"
+              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
               @click="goBack"
             >
-              เลือกสินค้าเพิ่ม
+              ย้อนกลับไปจัดการที่อยู่
             </button>
           </div>
-          <div class="flex items-center justify-end">
-            <POStepper />
+
+          <div class="w-full md:w-auto flex justify-center md:justify-end pt-2 md:pt-0 border-t border-slate-100 md:border-none">
+            <div class="w-full max-w-[400px] md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
+              <POStepper />
+            </div>
           </div>
+
         </div>
       </nav>
     </div>
 
-    <div class="flex gap-3 items-start overflow-visible">
+    <div class="flex flex-col lg:flex-row gap-3 items-start overflow-visible">
       <aside
-        :class="[isSidebarOpen ? 'w-64 hover:w-80' : 'w-20']"
-        class="sticky top-24 h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-10 border-t-primary shadow-md shrink-0 "
+        :class="[isSidebarOpen ? 'lg:w-64 lg:hover:w-80' : 'lg:w-20']"
+        class="w-full lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-10 border-t-primary shadow-md shrink-0 "
       >
         <div
           class="p-4 flex justify-between items-center border-b h-16 shrink-0"
@@ -144,12 +151,12 @@ const getReadyToShipStatus = (item: any) => {
         </nav>
       </aside>
 
-      <main class="flex-1 flex flex-col min-w-0 gap-3 pb-32">
+      <main class="flex-1 flex flex-col min-w-0 gap-3 pb-6 md:pb-32">
         <div v-if="currentStep === 1">
-        <header class="bg-white border-b border-slate-200 p-4 shadow-sm rounded-2xl border-t-8 border-t-primary mb-3">
-          <div v-if="po" class="flex justify-between items-center px-2">
+        <header class="bg-white border-b border-slate-200 p-3 md:p-4 shadow-sm rounded-2xl border-t-8 border-t-primary mb-3">
+          <div v-if="po" class="flex flex-col lg:flex-row justify-between lg:items-center gap-3 px-1 md:px-2">
             
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 md:gap-4">
               <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 shrink-0">
                 <Icon icon="mdi:file-document-edit-outline" class="w-6 h-6 text-[#0D95DA]" />
               </div>
@@ -170,7 +177,7 @@ const getReadyToShipStatus = (item: any) => {
               </button>
             </div>
 
-            <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 md:gap-4">
               <button class="bg-white text-slate-500 border border-slate-200 px-4 py-2 rounded-lg text-[11px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all">
                 <Icon icon="mdi:magnify-scan" class="w-4 h-4" /> ตรวจสอบสต็อก
               </button>
@@ -341,7 +348,7 @@ const getReadyToShipStatus = (item: any) => {
             </div>
 
             <div
-              class="p-8 border-t border-slate-100 flex justify-end bg-white "
+              class="p-4 md:p-8 border-t border-slate-100 flex justify-end bg-white "
             >
               <div class="w-full max-w-md space-y-3 bg-white">
                 <div

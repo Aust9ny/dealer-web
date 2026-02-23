@@ -86,7 +86,7 @@ const handleNotifySubmit = async () => {
 
 <template>
     <div v-if="product" class="min-h-screen bg-[#F8F9FA] pb-20">
-        <div class="max-w-300 mx-auto px-4 py-4 flex items-center gap-2 text-[13px] text-slate-500">
+        <div class="max-w-300 mx-auto px-3 md:px-4 py-4 flex items-center gap-2 text-[12px] md:text-[13px] text-slate-500 overflow-x-auto whitespace-nowrap">
             <NuxtLink to="/" class="hover:text-blue-500">หน้าแรก</NuxtLink>
             <Icon icon="mdi:chevron-right" class="w-4 h-4" />
             <NuxtLink to="../category">
@@ -96,9 +96,9 @@ const handleNotifySubmit = async () => {
             <span class="truncate font-bold text-slate-800">{{ products?.name }}</span>
         </div>
 
-        <div class="max-w-300 mx-auto px-4">
-            <div class="bg-white border border-slate-200 rounded-2xl p-8 shadow-sm">
-                <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        <div class="max-w-300 mx-auto px-3 md:px-4">
+            <div class="bg-white border border-slate-200 rounded-2xl p-4 md:p-8 shadow-sm">
+                <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 md:gap-10">
                     <div class="lg:col-span-5 space-y-6">
                         <div class="lg:col-span-5 space-y-6">
                             <div
@@ -126,7 +126,7 @@ const handleNotifySubmit = async () => {
                                 </div>
                             </div>
 
-                            <div class="flex gap-3 justify-center">
+                            <div class="flex gap-2 md:gap-3 justify-center overflow-x-auto">
                                 <div 
                                     v-for="i in 5" :key="i"
                                     class="w-16 h-16 border rounded-lg p-1 cursor-pointer hover:border-blue-500 transition-all"
@@ -172,7 +172,7 @@ const handleNotifySubmit = async () => {
                         </div>
 
                         <div class="space-y-2">
-                            <div class="flex items-center gap-6 mt-32">
+                            <div class="flex items-center gap-3 md:gap-6 mt-8 md:mt-32">
                                 <div class="flex items-center">
                                     <span class="text-sm font-bold mr-4">จำนวนสั่ง:</span>
                                     <input 
@@ -188,7 +188,7 @@ const handleNotifySubmit = async () => {
                             <Transition 
                                 enter-active-class="transition duration-200 ease-out"
                                 enter-from-class="opacity-0 -translate-y-1" enter-to-class="opacity-100 translate-y-0">
-                                <p v-if="isOverStock" class="text-[11px] font-bold text-red-500 ml-25.25">
+                                <p v-if="isOverStock" class="text-[11px] font-bold text-red-500 ml-0 md:ml-25.25">
                                     * จำนวนสินค้าตอนนี้มีเพียง {{ products?.stock }} ชิ้น
                                 </p>
                             </Transition>
@@ -222,18 +222,18 @@ const handleNotifySubmit = async () => {
             </div>
 
             <div class="mt-6 bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div class="flex border-b">
+                <div class="flex border-b overflow-x-auto whitespace-nowrap">
                     <button
-                        class="px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
+                        class="px-4 md:px-8 py-4 border-b-2 border-blue-500 text-blue-500 font-bold text-sm">รายละเอียดสินค้า</button>
                     <button
-                        class="px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
+                        class="px-4 md:px-8 py-4 text-slate-400 font-bold text-sm hover:bg-slate-50 transition-colors">คุณสมบัติ</button>
                 </div>
 
                 <div 
                     class="relative transition-all duration-500 ease-in-out"
                     :class="[isExpanded ? 'max-h-500' : 'max-h-100 overflow-hidden']">
 
-                    <div class="p-8 space-y-6">
+                    <div class="p-4 md:p-8 space-y-6">
                         <h2 class="text-lg font-bold text-slate-800">รายละเอียดสินค้า {{ products?.name }}</h2>
                         <p class="text-sm text-slate-600 leading-relaxed whitespace-pre-line">
                             {{ products?.specs }} <br><br>

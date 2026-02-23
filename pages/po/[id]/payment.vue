@@ -69,32 +69,39 @@ const goBack = () => {
 
 <template>
   <div class="flex flex-col w-full">
-    <div class="w-full mb-6">
-      <nav class="flex items-center text-sm font-medium w-full">
-        <div class="flex items-center justify-between w-full">
-          <div class="flex items-center gap-1">
-            <Icon
-              icon="mdi:chevron-right"
-              class="w-4 h-4 text-slate-300 rotate-180"
-            />
+<div class="w-full mb-4 md:mb-8 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl shadow-sm md:shadow-none">
+      <nav class="flex flex-col gap-4 w-full">
+        <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
+          
+          <div class="flex items-center gap-1 group">
+            <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
+              <Icon
+                icon="mdi:chevron-left"
+                class="w-5 h-5 text-slate-400 group-hover:text-[#0D95DA] transition-all"
+              />
+            </div>
             <button
-              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold"
+              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
               @click="goBack"
             >
               ย้อนกลับไปจัดการที่อยู่
             </button>
           </div>
-          <div class="flex items-center justify-end">
-            <POStepper />
+
+          <div class="w-full md:w-auto flex justify-center md:justify-end pt-2 md:pt-0 border-t border-slate-100 md:border-none">
+            <div class="w-full max-w-[400px] md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
+              <POStepper />
+            </div>
           </div>
+
         </div>
       </nav>
     </div>
 
-    <div class="grid grid-cols-12 gap-6 items-start">
-      <div class="col-span-8 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-6 items-start">
+      <div class="lg:col-span-8 space-y-4 md:space-y-6">
         <div
-          class="bg-white rounded-xl p-10 border border-t-10 border-t-primary border-slate-200 shadow-sm text-center"
+          class="bg-white rounded-xl p-4 md:p-10 border border-t-10 border-t-primary border-slate-200 shadow-sm text-center"
         >
           <div class="max-w-sm mx-auto">
             <h2
@@ -112,13 +119,13 @@ const goBack = () => {
               <div
                 class="aspect-square bg-slate-100 rounded-xl flex items-center justify-center border-4 border-dashed border-slate-200"
               >
-                <Icon icon="mdi:qrcode-scan" class="w-32 h-32 text-slate-300" />
+                  <Icon icon="mdi:qrcode-scan" class="w-24 h-24 md:w-32 md:h-32 text-slate-300" />
               </div>
               <div
                 class="mt-4 flex items-center justify-center gap-2 text-red-500 font-black"
               >
                 <Icon icon="mdi:clock-outline" class="w-5 h-5" />
-                <span class="text-lg uppercase tracking-tighter"
+                    <span class="text-base md:text-lg uppercase tracking-tighter"
                   >หมดอายุใน: {{ timeLeft }}</span
                 >
               </div>
@@ -146,7 +153,7 @@ const goBack = () => {
         </div>
 
         <div
-          class="bg-white rounded-3xl p-8 border border-slate-200 shadow-sm opacity-60"
+          class="bg-white rounded-3xl p-4 md:p-8 border border-slate-200 shadow-sm opacity-60"
         >
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-4">
@@ -169,13 +176,13 @@ const goBack = () => {
         </div>
       </div>
 
-      <div class="col-span-4 sticky top-24">
-        <div class="col-span-4 sticky top-24">
+      <div class="lg:col-span-4 lg:sticky lg:top-24">
+        <div class="lg:col-span-4 lg:sticky lg:top-24">
           <div
             class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt"
           >
             <div
-              class="p-6 border-b border-slate-100 flex justify-between items-center bg-white border-t-10 border-t-primary"
+              class="p-4 md:p-6 border-b border-slate-100 flex justify-between items-center bg-white border-t-10 border-t-primary"
             >
               <div class="flex items-center gap-4">
                 <div
@@ -188,7 +195,7 @@ const goBack = () => {
                 </div>
                 <div>
                   <h3
-                    class="text-xl font-black text-slate-800 tracking-tighter uppercase"
+                    class="text-lg md:text-xl font-black text-slate-800 tracking-tighter uppercase"
                   >
                     #{{ po?.id }}
                   </h3>
@@ -206,7 +213,7 @@ const goBack = () => {
               </button>
             </div>
 
-            <div class="p-6 space-y-6">
+            <div class="p-4 md:p-6 space-y-6">
               <div
                 class="flex justify-between items-center border-b border-black pb-2"
               >
