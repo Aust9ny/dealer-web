@@ -5,23 +5,28 @@ import { Icon } from '@iconify/vue';
 import { watch, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const route = useRoute();
-const dropdownRef = ref<HTMLElement | null>(null);
 
 // 1️⃣ ปิดเมื่อเปลี่ยนหน้า
 watch(
   () => route.fullPath,
   () => {
     showAccountMenu.value = false;
-  }
+  },
 );
 
 // 2️⃣ ปิดเมื่อกดข้างนอก
 const handleClickOutside = (event: MouseEvent) => {
-  if (
-    showAccountMenu.value &&
-    dropdownRef.value &&
-    !dropdownRef.value.contains(event.target as Node)
-  ) {
+  const target = event.target as Node;
+
+  const clickedOutsideMobile =
+    mobileDropdownRef.value &&
+    !mobileDropdownRef.value.contains(target);
+
+  const clickedOutsideDesktop =
+    desktopDropdownRef.value &&
+    !desktopDropdownRef.value.contains(target);
+
+  if (showAccountMenu.value && clickedOutsideMobile && clickedOutsideDesktop) {
     showAccountMenu.value = false;
   }
 };
@@ -60,7 +65,7 @@ const goToLatestPO = () => {
 
 // 🟢 Auth & Dashboard Composables
 const { trendingProducts, banner1 } = useDashboard();
-const { currentUser, login, logout } = useAuth(); 
+const { currentUser, login, logout } = useAuth();
 
 const showAccountMenu = ref(false);
 const showSearchModal = ref(false);
@@ -69,7 +74,11 @@ const showSearchModal = ref(false);
 const roles = [
   { name: 'Technician', icon: 'mdi:tools', color: 'text-amber-500' },
   { name: 'Dealer', icon: 'mdi:storefront-outline', color: 'text-primary' },
-  { name: 'Franchise', icon: 'mdi:office-building-marker-outline', color: 'text-emerald-500' }
+  {
+    name: 'Franchise',
+    icon: 'mdi:office-building-marker-outline',
+    color: 'text-emerald-500',
+  },
 ] as const;
 
 // 🟢 Dynamic Initials from Auth State
@@ -94,11 +103,14 @@ const handleLogout = () => {
   logout();
   showAccountMenu.value = false;
 };
+
+const mobileDropdownRef = ref<HTMLElement | null>(null);
+const desktopDropdownRef = ref<HTMLElement | null>(null);
 </script>
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full h-23 bg-white flex items-center px-12 border-t-10 border-primary shadow-sm z-110"
+    class="fixed top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
   >
     <div
       v-if="showSearchModal"
@@ -114,7 +126,137 @@ const handleLogout = () => {
       </div>
     </NuxtLink>
 
-    <div class="flex-1 flex justify-center px-12 relative">
+    <div class="flex items-center gap-3 ml-auto md:hidden">
+      <!-- MOBILE VERSION -->
+      <button @click="activateSearch">
+        <Icon icon="mdi:magnify" class="w-6 h-6 text-gray-700" />
+      </button>
+
+      <button class="relative" @click="goToLatestPO">
+        <Icon icon="mdi:clipboard-text-outline" class="w-6 h-6 text-gray-700" />
+        <span
+          v-if="totalPO"
+          class="absolute -top-2 -right-2 w-4 h-4 text-[10px] bg-red-500 text-white rounded-full flex items-center justify-center"
+        >
+          {{ totalPO }}
+        </span>
+      </button>
+
+      <div class="flex md:hidden items-center gap-3 ml-auto">
+        <div ref="mobileDropdownRef" class="relative">
+          <button
+            class="flex items-center justify-center w-10 h-10 rounded-full bg-primary"
+            @click="showAccountMenu = !showAccountMenu"
+          >
+            <div
+              class="w-8 h-8 rounded-full bg-[#003E73] flex items-center justify-center text-white text-sm font-black"
+            >
+              {{ initials }}
+            </div>
+          </button>
+
+          <!-- MOBILE DROPDOWN -->
+          <div
+            v-if="showAccountMenu"
+            class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-[200]"
+            @click.stop
+          >
+            <!-- ชื่อผู้ใช้งาน -->
+            <div
+              v-if="currentUser"
+              class="px-4 py-3 bg-slate-50 border-b border-gray-100"
+            >
+              <p
+                class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
+              >
+                ชื่อผู้ใช้งาน
+              </p>
+              <p class="text-sm font-bold text-slate-800">
+                {{ currentUser.fname }} {{ currentUser.lname }}
+              </p>
+            </div>
+            <div class="p-2">
+              <p
+                class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest"
+              >
+                สลับสิทธิ์การเข้าชม (Mock)
+              </p>
+              <div
+                v-for="role in roles"
+                :key="role.name"
+                class="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all"
+                :class="[
+                  currentUser?.role === role.name
+                    ? 'bg-blue-50'
+                    : 'hover:bg-gray-50',
+                ]"
+                @click="handleSwitchRole(role.name)"
+              >
+                <Icon :icon="role.icon" class="w-5 h-5" :class="role.color" />
+                <div class="flex flex-col">
+                  <span
+                    class="text-xs font-bold"
+                    :class="
+                      currentUser?.role === role.name
+                        ? 'text-primary'
+                        : 'text-gray-700'
+                    "
+                    >{{ role.name }}</span
+                  >
+                  <span
+                    v-if="currentUser?.role === role.name"
+                    class="text-[9px] text-blue-400 font-medium italic"
+                    >กำลังใช้งาน</span
+                  >
+                </div>
+                <Icon
+                  v-if="currentUser?.role === role.name"
+                  icon="mdi:check-circle"
+                  class="ml-auto w-4 h-4 text-primary"
+                />
+              </div>
+            </div>
+
+            <div class="h-px bg-gray-100 mx-3 mt-1" />
+            <div class="py-1">
+              <div
+                class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+                @click="goToLatestPO"
+              >
+                <span>การสั่งซื้อของฉัน</span>
+                <span
+                  class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
+                  >{{ totalPO }}</span
+                >
+              </div>
+              <div
+                class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+              >
+                การเงินเเละการชำระเงิน
+              </div>
+
+              <NuxtLink
+                to="/Dealer_Profile"
+                class="block px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+                @click="showAccountMenu = false"
+              >
+                บัญชีของฉัน
+              </NuxtLink>
+
+              <div
+                class="px-4 py-3 text-sm text-red-500 font-bold cursor-pointer hover:bg-red-50 transition flex items-center gap-2"
+                @click="handleLogout"
+              >
+                <Icon icon="mdi:logout" class="w-4 h-4" />
+                ออกจากระบบ
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hidden md:flex flex-1 justify-center px-12 relative">
       <div class="relative w-full max-w-3xl z-100">
         <input
           type="text"
@@ -135,7 +277,7 @@ const handleLogout = () => {
       </div>
     </div>
 
-    <div class="flex items-center gap-4">
+    <div class="hidden md:flex items-center gap-4">
       <button
         class="flex items-center gap-2 px-5 h-10 rounded-full text-black bg-[#0D95DA]/10 border border-[#0D95DA] hover:bg-[#0D95DA]/20 transition"
         @click="goToLatestPO"
@@ -150,7 +292,7 @@ const handleLogout = () => {
 
       <div class="h-6 w-px bg-gray-300" />
 
-      <div ref="dropdownRef" class="relative">
+      <div ref="desktopDropdownRef" class="relative">
         <button
           class="flex items-center gap-3 pl-2 pr-4 h-11 rounded-full bg-primary hover:bg-[#004a85] transition min-w-40"
           @click="showAccountMenu = !showAccountMenu"
@@ -162,46 +304,98 @@ const handleLogout = () => {
           </div>
 
           <div class="flex flex-col items-start leading-tight">
-             <span class="text-[12px] font-bold text-white truncate max-w-25">
-                {{ currentUser?.fname || 'เข้าสู่ระบบ' }}
-             </span>
-             <span v-if="currentUser" class="text-[8px] bg-white/20 px-1.5 rounded text-white font-black uppercase tracking-tighter">
-                {{ currentUser.role }}
-             </span>
+            <span class="text-[12px] font-bold text-white truncate max-w-25">
+              {{ currentUser?.fname || "เข้าสู่ระบบ" }}
+            </span>
+            <span
+              v-if="currentUser"
+              class="text-[8px] bg-white/20 px-1.5 rounded text-white font-black uppercase tracking-tighter"
+            >
+              {{ currentUser.role }}
+            </span>
           </div>
 
-          <Icon icon="mdi:chevron-down" class="w-4 h-4 text-white transition-transform" :class="{'rotate-180': showAccountMenu}" />
+          <Icon
+            icon="mdi:chevron-down"
+            class="w-4 h-4 text-white transition-transform"
+            :class="{ 'rotate-180': showAccountMenu }"
+          />
         </button>
-        <div v-if="showAccountMenu" class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120">
-            <!-- ชื่อผู้ใช้งาน -->
-            <div v-if="currentUser" class="px-4 py-3 bg-slate-50 border-b border-gray-100">
-              <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">ชื่อผู้ใช้งาน</p>
-              <p class="text-sm font-bold text-slate-800">{{ currentUser.fname }} {{ currentUser.lname }}</p>
-            </div>
+        <div
+          v-if="showAccountMenu"
+          class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120"
+        >
+          <!-- ชื่อผู้ใช้งาน -->
+          <div
+            v-if="currentUser"
+            class="px-4 py-3 bg-slate-50 border-b border-gray-100"
+          >
+            <p
+              class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
+            >
+              ชื่อผู้ใช้งาน
+            </p>
+            <p class="text-sm font-bold text-slate-800">
+              {{ currentUser.fname }} {{ currentUser.lname }}
+            </p>
+          </div>
           <div class="p-2">
-            <p class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest">สลับสิทธิ์การเข้าชม (Mock)</p>
-            <div 
-              v-for="role in roles" :key="role.name"
+            <p
+              class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest"
+            >
+              สลับสิทธิ์การเข้าชม (Mock)
+            </p>
+            <div
+              v-for="role in roles"
+              :key="role.name"
               class="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all"
-              :class="[currentUser?.role === role.name ? 'bg-blue-50' : 'hover:bg-gray-50']"
+              :class="[
+                currentUser?.role === role.name
+                  ? 'bg-blue-50'
+                  : 'hover:bg-gray-50',
+              ]"
               @click="handleSwitchRole(role.name)"
             >
               <Icon :icon="role.icon" class="w-5 h-5" :class="role.color" />
               <div class="flex flex-col">
-                <span class="text-xs font-bold" :class="currentUser?.role === role.name ? 'text-primary' : 'text-gray-700'">{{ role.name }}</span>
-                <span v-if="currentUser?.role === role.name" class="text-[9px] text-blue-400 font-medium italic">กำลังใช้งาน</span>
+                <span
+                  class="text-xs font-bold"
+                  :class="
+                    currentUser?.role === role.name
+                      ? 'text-primary'
+                      : 'text-gray-700'
+                  "
+                  >{{ role.name }}</span
+                >
+                <span
+                  v-if="currentUser?.role === role.name"
+                  class="text-[9px] text-blue-400 font-medium italic"
+                  >กำลังใช้งาน</span
+                >
               </div>
-              <Icon v-if="currentUser?.role === role.name" icon="mdi:check-circle" class="ml-auto w-4 h-4 text-primary" />
+              <Icon
+                v-if="currentUser?.role === role.name"
+                icon="mdi:check-circle"
+                class="ml-auto w-4 h-4 text-primary"
+              />
             </div>
           </div>
 
           <div class="h-px bg-gray-100 mx-3 mt-1" />
           <div class="py-1">
-            <div class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition" @click="goToLatestPO">
+            <div
+              class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+              @click="goToLatestPO"
+            >
               <span>การสั่งซื้อของฉัน</span>
-              <span class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">{{ totalPO }}</span>
+              <span
+                class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
+                >{{ totalPO }}</span
+              >
             </div>
-            <div class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition">
+            <div
+              class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
+            >
               การเงินเเละการชำระเงิน
             </div>
 
@@ -221,7 +415,6 @@ const handleLogout = () => {
               ออกจากระบบ
             </div>
           </div>
-          
         </div>
       </div>
     </div>

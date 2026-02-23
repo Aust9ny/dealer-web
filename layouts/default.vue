@@ -24,7 +24,7 @@ const mainPaddingClass = computed(() => {
 
     <Topbar />
 
-    <main :class="['pt-23', mainPaddingClass]">
+    <main :class="['pt-16 md:pt-23', mainPaddingClass]">
       <slot />
     </main>
 
