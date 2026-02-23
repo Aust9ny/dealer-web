@@ -1,6 +1,6 @@
 <template>
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4">
-    <nav class="flex items-center gap-2 mb-4 px-4 text-sm font-medium">
+    <nav class="flex items-center gap-2 mb-4 px-2 md:px-4 text-xs md:text-sm font-medium overflow-x-auto whitespace-nowrap">
       <NuxtLink to="/" class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors">
         <Icon icon="mdi:home-outline" class="w-4 h-4" />
         หน้าแรก
@@ -17,8 +17,8 @@
       </template>
     </nav>
 
-    <div class="flex flex-1 gap-3 items-start">
-      <aside :class="[isSidebarOpen ? 'w-64' : 'w-20']" class="sticky top-4 h-[calc(100vh-60px)] bg-white text-black transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden">
+    <div class="flex flex-1 flex-col lg:flex-row gap-3 items-start">
+      <aside :class="[isSidebarOpen ? 'lg:w-64' : 'lg:w-20']" class="w-full lg:sticky lg:top-4 lg:h-[calc(100vh-60px)] bg-white text-black transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden">
         <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
           <span v-if="isSidebarOpen" class="font-bold truncate text-[#0D95DA]">Advice Catalog</span>
           <button class="hover:bg-slate-100 p-1.5 rounded-lg transition-colors ml-1" @click="isSidebarOpen = !isSidebarOpen">
@@ -46,8 +46,8 @@
       </aside>
 
       <main class="flex-1 flex flex-col min-w-0 gap-1 pb-10">
-        <header class="bg-white border-b border-slate-200 p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-2">
-          <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
+        <header class="bg-white border-b border-slate-200 p-4 md:p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-0 lg:mr-2">
+          <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mb-6 border-b border-slate-200 pb-4">
             <div class="flex items-baseline gap-2">
               <h2 class="text-xl font-bold text-slate-800">
                 {{ activeCategoryName }} <span v-if="activeSubCategory" class="text-[#0D95DA]"/>
@@ -55,7 +55,7 @@
               <span class="text-slate-400 text-xs">({{ filteredProducts.length }} รายการ)</span>
             </div>
             
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3">
               <button class="p-2 text-slate-400 hover:bg-slate-50 rounded-lg border border-slate-200">
                 <Icon icon="mdi:printer-outline" class="w-5 h-5" />
               </button>
@@ -81,13 +81,13 @@
 
           <div class="space-y-4">
             <div class="flex items-center gap-2"><span class="font-bold text-slate-800">รุ่น / ซีรีส์:</span></div>
-            <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-300">
-              <button :class="[activeSubTag === 'ALL' ? 'bg-[#2D5A9E] text-white' : 'bg-white text-slate-500 border-slate-200']" class="px-5 py-2 rounded-full text-sm font-medium border transition-all" @click="activeSubTag = 'ALL'"> ALL </button>
-              <button v-for="tag in currentSubCatTags" :key="tag" :class="[activeSubTag === tag ? 'bg-[#2D5A9E] text-white' : 'bg-white text-slate-500 border-slate-200']" class="px-5 py-2 rounded-full text-sm border transition-all" @click="activeSubTag = tag"> {{ tag }} </button>
+            <div class="flex flex-wrap gap-2 md:gap-3 pb-6 border-b border-slate-300">
+              <button :class="[activeSubTag === 'ALL' ? 'bg-[#2D5A9E] text-white' : 'bg-white text-slate-500 border-slate-200']" class="px-3 md:px-5 py-2 rounded-full text-xs md:text-sm font-medium border transition-all" @click="activeSubTag = 'ALL'"> ALL </button>
+              <button v-for="tag in currentSubCatTags" :key="tag" :class="[activeSubTag === tag ? 'bg-[#2D5A9E] text-white' : 'bg-white text-slate-500 border-slate-200']" class="px-3 md:px-5 py-2 rounded-full text-xs md:text-sm border transition-all" @click="activeSubTag = tag"> {{ tag }} </button>
             </div>
           </div>
 
-          <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
+          <div class="mt-6 flex flex-col md:flex-row justify-between md:items-center gap-4">
             <div class="relative w-full max-w-md">
               <input 
                 v-model="searchQuery" 
@@ -97,9 +97,9 @@
               >
               <Icon icon="mdi:magnify" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             </div>
-            <div class="flex items-center gap-3">
+            <div class="flex items-center gap-2 md:gap-3 w-full md:w-auto">
               <span class="text-sm text-slate-600 font-medium">สถานะสินค้า:</span>
-              <div class="relative min-w-35">
+              <div class="relative min-w-0 w-full md:min-w-35">
                 <select 
                   v-model="stockStatus" 
                   class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[#0D95DA]"
@@ -114,8 +114,8 @@
           </div>
         </header>
 
-        <section class="mr-2 mt-2">
-          <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200 mr-2">
+        <section class="mr-0 lg:mr-2 mt-2">
+          <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-14 md:py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200 mr-0 lg:mr-2">
             <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
             <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ ลองเปลี่ยนคำค้นหาใหม่ดูนะ</p>
             <button 
@@ -142,13 +142,11 @@
         </section>
       </main>
     </div>
-    <SelectedPOFooter />
   </div>
 </template>
 
 <script setup>
 import { Icon } from '@iconify/vue';
-import SelectedPOFooter from '@/components/SelectedPOFooter.vue';
 
 // 🟢 2. UI STATES
 const isSidebarOpen = ref(true);

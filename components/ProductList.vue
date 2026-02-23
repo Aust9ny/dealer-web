@@ -66,7 +66,7 @@ onUnmounted(() => {
 
 <template>
   <div class="product-list-section py-4">
-<div class="flex flex-wrap items-start justify-between gap-x-6 gap-y-4 mx-4 md:mx-14 mb-8">
+<div class="flex flex-wrap items-start justify-between gap-x-3 md:gap-x-6 gap-y-3 md:gap-y-4 mx-3 md:mx-14 mb-6 md:mb-8">
       
       <div class="w-full lg:w-100 shrink-0">
         <h2 class="text-xl md:text-2xl font-bold text-slate-800 leading-tight">
@@ -74,7 +74,7 @@ onUnmounted(() => {
         </h2>
       </div>
 
-      <div v-if="categories.length > 1" class="flex flex-wrap items-start justify-between lg:justify-end gap-2 flex-1">
+      <div v-if="categories.length > 1" class="flex flex-wrap items-start justify-start lg:justify-end gap-2 flex-1">
         <button 
           v-for="cat in categories" 
           :key="cat"
@@ -90,8 +90,8 @@ onUnmounted(() => {
           {{ cat }}
         </button>
       </div>
-              <NuxtLink to="category">
-                <button class="group flex items-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-full border border-slate-300 hover:border-[#2196F3] transition-all active:scale-95 whitespace-nowrap">
+              <NuxtLink to="category" class="w-full sm:w-auto">
+                <button class="w-full sm:w-auto group flex items-center justify-center gap-2 px-4 py-2 text-sm font-semibold text-slate-400 hover:text-[#2196F3] rounded-full border border-slate-300 hover:border-[#2196F3] transition-all active:scale-95 whitespace-nowrap">
                   <span>ดูทั้งหมด</span>
                   <svg class="w-4 h-4 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />

@@ -63,7 +63,7 @@ const handleNotifySubmit = async () => {
 <template>
     <div class="w-full mb-1">
         <button
-            class="sticky top-23 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-4 py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
+            class="sticky top-35 md:top-23 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
             @click="emit('toggle')">
             <div class="flex space-x-1 w-full text-sm items-center">
                 <span class="text-slate-800 font-bold">{{ label || activeSubTag }}</span>
@@ -83,12 +83,12 @@ const handleNotifySubmit = async () => {
                     <table class="w-full min-w-300 text-left border-separate border-spacing-0 table-fixed">
                         <thead class="bg-slate-50 sticky top-0 z-30">
                             <tr class="text-[12px] uppercase tracking-tighter text-slate-500 font-black">
-                                <th
-                                    class="p-3 w-20 text-center sticky left-0 z-40 bg-slate-50 border-b border-r border-slate-200">
-                                    รูปสินค้า</th>
-                                <th
-                                    class="p-3 w-62.5 sticky left-20 z-40 bg-slate-50 border-b border-r border-slate-200 shadow-[2px_0_0_0_#e2e8f0]">
-                                    ชื่อสินค้า</th>
+                                <th class="p-3 w-20 text-center sticky left-0 z-40 bg-slate-50 border-b border-r border-slate-200">
+                                    รูปสินค้า
+                                </th>
+                                <th class="p-3 w-62.5 md:sticky md:left-20 z-40 bg-slate-50 border-b border-r border-slate-200 md:shadow-[2px_0_0_0_#e2e8f0]">
+                                    ชื่อสินค้า
+                                </th>
                                 <th class="p-3 w-auto bg-slate-50 border-b border-r border-slate-200">รายละเอียด</th>
                                 <th class="p-3 w-30 text-center bg-slate-50 border-b border-r border-slate-200">
                                     ประกัน</th>
@@ -124,7 +124,7 @@ const handleNotifySubmit = async () => {
                                 </td>
 
                                 <td
-                                    class="p-3 font-bold sticky left-20 z-20 bg-white group-hover:bg-slate-50 border-b border-r border-slate-200 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
+                                    class="p-3 font-bold md:sticky left-20 z-20 bg-white group-hover:bg-slate-50 border-b border-r border-slate-200 shadow-[4px_0_8px_-4px_rgba(0,0,0,0.1)]">
                                     <NuxtLink :to="getProductUrl(product)" class="hover:scale-105 active:scale-95">
                                         <div class="whitespace-normal line-clamp-2">{{ product.name }}</div>
                                         <div class="gap-1 flex flex-wrap mt-1">
@@ -189,7 +189,7 @@ const handleNotifySubmit = async () => {
                         </tbody>
                     </table>
                 </div>
-                <div v-else class="p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+                <div v-else class="p-4 md:p-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
                     <ProductCard v-for="product in products" :key="product.id" :product="product" view-mode="grid" />
                 </div>
             </div>

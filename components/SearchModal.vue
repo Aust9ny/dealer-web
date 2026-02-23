@@ -1,22 +1,22 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-22 z-140 flex items-start justify-center pt-2"
+    class="fixed left-0 right-0 bottom-0 top-36 md:top-22 z-140 flex items-start justify-center px-2 pb-2"
   >
     <!-- Overlay -->
     <div class="absolute inset-0" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-425 max-w-[98vw] h-[80vh] overflow-hidden bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
+      class="relative w-full md:w-425 max-w-[98vw] h-[calc(100vh-10rem)] md:h-[80vh] overflow-hidden bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
     >
-      <div class="grid grid-cols-12 min-h-105 max-h-[80vh]">
+      <div class="grid grid-cols-1 md:grid-cols-12 min-h-full max-h-full overflow-y-auto md:overflow-hidden">
         <!-- Col 1 -->
-        <div class="col-span-3 relative flex flex-col">
-          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
+        <div class="md:col-span-3 relative flex flex-col border-b md:border-b-0">
+          <div class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
 
           <!-- Trending -->
-          <div class="p-5">
+          <div class="p-4 md:p-5">
             <div class="text-[15px] font-bold text-gray-900 mb-4">
               📈 เทรนด์การค้นหาช่วงนี้
             </div>
@@ -39,12 +39,12 @@
           </div>
 
           <!-- เส้นคั่น -->
-          <div class="px-5">
+          <div class="px-4 md:px-5">
             <div class="h-px w-4/4 bg-gray-400"/>
           </div>
 
           <!-- History -->
-          <div class="p-5">
+          <div class="p-4 md:p-5">
             <div class="flex items-center justify-between mb-4">
               <div class="text-[15px] font-bold text-gray-900">
                 🕘 ประวัติที่คุณเคยค้นหา
@@ -75,12 +75,12 @@
         </div>
 
         <!-- Col 2 : Products -->
-        <div class="col-span-5 col-start-4 relative flex flex-col max-h-[80vh]">
-          <div class="absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
+        <div class="md:col-span-5 md:col-start-4 relative flex flex-col md:max-h-[80vh] border-b md:border-b-0">
+          <div class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
 
           <!-- Header -->
           <div
-            class="flex items-center justify-between px-6 pt-6 pb-4 shrink-0"
+            class="flex items-center justify-between px-4 md:px-6 pt-4 md:pt-6 pb-4 shrink-0"
           >
             <div class="text-[16px] font-bold text-gray-900">
               🔥 สินค้าที่เป็นเทรนด์ตอนนี้
@@ -93,15 +93,15 @@
           </div>
 
           <!-- Product List -->
-          <div class="flex-1 overflow-y-auto px-4 pb-6">
+          <div class="flex-1 overflow-y-auto px-3 md:px-4 pb-4 md:pb-6">
             <div
               v-for="product in trendingProducts"
               :key="product.id"
-              class="flex gap-4 px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
+              class="flex flex-col sm:flex-row gap-3 md:gap-4 px-2 md:px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
             >
               <!-- Image -->
               <div
-                class="w-24 h-24 flex items-center justify-center bg-gray-50 rounded-lg"
+                class="w-full sm:w-24 h-32 sm:h-24 flex items-center justify-center bg-gray-50 rounded-lg"
               >
                 <img :src="product.image" class="max-h-20 object-contain">
               </div>
@@ -132,7 +132,7 @@
 
                 <!-- RIGHT : Price -->
                 <div
-                  class="flex flex-col items-end justify-between text-right min-w-42.5"
+                class="flex flex-col items-start sm:items-end justify-between text-left sm:text-right min-w-0 sm:min-w-42.5"
                 >
                   <div class="flex flex-col items-end gap-1">
                     <!-- Current Price -->
@@ -180,7 +180,7 @@
 
         <!-- Col 3 : Banner -->
 
-        <div class="col-span-4 col-start-9 p-5 flex flex-col max-h-[80vh]">
+        <div class="md:col-span-4 md:col-start-9 p-4 md:p-5 flex flex-col md:max-h-[80vh]">
           <!-- Header -->
 
           <div class="flex items-center justify-between mb-5 shrink-0">
@@ -195,7 +195,7 @@
             </button>
           </div>
 
-          <div class="overflow-y-auto space-y-3 pr-2">
+          <div class="overflow-y-auto space-y-3 pr-0 md:pr-2">
             <a
               v-for="banner in banners"
               :key="banner.id"

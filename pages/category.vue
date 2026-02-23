@@ -1,233 +1,9 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
-<template>
-  <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4">
-    <nav class="flex items-center gap-2 mb-10 px-4 text-sm font-medium">
-      <NuxtLink to="/" class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors">
-        <Icon icon="mdi:home-outline" class="w-4 h-4" />
-        หน้าแรก
-      </NuxtLink>
-      <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
-      <span class="text-slate-500">หมวดหมู่สินค้า</span>
-      <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
-      <span :class="[activeSubCategory ? 'text-slate-500' : 'text-[#0D95DA] ']">
-        {{ activeCategoryName }}
-      </span>
-      <template v-if="activeSubCategory">
-        <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
-        <span class="text-[#0D95DA] ">{{ activeSubCategory }}</span>
-      </template>
-    </nav>
-
-    <div class="flex flex-1 gap-3 items-start overflow-visible">
-      <aside 
-        :class="[isSidebarOpen ? 'w-64' : 'w-20']"
-        class="sticky top-4 h-[calc(100vh-60px)] bg-white text-black transition-all duration-300 flex flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden"
-      >
-        <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
-          <span v-if="isSidebarOpen" class="font-bold truncate text-black">หมวดหมู่สินค้า</span>
-          <button class="hover:bg-slate-100 p-1.5 rounded-lg transition-colors ml-1" @click="isSidebarOpen = !isSidebarOpen">
-            <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
-          </button>
-        </div>
-        
-        <nav class="flex-1 overflow-y-auto p-3 pb-50 space-y-1 scrollbar-thin ">
-          <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
-            <div 
-              class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1"
-              :class="[
-                activeCategory === cat.id ? 'text-primary font-bold' : ' text-slate-900',
-                !isSidebarOpen ? 'justify-center p-2' : 'justify-between'
-              ]"
-              @click="toggleCategory(cat, $event)" 
-            >
-              <div 
-                class="flex items-center w-full"
-                :class="[!isSidebarOpen ? 'justify-center' : 'gap-3']"
-              >
-                <div 
-                  class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full transition-all duration-300 "
-                  :class="[
-                    activeCategory === cat.id 
-                      ? 'bg-primary text-white shadow-blue-500/20' 
-                      : ' text-slate-400 group-hover:bg-slate-100'
-                  ]"
-                >
-                  <span class="text-xl">{{ cat.icon }}</span>
-                </div>
-
-                <span v-if="isSidebarOpen" class="font-medium whitespace-nowrap">{{ cat.name }}</span>
-              </div>
-
-              <Icon 
-                v-if="isSidebarOpen" 
-                icon="mdi:chevron-down" 
-                class="w-4 h-4 transition-transform duration-200 opacity-50" 
-                :class="{ 'rotate-180': activeCategory === cat.id }" 
-              />
-            </div>
-            
-            <transition 
-              enter-active-class="transition-all duration-300 ease-out" 
-              enter-from-class="max-h-0 opacity-0" enter-to-class="max-h-64 opacity-100" 
-              leave-active-class="transition-all duration-200 ease-in"
-              leave-from-class="max-h-64 opacity-100" leave-to-class="max-h-0 opacity-0"
-            >
-              <div v-if="activeCategory === cat.id && isSidebarOpen" class="overflow-hidden bg-white mb-2">
-                <div 
-                  v-for="sub in cat.subCats" :key="sub"
-                  class="py-2.5 pl-12 pr-4 text-sm transition-colors font-semibold relative cursor-pointer hover:text-black hover:bg-slate-50"
-                  :class="{ 'text-primary bg-bg-active': activeSubCategory === sub, 'text-slate-400': activeSubCategory !== sub }"
-                  @click="selectSubCategory(cat.id, sub)"
-                >
-                  {{ sub }}
-                </div>
-              </div>
-            </transition>
-          </div>
-        </nav>
-      </aside>
-
-      <main class="flex-1 flex flex-col min-w-0 gap-1 pb-10">
-        <header class="bg-white border-b border-slate-200 p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-2">
-          <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
-            <div class="flex items-baseline gap-2">
-              <h2 class="text-xl text-slate-800">{{ activeSubCategory || activeCategoryName }}</h2>
-              <span class="text-slate-400 text-xs">({{ filteredProducts.length }} รายการ)</span>
-            </div>
-
-            <div class="flex items-center gap-3">
-              <button class="p-2 text-slate-400 hover:bg-slate-50 rounded-lg border border-slate-200">
-                <Icon icon="mdi:printer-outline" class="w-5 h-5" />
-              </button>
-              <div class="h-8 w-px bg-slate-200 mx-1" />
-              <button 
-                class="p-2 transition-all rounded-lg border"
-                :class="[viewMode === 'grid' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']"
-                @click="viewMode = 'grid'"
-              >
-                <Icon icon="mdi:view-grid-outline" class="w-5 h-5" />
-              </button>
-              <button 
-                class="p-2 transition-all rounded-lg border"
-                :class="[viewMode === 'list' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']"
-                @click="viewMode = 'list'"
-              >
-                <Icon icon="mdi:format-list-bulleted" class="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-4">
-            <div class="flex items-center gap-2"><span class=" text-slate-800 text-md text-semibold">รุ่น / ซีรีส์:</span></div>
-            <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
-              <button
-                :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500 hover:bg-slate-50']"
-                class="px-5 py-2 rounded-full text-md border transition-all " 
-                @click="activeSubTag = 'ALL'"
-              >
-                ALL
-              </button>
-              <button 
-                v-for="tag in currentSubCatTags" :key="tag"
-                :class="[activeSubTag === tag ? 'bg-primary text-white' : 'bg-white text-slate-500  hover:bg-slate-50']"
-                class="px-5 py-2 rounded-full text-md  border transition-all " 
-                @click="activeSubTag = tag"
-              > 
-                {{ tag }}
-              </button>
-            </div>
-          </div>
-
-          <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="relative w-full max-w-md">
-              <input 
-                v-model="searchQuery" type="text" placeholder="ค้นหาชื่อสินค้า..."
-                class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm"
-              >
-              <Icon icon="mdi:magnify" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-            </div>
-            <div class="flex items-center gap-3">
-              <span class="text-sm text-slate-600 font-medium">สถานะสินค้า:</span>
-              <div class="relative min-w-35">
-                <select v-model="stockStatus" class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none">
-                  <option>ทั้งหมด</option>
-                  <option>มีของ</option>
-                  <option>ของหมด</option>
-                </select>
-                <Icon icon="mdi:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
-              </div>
-            </div>
-          </div>
-        </header>
-
-        <section class="mr-2 mt-2">
-          <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-            <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
-            <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ</p>
-            <button class="mt-2 text-[#0D95DA] text-sm font-bold underline decoration-dashed hover:cursor-pointer hover:text-primary" @click="resetFilters">ล้างการกรอง</button>
-          </div>
-
-          <template v-else>
-            <div class="space-y-4">
-              <div v-for="(taggedProducts, tagName) in productsBySubTag" :key="tagName">
-                <ProductDropdown 
-                  :label="tagName" :products="taggedProducts" :view-mode="viewMode"
-                  :is-open="dropdownStates[tagName]" @toggle="toggleDropdown(tagName)" 
-                />
-              </div>
-            </div>
-          </template>
-        </section>
-      </main>
-    </div>
-
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0 -translate-x-2" enter-to-class="opacity-100 translate-x-0"
-      leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100 translate-x-0" leave-to-class="opacity-0 -translate-x-2"
-    >
-      <div v-if="isQuickSelectOpen" class="fixed inset-0 z-100 bg-transparent" @click.self="isQuickSelectOpen = false">
-        <div 
-          class="absolute left-22 bg-white w-72 rounded-3xl shadow-[0_10px_40px_rgba(0,0,0,0.15)] border border-slate-200 flex flex-col"
-          :style="isFlipped ? { bottom: `${flyoutOffset}px` } : { top: `${flyoutOffset}px` }"
-        >
-          <div class="p-4 border-b border-slate-50 flex items-center justify-between bg-slate-50/80 rounded-t-3xl">
-            <div class="flex items-center gap-3">
-              <span class="text-xl">{{ tempCategory?.icon }}</span>
-              <div>
-                <h3 class="text-slate-800 text-xs text-semibold">{{ tempCategory?.name }}</h3>
-              </div>
-            </div>
-            <button class="p-1 hover:bg-white rounded-lg text-slate-400" @click="isQuickSelectOpen = false">
-              <Icon icon="mdi:close" class="w-4 h-4" />
-            </button>
-          </div>
-
-          <div class="p-2 max-h-[45vh] overflow-y-auto space-y-1 scrollbar-thin text-semibold">
-            <button
-              v-for="sub in tempCategory?.subCats" :key="sub"
-              class="w-full p-3 rounded-xl text-left flex items-center justify-between group transition-all hover:bg-slate-50"
-              :class="{ 'bg-blue-50 text-primary': activeSubCategory === sub }"
-              @click="handleModalSelect(tempCategory.id, sub)"
-            >
-              <span class="text-xs ">{{ sub }}</span>
-              <Icon icon="mdi:chevron-right" class="w-4 h-4 text-[#0D95DA] opacity-0 group-hover:opacity-100 transition-all" />
-            </button>
-          </div>
-          
-          <div class="absolute -left-1.5 w-3 h-3 bg-white rotate-45 border-l border-b border-slate-200" :class="isFlipped ? 'bottom-6' : 'top-6'" />
-        </div>
-      </div>
-    </Transition>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import type { Product } from '@/types/product'; // 🟢 Use real interface
+import type { Product } from '@/types/product';
 
-// 🟢 1. REFINED STATES
+// 🟢 STATES & REFS
 const isSidebarOpen = ref(true);
 const activeCategory = ref<number>(1);
 const activeSubCategory = ref<string>('iPhone');
@@ -235,9 +11,7 @@ const activeSubTag = ref<string>('ALL');
 const globalLoading = useState('global-loading', () => false);
 const viewMode = ref<'grid' | 'list'>('list');
 
-// UI States
 const isQuickSelectOpen = ref(false);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const tempCategory = ref<any>(null);
 const flyoutOffset = ref(0);
 const isFlipped = ref(false);
@@ -245,115 +19,111 @@ const isFlipped = ref(false);
 const searchQuery = ref('');
 const stockStatus = ref<'ทั้งหมด' | 'มีของ' | 'ของหมด'>('ทั้งหมด');
 
-// 🟢 2. DATA SOURCE
-const { products } = useDashboard(); // Assuming this returns Ref<Product[]>
+const { products } = useDashboard();
 
-// 🟢 3. REFACTORED SEARCH & FILTER ENGINE
+// 🟢 COMPUTED: FILTERING
 const filteredProducts = computed(() => {
   let result = [...products.value];
-
-  // 1. Filter by Sub-Category (e.g., 'iPhone', 'CPU')
   if (activeSubCategory.value) {
-    result = result.filter(p => 
-      p.category?.toLowerCase() === activeSubCategory.value.toLowerCase()
+    result = result.filter(
+      (p) =>
+        p.category?.toLowerCase() === activeSubCategory.value.toLowerCase(),
     );
   }
-
-  // 2. Filter by Series Tag (e.g., 'iPhone 15', 'Ryzen 7')
   if (activeSubTag.value !== 'ALL') {
-    result = result.filter(p => p.tag === activeSubTag.value);
+    result = result.filter((p) => p.tag === activeSubTag.value);
   }
-
-  // 3. Multi-Field Real Search
   if (searchQuery.value) {
-    const query = searchQuery.value.toLowerCase();
-    result = result.filter(p => 
-      p.name.toLowerCase().includes(query) || 
-      p.sku.toLowerCase().includes(query) || 
-      p.brand.toLowerCase().includes(query) ||
-      p.specs.toLowerCase().includes(query)
+    const q = searchQuery.value.toLowerCase();
+    result = result.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.sku.toLowerCase().includes(q) ||
+        p.brand.toLowerCase().includes(q),
     );
   }
-
-  // 4. Stock Status Filter using real 'stock' property
   if (stockStatus.value !== 'ทั้งหมด') {
-    if (stockStatus.value === 'มีของ') {
-      result = result.filter(p => (p.stock ?? 0) > 0);
-    } else {
-      result = result.filter(p => (p.stock ?? 0) === 0);
-    }
+    result = result.filter((p) =>
+      stockStatus.value === 'มีของ' ? (p.stock ?? 0) > 0 : (p.stock ?? 0) === 0,
+    );
   }
-
   return result;
 });
 
-// 🟢 4. DYNAMIC GROUPING BY TAG
+// 🟢 COMPUTED: GROUPING
 const productsBySubTag = computed(() => {
   const groups: Record<string, Product[]> = {};
-  
-  if (activeSubTag.value !== 'ALL') {
-    groups[activeSubTag.value] = filteredProducts.value;
-    return groups;
-  }
-  
-  // 1. จัดกลุ่มเหมือนเดิม
-  filteredProducts.value.forEach(p => {
+  filteredProducts.value.forEach((p) => {
     const key = p.tag || 'อื่นๆ';
     if (!groups[key]) groups[key] = [];
     groups[key].push(p);
   });
-
-  // 2. แปลงเป็น Array เพื่อให้เรา Sort ลำดับได้เป๊ะๆ
-  // เราจะเรียงตามชื่อ Tag (เช่น "iPhone 16" จะมาก่อน "iPhone 15")
   return Object.entries(groups)
-    .sort(([tagA], [tagB]) => {
-      // จัดการกรณี 'อื่นๆ' ให้ไปอยู่ท้ายสุดเสมอ
-      if (tagA === 'อื่นๆ') return 1;
-      if (tagB === 'อื่นๆ') return -1;
-      
-      // เรียงจากมากไปน้อย (Descending) เพื่อให้รุ่นใหม่ขึ้นก่อน
-      return tagB.localeCompare(tagA, undefined, { numeric: true, sensitivity: 'base' });
-    })
-    .reduce((acc, [key, value]) => {
-      acc[key] = value;
-      return acc;
-    }, {} as Record<string, Product[]>);
+    .sort(([a], [b]) => b.localeCompare(a, undefined, { numeric: true }))
+    .reduce(
+      (acc, [k, v]) => {
+        acc[k] = v;
+        return acc;
+      },
+      {} as Record<string, Product[]>,
+    );
 });
 
-// 🟢 5. CATEGORY & TAG GENERATION
 const currentSubCatTags = computed(() => {
-  if (!activeSubCategory.value) return [];
-  // Get unique tags from all products belonging to this sub-category
   const tags = new Set<string>();
   products.value
-    .filter(p => p.category?.toLowerCase() === activeSubCategory.value.toLowerCase())
-    .forEach(p => p.tag && tags.add(p.tag));
-  
+    .filter(
+      (p) =>
+        p.category?.toLowerCase() === activeSubCategory.value.toLowerCase(),
+    )
+    .forEach((p) => p.tag && tags.add(p.tag));
   return Array.from(tags).sort();
 });
 
-// Category Data (Should eventually come from an API)
+// 🟢 STATIC DATA
 const baseCategories = [
-  { name: 'Apple Products', icon: '📱', subCats: ['iPhone', 'iPad', 'Mac', 'AirPods', 'Apple watch'] },
-  { name: 'Laptops', icon: '💻', subCats: ['Gaming', 'Thin & Light', 'Workstation'] },
-  { name: 'PC Components', icon: '🔌', subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'] }
+  {
+    name: 'Apple Products',
+    icon: '📱',
+    subCats: ['iPhone', 'iPad', 'Mac', 'AirPods', 'Apple watch'],
+  },
+  {
+    name: 'Laptops',
+    icon: '💻',
+    subCats: ['Gaming', 'Thin & Light', 'Workstation'],
+  },
+  {
+    name: 'PC Components',
+    icon: '🔌',
+    subCats: ['CPU', 'GPU', 'Mainboard', 'RAM'],
+  },
 ];
-const categories = Array.from({ length: 15 }, (_, i) => ({ id: i + 1, ...baseCategories[i % baseCategories.length] }));
-const activeCategoryName = computed(() => categories.find(c => c.id === activeCategory.value)?.name || 'Categories');
+const categories = Array.from({ length: 15 }, (_, i) => ({
+  id: i + 1,
+  ...baseCategories[i % baseCategories.length],
+}));
+const activeCategoryName = computed(
+  () =>
+    categories.find((c) => c.id === activeCategory.value)?.name || 'Categories',
+);
 
-// 🟢 6. ACTIONS
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// 🟢 ACTIONS
 const toggleCategory = (cat: any, event: MouseEvent) => {
   if (!isSidebarOpen.value) {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-    const viewportHeight = window.innerHeight;
-    isFlipped.value = rect.top + 350 > viewportHeight;
-    flyoutOffset.value = isFlipped.value ? viewportHeight - rect.bottom : rect.top;
+    isFlipped.value = rect.top + 350 > window.innerHeight;
+    flyoutOffset.value = isFlipped.value
+      ? window.innerHeight - rect.bottom
+      : rect.top;
     tempCategory.value = cat;
     isQuickSelectOpen.value = true;
   } else {
     activeCategory.value = activeCategory.value === cat.id ? 0 : cat.id;
   }
+};
+
+const selectMainCategory = (cat: any) => {
+  tempCategory.value = cat;
 };
 
 const selectSubCategory = async (catId: number, subName: string) => {
@@ -362,11 +132,16 @@ const selectSubCategory = async (catId: number, subName: string) => {
   activeSubCategory.value = subName;
   activeSubTag.value = 'ALL';
   isQuickSelectOpen.value = false;
-  try { await new Promise(r => setTimeout(r, 400)); } finally { globalLoading.value = false; }
+  try {
+    await new Promise((r) => setTimeout(r, 400));
+  } finally {
+    globalLoading.value = false;
+  }
 };
 
-const handleModalSelect = (catId: number, subName: string) => selectSubCategory(catId, subName);
-
+const handleModalSelect = (catId: number, subName: string) =>
+  selectSubCategory(catId, subName);
+  
 const resetFilters = () => {
   searchQuery.value = ''; 
   stockStatus.value = 'ทั้งหมด';
@@ -374,20 +149,463 @@ const resetFilters = () => {
   activeSubCategory.value = 'iPhone';
 };
 
-// Dropdown Toggles
 const dropdownStates = ref<Record<string, boolean>>({});
-const toggleDropdown = (tagName: string) => dropdownStates.value[tagName] = !dropdownStates.value[tagName];
+const toggleDropdown = (tag: string) =>
+  (dropdownStates.value[tag] = !dropdownStates.value[tag]);
 
-watch(productsBySubTag, (newGroups) => {
-  Object.keys(newGroups).forEach(tag => { 
-    if (dropdownStates.value[tag] === undefined) dropdownStates.value[tag] = true; 
-  });
-}, { immediate: true });
+watch(
+  productsBySubTag,
+  (newG) => {
+    Object.keys(newG).forEach((t) => {
+      if (dropdownStates.value[t] === undefined) dropdownStates.value[t] = true;
+    });
+  },
+  { immediate: true },
+);
 </script>
 
+<template>
+  <div
+    class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4 font-sans"
+  >
+    <nav
+      class="flex items-center gap-2 mb-4 px-2 md:px-4 text-xs md:text-sm font-medium overflow-x-auto whitespace-nowrap scrollbar-hide"
+    >
+      <NuxtLink
+        to="/"
+        class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors"
+      >
+        <Icon icon="mdi:home-outline" class="w-4 h-4" /> หน้าแรก
+      </NuxtLink>
+      <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
+      <span class="text-slate-500">หมวดหมู่สินค้า</span>
+      <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
+      <span class="text-[#0D95DA] font-bold">{{
+        activeSubCategory || activeCategoryName
+      }}</span>
+    </nav>
+
+    <div
+      class="flex flex-1 flex-col lg:flex-row gap-3 items-start overflow-visible"
+    >
+      <aside
+        :class="[isSidebarOpen ? 'lg:w-64' : 'lg:w-20']"
+        class="hidden lg:flex w-full lg:sticky lg:top-4 lg:h-[calc(100vh-60px)] bg-white transition-all duration-300 flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden"
+      >
+        <div
+          class="p-4 flex justify-between items-center border-b h-16 shrink-0"
+        >
+          <span v-if="isSidebarOpen" class="font-bold truncate text-black"
+            >หมวดหมู่สินค้า</span
+          >
+          <button
+            class="hover:bg-slate-100 p-1.5 rounded-lg ml-1"
+            @click="isSidebarOpen = !isSidebarOpen"
+          >
+            <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
+          </button>
+        </div>
+
+        <nav class="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
+          <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
+            <div
+              class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1"
+              :class="[
+                activeCategory === cat.id
+                  ? 'text-primary font-bold bg-blue-50/50'
+                  : 'text-slate-900 hover:bg-slate-50',
+                !isSidebarOpen ? 'justify-center p-2' : 'justify-between',
+              ]"
+              @click="toggleCategory(cat, $event)"
+            >
+              <div
+                class="flex items-center w-full"
+                :class="[!isSidebarOpen ? 'justify-center' : 'gap-3']"
+              >
+                <div
+                  class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full transition-all duration-300"
+                  :class="
+                    activeCategory === cat.id
+                      ? 'bg-primary text-white shadow-lg'
+                      : 'text-slate-400 group-hover:bg-white'
+                  "
+                >
+                  <span class="text-xl">{{ cat.icon }}</span>
+                </div>
+                <span
+                  v-if="isSidebarOpen"
+                  class="font-medium whitespace-nowrap text-sm"
+                  >{{ cat.name }}</span
+                >
+              </div>
+              <Icon
+                v-if="isSidebarOpen"
+                icon="mdi:chevron-down"
+                class="w-4 h-4 opacity-50"
+                :class="{ 'rotate-180': activeCategory === cat.id }"
+              />
+            </div>
+
+            <div
+              v-if="activeCategory === cat.id && isSidebarOpen"
+              class="overflow-hidden bg-white mb-2"
+            >
+              <div
+                v-for="sub in cat.subCats"
+                :key="sub"
+                class="py-2.5 pl-12 pr-4 text-xs font-semibold cursor-pointer hover:text-[#0D95DA] hover:bg-slate-50 transition-colors"
+                :class="
+                  activeSubCategory === sub
+                    ? 'text-[#0D95DA] bg-blue-50 rounded-lg'
+                    : 'text-slate-400'
+                "
+                @click="selectSubCategory(cat.id, sub)"
+              >
+                {{ sub }}
+              </div>
+            </div>
+          </div>
+        </nav>
+      </aside>
+
+      <main class="flex-1 flex flex-col min-w-0 gap-3 w-full">
+        <button
+          class="lg:hidden flex items-center justify-center gap-2 bg-white p-4 rounded-xl shadow-sm border-t-4 border-t-[#0D95DA] font-bold text-slate-700 w-full active:scale-[0.98] transition-transform"
+          @click="
+            isQuickSelectOpen = true;
+            tempCategory = null;
+          "
+        >
+          <Icon icon="mdi:grid" /> เลือกหมวดหมู่สินค้า
+        </button>
+
+        <header
+          class="bg-white border-b border-slate-200 p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-2"
+        >
+          <div
+            class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4"
+          >
+            <div class="flex items-baseline gap-2">
+              <h2 class="text-xl text-slate-800">
+                {{ activeSubCategory || activeCategoryName }}
+              </h2>
+              <span class="text-slate-400 text-xs"
+                >({{ filteredProducts.length }} รายการ)</span
+              >
+            </div>
+
+            <div class="flex items-center gap-3">
+              <button
+                class="p-2 text-slate-400 hover:bg-slate-50 rounded-lg border border-slate-200"
+              >
+                <Icon icon="mdi:printer-outline" class="w-5 h-5" />
+              </button>
+              <div class="h-8 w-px bg-slate-200 mx-1" />
+              <button
+                class="p-2 transition-all rounded-lg border"
+                :class="[
+                  viewMode === 'grid'
+                    ? 'text-[#0D95DA] bg-blue-50 border-blue-200'
+                    : 'text-slate-400 hover:bg-slate-50 border-slate-200',
+                ]"
+                @click="viewMode = 'grid'"
+              >
+                <Icon icon="mdi:view-grid-outline" class="w-5 h-5" />
+              </button>
+              <button
+                class="p-2 transition-all rounded-lg border"
+                :class="[
+                  viewMode === 'list'
+                    ? 'text-[#0D95DA] bg-blue-50 border-blue-200'
+                    : 'text-slate-400 hover:bg-slate-50 border-slate-200',
+                ]"
+                @click="viewMode = 'list'"
+              >
+                <Icon icon="mdi:format-list-bulleted" class="w-5 h-5" />
+              </button>
+            </div>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <span class="text-slate-800 text-md text-semibold"
+                >รุ่น / ซีรีส์:</span
+              >
+            </div>
+            <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
+              <button
+                :class="[
+                  activeSubTag === 'ALL'
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-slate-500 hover:bg-slate-50',
+                ]"
+                class="px-5 py-2 rounded-full text-md border transition-all"
+                @click="activeSubTag = 'ALL'"
+              >
+                ALL
+              </button>
+              <button
+                v-for="tag in currentSubCatTags"
+                :key="tag"
+                :class="[
+                  activeSubTag === tag
+                    ? 'bg-primary text-white'
+                    : 'bg-white text-slate-500  hover:bg-slate-50',
+                ]"
+                class="px-5 py-2 rounded-full text-md border transition-all"
+                @click="activeSubTag = tag"
+              >
+                {{ tag }}
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4"
+          >
+            <div class="relative w-full max-w-md">
+              <input
+                v-model="searchQuery"
+                type="text"
+                placeholder="ค้นหาชื่อสินค้า..."
+                class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm"
+              >
+              <Icon
+                icon="mdi:magnify"
+                class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5"
+              />
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-sm text-slate-600 font-medium"
+                >สถานะสินค้า:</span
+              >
+              <div class="relative min-w-35">
+                <select
+                  v-model="stockStatus"
+                  class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none"
+                >
+                  <option>ทั้งหมด</option>
+                  <option>มีของ</option>
+                  <option>ของหมด</option>
+                </select>
+                <Icon
+                  icon="mdi:chevron-down"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"
+                />
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <section class="mt-4 space-y-6 pb-20">
+          <div
+            v-if="filteredProducts.length === 0"
+            class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200"
+          >
+            <Icon
+              icon="mdi:package-variant-closed"
+              class="w-16 h-16 text-slate-200 mb-4"
+            />
+            <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ</p>
+            <button
+              class="mt-2 text-[#0D95DA] text-sm font-bold underline"
+              @click="resetFilters"
+            >
+              ล้างการกรอง
+            </button>
+          </div>
+          <template v-else>
+            <div
+              v-for="(taggedProducts, tagName) in productsBySubTag"
+              :key="tagName"
+            >
+              <ProductDropdown
+                :label="tagName"
+                :products="taggedProducts"
+                :view-mode="viewMode"
+                :is-open="dropdownStates[tagName]"
+                @toggle="toggleDropdown(tagName)"
+              />
+            </div>
+          </template>
+        </section>
+      </main>
+    </div>
+
+    <Transition name="fade">
+      <div
+        v-if="isQuickSelectOpen"
+        class="fixed inset-0 z-100 flex items-center justify-center p-4"
+      >
+        <div
+          class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"
+          @click="isQuickSelectOpen = false"
+        />
+
+        <div
+          class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl z-10 flex flex-col overflow-hidden relative transition-all duration-300 min-h-120 max-h-[82vh]"
+          :class="[
+            $viewport.isGreaterOrEquals('lg') && !isSidebarOpen
+              ? 'absolute'
+              : 'relative',
+          ]"
+          :style="
+            $viewport.isGreaterOrEquals('lg') && !isSidebarOpen
+              ? isFlipped
+                ? { bottom: `${flyoutOffset}px`, left: '88px' }
+                : { top: `${flyoutOffset}px`, left: '88px' }
+              : {}
+          "
+        >
+          <div
+            v-if="$viewport.isGreaterOrEquals('lg') && !isSidebarOpen"
+            class="absolute -left-1.5 w-3 h-3 bg-white rotate-45 border-l border-b border-slate-200"
+            :class="isFlipped ? 'bottom-6' : 'top-6'"
+          />
+
+          <div
+            class="p-6 border-b bg-slate-50/50 flex items-center justify-between shrink-0"
+          >
+            <div class="flex items-center gap-3">
+              <button
+                v-if="tempCategory && !$viewport.isGreaterOrEquals('lg')"
+                class="p-2 bg-white rounded-full shadow-sm text-primary active:scale-90 transition-transform"
+                @click="tempCategory = null"
+              >
+                <Icon icon="mdi:arrow-left" class="w-5 h-5" />
+              </button>
+              <div
+                v-else
+                class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-xl"
+              >
+                {{ tempCategory?.icon || "📦" }}
+              </div>
+              <div>
+                <span class="block font-bold text-slate-800 leading-tight">
+                  {{ tempCategory ? tempCategory.name : "เลือกหมวดหมู่หลัก" }}
+                </span>
+                <span
+                  class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
+                >
+                  {{
+                    tempCategory
+                      ? "ระบุหมวดหมู่ย่อยที่คุณต้องการ"
+                      : "เลือกหัวข้อสินค้าที่ต้องการค้นหา"
+                  }}
+                </span>
+              </div>
+            </div>
+            <button
+              class="p-2 hover:bg-white rounded-full text-slate-400 transition-colors"
+              @click="isQuickSelectOpen = false"
+            >
+              <Icon icon="mdi:close" class="w-6 h-6" />
+            </button>
+          </div>
+
+          <div
+            class="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hide bg-white"
+          >
+            <div v-if="!tempCategory" class="grid grid-cols-1 gap-2">
+              <button
+                v-for="cat in categories"
+                :key="cat.id"
+                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all text-left border border-transparent hover:border-slate-100 group"
+                @click="selectMainCategory(cat)"
+              >
+                <span
+                  class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-2xl group-hover:bg-white transition-colors"
+                >
+                  {{ cat.icon }}
+                </span>
+                <div class="flex-1">
+                  <span class="font-bold text-slate-700 block">{{
+                    cat.name
+                  }}</span>
+                  <span class="text-[10px] text-slate-400"
+                    >{{ cat.subCats.length }} หมวดหมู่ย่อย</span
+                  >
+                </div>
+                <Icon
+                  icon="mdi:chevron-right"
+                  class="text-slate-300 group-hover:text-primary transition-colors"
+                />
+              </button>
+            </div>
+
+            <div v-else class="space-y-2">
+              <button
+                v-for="sub in tempCategory.subCats"
+                :key="sub"
+                class="w-full p-4 rounded-2xl text-left flex items-center justify-between transition-all group border border-transparent"
+                :class="
+                  activeSubCategory === sub
+                    ? 'bg-blue-50 text-[#0D95DA] font-bold border-blue-100 shadow-sm'
+                    : 'hover:bg-slate-50 text-slate-600'
+                "
+                @click="handleModalSelect(tempCategory.id, sub)"
+              >
+                <div class="flex items-center gap-3">
+                  <div
+                    class="w-1.5 h-1.5 rounded-full bg-primary transition-transform duration-300"
+                    :class="activeSubCategory === sub ? 'scale-100' : 'scale-0'"
+                  />
+                  <span class="text-sm md:text-base">{{ sub }}</span>
+                </div>
+                <Icon
+                  :icon="
+                    activeSubCategory === sub
+                      ? 'mdi:check-circle'
+                      : 'mdi:chevron-right'
+                  "
+                  class="w-5 h-5"
+                  :class="
+                    activeSubCategory === sub
+                      ? 'text-primary'
+                      : 'text-slate-300'
+                  "
+                />
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="p-4 bg-slate-50/50 text-center border-t border-slate-100 shrink-0"
+          >
+            <p
+              class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
+            >
+              Dealer Inventory Management
+            </p>
+          </div>
+        </div>
+      </div>
+    </Transition>
+  </div>
+</template>
+
+
 <style scoped>
-.scrollbar-thin::-webkit-scrollbar { width: 6px; height: 6px; }
-.scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
-.scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-.scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
+}
 </style>

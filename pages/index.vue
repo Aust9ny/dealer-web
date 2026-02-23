@@ -7,10 +7,10 @@ const showModal = ref(false);
 
 <template>
   <div class="bg-gray-100 min-h-screen font-thai">
-    <div class="max-w-400 mx-auto p-6">
-      <div class="grid grid-cols-12 gap-6">
+    <div class="max-w-400 mx-auto p-3 md:p-6">
+      <div class="grid grid-cols-12 gap-4 md:gap-6">
         <aside class="col-span-12 lg:col-span-3 space-y-4">
-          <div class="bg-white rounded-2xl p-5 shadow-sm border border-slate-300 border-t-12 border-t-primary">
+          <div class="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-300 border-t-12 border-t-primary">
             <div class="mb-3 font-bold text-slate-800">เมนูจัดการ:</div>
               <div class="block w-60 mx-auto bg-primary text-white py-2 rounded-md text-center hover:bg-primary/90 transition mb-6" @click="showModal = true">เปิดบิลสั่งซื้อสินค้า</div>
               <SelectPurchaseOrderModal v-model="showModal" />
@@ -32,16 +32,16 @@ const showModal = ref(false);
 
         <main class="col-span-12 lg:col-span-9 space-y-5">
           <header
-            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-300 flex items-center justify-between border-t-12 border-t-primary">
-            <h2 class="font-bold text-xl text-slate-800">สรุปผลการดำเนินงาน</h2>
-            <div class="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl p-1.5">
+            class="bg-white rounded-2xl p-4 shadow-sm border border-slate-300 flex flex-col md:flex-row gap-3 md:items-center justify-between border-t-12 border-t-primary">
+            <h2 class="font-bold text-lg md:text-xl text-slate-800">สรุปผลการดำเนินงาน</h2>
+            <div class="flex items-center gap-2 bg-slate-50 border border-slate-300 rounded-xl p-1.5 w-full md:w-auto">
               <input v-model="startDate" type="date" class="bg-transparent border-none text-sm">
               <span class="text-slate-300">|</span>
               <input v-model="endDate" type="date" class="bg-transparent border-none text-sm">
             </div>
           </header>
 
-          <div class="bg-white rounded-2xl p-8 lg:p-12 shadow-sm border border-slate-300">
+          <div class="bg-white rounded-2xl p-4 md:p-8 lg:p-12 shadow-sm border border-slate-300">
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
               <div 
@@ -111,8 +111,8 @@ const showModal = ref(false);
 
         </main>
       </div>
-      <div class=" rounded-2xl p-4 mt-5">
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+      <div class=" rounded-2xl p-2 md:p-4 mt-5">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10">
 
           <div
            v-for="(item, index) in quickAccessItems" :key="index"
@@ -129,7 +129,7 @@ const showModal = ref(false);
       </div>
     </div>
 
-    <div class="bg-white border-t border-slate-200 pb-20 px-6 ">
+    <div class="bg-white border-t border-slate-200 pb-20 px-3 md:px-6 ">
       <div class="max-w-350 mx-auto space-y-10 py-10">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <PromotionBanner :banners="banner1" />
