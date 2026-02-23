@@ -88,13 +88,13 @@ const getReadyToShipStatus = (item: any) => {
     <div class="w-full mb-6 px-1">
       <nav class="flex items-center text-sm font-medium w-full">
         <div class="flex items-center justify-between w-full">
-          <div class="flex items-center gap-1">
+          <div class="flex items-center gap-1 border border-slate-200 bg-white p-3 rounded-lg">
             <Icon
               icon="mdi:chevron-right"
               class="w-4 h-4 text-slate-300 rotate-180"
             />
             <button
-              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold uppercase text-[12px] tracking-tight"
+              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold uppercase  tracking-tight"
               @click="goBack"
             >
               เลือกสินค้าเพิ่ม
@@ -118,12 +118,12 @@ const getReadyToShipStatus = (item: any) => {
           <span v-if="isSidebarOpen" class="font-bold  text-[#0D95DA]"
             >เลือกใบสั่งซื้อ ({{ userOrders.length }})</span
           >
-          <button
+          <!-- <button
             class="hover:bg-slate-100 p-1.5 rounded-lg"
             @click="isSidebarOpen = !isSidebarOpen"
           >
             <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
-          </button>
+          </button> -->
         </div>
         <nav class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
           <NuxtLink
@@ -146,44 +146,44 @@ const getReadyToShipStatus = (item: any) => {
 
       <main class="flex-1 flex flex-col min-w-0 gap-3 pb-32">
         <div v-if="currentStep === 1">
-          <header
-            class="bg-white border-b border-slate-200 p-6 shadow-sm rounded-2xl border-t-10 border-t-primary mb-3"
-          >
-            <div v-if="po" class="flex justify-between items-center">
-              <div class="flex items-center gap-4">
-                <div
-                  class="w-14 h-14 bg-blue-50 rounded-2xl flex items-center justify-center border border-blue-100"
-                >
-                  <Icon
-                    icon="mdi:file-document-edit-outline"
-                    class="w-8 h-8 text-[#0D95DA]"
-                  />
-                </div>
-                <div>
-                  <h1
-                    class="text-xl font-black text-slate-800 uppercase tracking-tight"
-                  >
-                    {{ po.id }}
-                  </h1>
-                  <p
-                    class="text-[11px] text-slate-400 font-bold uppercase tracking-widest"
-                  >
-                    {{ formatDate(po.createdAt) }}
-                  </p>
-                </div>
+        <header class="bg-white border-b border-slate-200 p-4 shadow-sm rounded-2xl border-t-8 border-t-primary mb-3">
+          <div v-if="po" class="flex justify-between items-center px-2">
+            
+            <div class="flex items-center gap-4">
+              <div class="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100 shrink-0">
+                <Icon icon="mdi:file-document-edit-outline" class="w-6 h-6 text-[#0D95DA]" />
               </div>
-              <div class="flex items-center gap-3">
-                <button class="p-2.5 text-slate-400 border rounded-xl">
-                  <Icon icon="mdi:printer-outline" class="w-5 h-5" />
-                </button>
-                <button
-                  class="bg-[#0D95DA] text-white px-6 py-2.5 rounded-xl text-xs font-black flex items-center gap-2 shadow-lg shadow-blue-500/20"
-                >
-                  <Icon icon="mdi:magnify-scan" class="w-4 h-4" />เช็คสถานะ
-                </button>
+              
+              <div>
+                <h1 class="text-lg font-black text-slate-800 uppercase leading-none mb-1">
+                  {{ po.id }}
+                </h1>
+                <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                  {{ formatDate(po.createdAt, true) }}
+                </p>
               </div>
+
+              <div class="h-8 bg-slate-200 w-px mx-2" />
+
+              <button class="p-2 text-slate-400 border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors">
+                <Icon icon="mdi:printer-outline" class="w-5 h-5" />
+              </button>
             </div>
-          </header>
+
+            <div class="flex items-center gap-4">
+              <button class="bg-white text-slate-500 border border-slate-200 px-4 py-2 rounded-lg text-[11px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all">
+                <Icon icon="mdi:magnify-scan" class="w-4 h-4" /> ตรวจสอบสต็อก
+              </button>
+              
+              <div class="h-8 bg-slate-200 w-px" />
+
+              <button class="p-1 hover:bg-slate-100 rounded-full transition-colors">
+                <Icon icon="octicon:kebab-horizontal-16" width="20" height="20" class="text-slate-400" />
+              </button>
+            </div>
+            
+          </div>
+        </header>
 
           <section
             v-if="po"
