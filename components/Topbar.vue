@@ -5,7 +5,6 @@ import { Icon } from '@iconify/vue';
 import { watch, ref, onMounted, onBeforeUnmount } from 'vue';
 
 const route = useRoute();
-const dropdownRef = ref<HTMLElement | null>(null);
 
 // 1️⃣ ปิดเมื่อเปลี่ยนหน้า
 watch(
