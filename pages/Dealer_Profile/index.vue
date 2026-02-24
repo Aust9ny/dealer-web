@@ -70,7 +70,7 @@ const isSidebarOpen = ref(false);
               type="text"
               placeholder="ค้นหาสินค้า, แบรนด์, รุ่น หรือหมายเลขคำสั่งซื้อ"
               class="w-full h-11 px-4 rounded-full border focus:ring-2 focus:ring-primary outline-none"
-            />
+            >
           </div>
         </div>
       </div>
@@ -181,7 +181,7 @@ const isSidebarOpen = ref(false);
           <img
             src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
             class="w-40 opacity-70"
-          />
+          >
           <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
           <button
             class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
@@ -196,14 +196,14 @@ const isSidebarOpen = ref(false);
         <div class="bg-white rounded-xl shadow overflow-hidden">
           <!-- MENU BUTTON -->
           <button
-            @click="isSidebarOpen = !isSidebarOpen"
             class="w-full flex items-center gap-3 font-medium p-6"
             :class="isSidebarOpen ? 'border-b' : ''"
+            @click="isSidebarOpen = !isSidebarOpen"
           >
             <div class="space-y-1">
-              <div class="w-6 h-0.5 bg-gray-700"></div>
-              <div class="w-6 h-0.5 bg-gray-700"></div>
-              <div class="w-6 h-0.5 bg-gray-700"></div>
+              <div class="w-6 h-0.5 bg-gray-700"/>
+              <div class="w-6 h-0.5 bg-gray-700"/>
+              <div class="w-6 h-0.5 bg-gray-700"/>
             </div>
             เมนู
           </button>
