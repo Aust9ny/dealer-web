@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import type { PurchaseOrder as PO } from '@/types/purchase-order';
+import { usePOPricing } from '@/composables/usePOPricing';
 
 // 1. รับ Props จากหน้าแม่ [id].vue
 const props = defineProps<{
@@ -17,6 +18,7 @@ const props = defineProps<{
 }>();
 
 const router = useRouter();
+const { getSubtotalFromItems, getVat, getGrandTotal, getEffectiveQuantity } = usePOPricing();
 
 const { userOrders, updatePOItemQuantity } = useMockPO();
 
@@ -52,6 +54,32 @@ const isAllSelected = computed({
   },
 });
 
+// เปลี่ยนจากการดึง userOrders ตรงๆ 
+const displayOrders = computed(() => {
+  return userOrders.value.map(order => {
+    if (order.id === props.po.id) {
+      const currentTotal = getSubtotalFromItems(props.po.items);
+      return { ...order, totalAmount: currentTotal };
+    }
+    return order;
+  });
+});
+
+// คำนวณ Subtotal ใหม่ที่กรองเฉพาะของที่มีสต็อก
+const effectiveSubtotal = computed(() => {
+  return getSubtotalFromItems(props.po.items);
+});
+
+// คำนวณยอดสุทธิ (Grand Total) ใหม่
+const effectiveGrandTotal = computed(() => {
+  return getGrandTotal(effectiveSubtotal.value);
+});
+
+// คำนวณ Vat จากยอดที่กรองแล้ว
+const effectiveVat = computed(() => {
+  return getVat(effectiveSubtotal.value);
+});
+
 const goBack = () => {
   router.push('/');
 };
@@ -61,6 +89,19 @@ const goBack = () => {
 const validateQuantity = (item: any) => {
   if (item.quantity < 0 || !item.quantity) item.quantity = 0;
   updatePOItemQuantity(props.po.id, item.product.id, item.quantity);
+};
+
+// Keep order totals in sync with every keystroke/click, not only on blur.
+// This prevents aside totals from appearing one step behind.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const syncQuantity = (item: any) => {
+  validateQuantity(item);
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getLineTotal = (item: any) => {
+  const price = item.priceAtPurchase ?? 0;
+  return price * getEffectiveQuantity(item);
 };
 
 const removeProduct = (productId: number) => {
@@ -129,7 +170,7 @@ const getReadyToShipStatus = (item: any) => {
 
       <nav class="flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto p-2 lg:p-3 gap-2 scrollbar-hide lg:scrollbar-thin">
         <NuxtLink
-          v-for="order in userOrders"
+          v-for="order in displayOrders"
           :key="order.id"
           :to="`/po/${order.id}`"
           class="flex-none lg:flex items-center gap-3 p-3 rounded-xl transition-all border border-transparent whitespace-nowrap lg:whitespace-normal"
@@ -142,8 +183,11 @@ const getReadyToShipStatus = (item: any) => {
           <div class="flex items-center gap-2">
             <Icon icon="mdi:file-document-outline" class="lg:hidden w-4 h-4" />
             <p class="font-bold text-[13px] lg:text-[14px]">
-              #{{ order.id }} <span class="hidden lg:inline">| {{ formatDate(order.createdAt, false) }} | ฿ {{ formatPrice(order.totalAmount) }}</span>
-            </p>
+      #{{ order.id }} 
+      <span class="hidden lg:inline">
+        | {{ formatDate(order.createdAt, false) }} 
+        | ฿ {{ formatPrice(order.totalAmount) }} </span>
+        </p>
           </div>
         </NuxtLink>
       </nav>
@@ -229,10 +273,10 @@ const getReadyToShipStatus = (item: any) => {
                     </div>
                   </td>
                   <td class="p-4 text-center border-b border-r border-slate-100">
-                    <input v-model.number="item.quantity" type="number" :min="0" :disabled="(item.product.stock ?? 0) <= 0" class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black" @change="validateQuantity(item)">
+                    <input v-model.number="item.quantity" type="number" :min="0" :disabled="(item.product.stock ?? 0) <= 0" class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black" @input="syncQuantity(item)" @change="validateQuantity(item)">
                   </td>
                   <td class="p-4 text-right font-bold text-slate-500 border-b border-r border-slate-100">฿{{ formatPrice(item.priceAtPurchase) }}</td>
-                  <td class="p-4 text-right font-black text-slate-900 border-b border-r border-slate-200 bg-blue-50/20">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</td>
+                  <td class="p-4 text-right font-black text-slate-900 border-b border-r border-slate-200 bg-blue-50/20">฿{{ formatPrice(getLineTotal(item)) }}</td>
                   <td class="p-4 text-center border-b border-r border-slate-100">
                     <span :class="getReadyToShipStatus(item)?.color" class="px-3 py-1 rounded-full text-[10px] font-black uppercase whitespace-nowrap">{{ getReadyToShipStatus(item)?.text }}</span>
                   </td>
@@ -287,7 +331,7 @@ const getReadyToShipStatus = (item: any) => {
 
                   <div class="mt-3 flex justify-between items-end w-full"> <div class="flex flex-col">
                       <span class="text-[10px] text-slate-400 font-bold uppercase">ราคารวม</span>
-                      <span class="text-base font-black text-slate-900">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</span>
+                      <span class="text-base font-black text-slate-900">฿{{ formatPrice(getLineTotal(item)) }}</span>
                       <span class="text-[9px] text-slate-400">@ ฿{{ formatPrice(item.priceAtPurchase) }}</span>
                     </div>
 
@@ -297,7 +341,7 @@ const getReadyToShipStatus = (item: any) => {
                       </span>
                       <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
                         <button class="px-2 text-slate-500 font-bold" @click="item.quantity > 0 ? item.quantity-- : 0; validateQuantity(item)">-</button>
-                        <input v-model.number="item.quantity" type="number" class="w-10 bg-transparent text-center font-black text-xs outline-none" @change="validateQuantity(item)">
+                        <input v-model.number="item.quantity" type="number" class="w-10 bg-transparent text-center font-black text-xs outline-none" @input="syncQuantity(item)" @change="validateQuantity(item)">
                         <button class="px-2 text-slate-500 font-bold" @click="item.quantity++; validateQuantity(item)">+</button>
                       </div>
                     </div>
@@ -309,10 +353,10 @@ const getReadyToShipStatus = (item: any) => {
 
           <div class="p-5 md:p-8 border-t border-slate-100 flex justify-end bg-white mt-6 lg:mt-0">
             <div class="w-full max-w-md space-y-3 bg-white">
-              <div class="flex justify-between text-sm font-bold text-slate-600">
-                <span>สินค้าทั้งหมด ({{ po?.items.length }} ชิ้น):</span>
-                <span>฿{{ formatPrice(subtotal + 4110) }}</span>
-              </div>
+            <div class="flex justify-between text-sm font-bold text-slate-600">
+              <span>สินค้าทั้งหมด ({{ po?.items.length }} ชิ้น):</span>
+              <span>฿{{ formatPrice(effectiveSubtotal + 4110) }}</span>
+            </div>
               <div class="flex justify-between items-center text-sm font-bold text-slate-600">
                 <div class="flex items-center gap-3 justify-center">
                   <span>ส่วนลด:</span>
@@ -325,11 +369,11 @@ const getReadyToShipStatus = (item: any) => {
               </div>
               <div class="flex justify-between text-sm font-bold pt-2 border-t border-dashed">
                 <span>ยอดก่อน Vat:</span>
-                <span class="text-slate-800 font-black">฿{{ formatPrice(subtotal - vat) }}</span>
+                <span class="text-slate-800 font-black">฿{{ formatPrice(effectiveSubtotal) }}</span>
               </div>
               <div class="flex justify-between text-sm font-bold text-slate-600">
                 <span>ยอด Vat7%:</span>
-                <span class="text-slate-800 font-black">฿{{ formatPrice(vat) }}</span>
+                <span class="text-slate-800 font-black">฿{{ formatPrice(effectiveVat) }}</span>
               </div>
               <div class="mt-4 pt-4 border-t-2 border-slate-800">
                 <div class="bg-slate-50/80 p-4 md:p-6 flex justify-between items-center rounded-sm">
@@ -337,7 +381,7 @@ const getReadyToShipStatus = (item: any) => {
                     <span class="text-base md:text-lg font-black text-slate-800 uppercase">ยอดรวมสุทธิ:</span>
                     <span class="text-[9px] md:text-[10px] text-slate-400 font-medium">(รวม Vat 7% แล้ว)</span>
                   </div>
-                  <span class="text-xl md:text-2xl font-black text-[#2D5A9E]">฿{{ formatPrice(grandTotal) }}</span>
+                  <span class="text-xl md:text-2xl font-black text-[#2D5A9E]">฿{{ formatPrice(effectiveGrandTotal) }}</span>
                 </div>
                 <div class="mt-2 border-b-2 border-slate-800" />
                 <div class="mt-0.5 border-b border-slate-800" />

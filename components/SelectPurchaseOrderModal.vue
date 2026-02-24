@@ -3,8 +3,10 @@ import { ref, computed } from 'vue';
 import { useScrollLock } from '@/composables/useScrollLock';
 import { useRouter } from 'vue-router';
 import { useMockPO } from '@/composables/useMockPO';
+import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
 
 const router = useRouter();
+const { formatCurrency, formatThaiDateTime } = usePOFooterHelpers();
 
 // ✅ ดึงข้อมูลจาก composable (แหล่งเดียว)
 const { getAllPO } = useMockPO();
@@ -28,23 +30,6 @@ const close = () => {
 
 const isOpen = computed(() => props.modelValue);
 useScrollLock(isOpen);
-
-// ✅ format เวลาไทย
-const formatThaiTime = (value: string) => {
-  return new Intl.DateTimeFormat('th-TH', {
-    dateStyle: 'short',
-    timeStyle: 'medium',
-    timeZone: 'Asia/Bangkok'
-  }).format(new Date(value));
-};
-
-// ✅ format เงินไทย
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('th-TH', {
-    style: 'currency',
-    currency: 'THB'
-  }).format(value);
-};
 
 // มี PO ไหม
 const hasPO = computed(() => purchaseOrders.length > 0);
@@ -91,7 +76,7 @@ const handleContinue = () => {
         >
           <span>
             #{{ po.id }} |
-            {{ formatThaiTime(po.createdAt) }} |
+            {{ formatThaiDateTime(po.createdAt) }} |
             {{ formatCurrency(po.totalAmount) }}
           </span>
         </div>

@@ -124,6 +124,7 @@ const mockPOs: PurchaseOrder[] = [
 
 export const useMockPO = () => {
   const { currentUser } = useAuth();
+  const { getSubtotalFromItems } = usePOPricing();
 
   // 🟢 Get all POs for the currently logged in user
   const userOrders = computed(() => {
@@ -159,11 +160,7 @@ export const useMockPO = () => {
 
           // 🟢 2. Bulletproof Total Calculation
           // Using ?? 0 ensures that even if price or qty is missing, we get a number.
-          order.totalAmount = order.items.reduce((sum, i) => {
-            const price = i.priceAtPurchase ?? 0;
-            const qty = i.quantity ?? 0;
-            return sum + (price * qty);
-          }, 0);
+          order.totalAmount = getSubtotalFromItems(order.items);
         }
       }
   };

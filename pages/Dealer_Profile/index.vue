@@ -1,24 +1,40 @@
 <script setup lang="ts">
 const { currentUser } = useAuth();
 const isSidebarOpen = ref(false);
+const activeOrderTab = ref('ทั้งหมด');
+
+interface MenuSection {
+  title: string;
+  items: string[];
+}
+
+const orderCount = 99;
+const orderTabs = ['ทั้งหมด', 'ที่ต้องชำระ', 'รอตรวจสอบ', 'กำลังจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
+
+const menuSections: MenuSection[] = [
+  { title: 'จัดการคำสั่งซื้อ', items: ['รายการสั่งซื้อทั้งหมด', 'รายการสินค้าค้างส่ง', 'ติดตามสถานะการจัดส่ง'] },
+  { title: 'การเงินและชำระเงิน', items: ['ชำระเงิน / อัปโหลดหลักฐาน', 'จ่ายชำระหนี้ Advice สนญ.', 'รายการเคลื่อนไหวบัญชี'] },
+  { title: 'งานบริการและติดตามสถานะเคลม', items: ['ตรวจสอบสถานะการแจ้งเคลม', 'สินค้าเคลมรอตัดสินใจ', 'รายงานการส่งคืน'] },
+  { title: 'ข้อมูลบัญชี', items: ['ข้อมูลส่วนตัวดีลเลอร์', 'รายชื่อไฟล์อัปโหลด', 'เงื่อนไขการจัดส่ง', 'เปลี่ยนรหัสผ่าน'] },
+];
+
+const initials = computed(() => {
+  const first = currentUser.value?.fname?.[0] || 'D';
+  const last = currentUser.value?.lname?.[0] || 'L';
+  return `${first}${last}`;
+});
 </script>
+
 <template>
   <div class="bg-gray-100 min-h-screen">
-    <div
-      class="max-w-7xl mx-auto p-3 gap-4 grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-7"
-    >
-      <!-- 1 : Sidebar top (โปรไฟล์) -->
-      <div
-        class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-2 lg:row-span-1"
-      >
+    <div class="max-w-7xl mx-auto p-3 gap-4 grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-7">
+      <div class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-2 lg:row-span-1">
         <div class="h-2 bg-primary" />
 
         <div class="p-4">
           <div class="flex items-center gap-3">
-            <div
-              class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm"
-            >
-              PS
+            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm">
+              {{ initials }}
             </div>
             <p class="font-medium text-gray-800">
               สวัสดี, {{ currentUser?.fname }} {{ currentUser?.lname }}
@@ -30,9 +46,7 @@ const isSidebarOpen = ref(false);
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
               <span>Dealer ID:</span>
-              <span class="text-gray-700 font-medium">{{
-                currentUser?.dealerID
-              }}</span>
+              <span class="text-gray-700 font-medium">{{ currentUser?.dealerID }}</span>
             </div>
             <div class="flex justify-between text-gray-500">
               <span>Email:</span>
@@ -42,70 +56,43 @@ const isSidebarOpen = ref(false);
         </div>
       </div>
 
-      <!-- 7 : Mobile Menu Card -->
       <div class="col-span-1 lg:hidden">
         <div class="bg-white rounded-xl shadow overflow-hidden">
-          <!-- MENU BUTTON -->
           <button
             class="w-full flex items-center gap-3 font-medium p-6"
             :class="isSidebarOpen ? 'border-b' : ''"
             @click="isSidebarOpen = !isSidebarOpen"
           >
             <div class="space-y-1">
-              <div class="w-6 h-0.5 bg-gray-700"/>
-              <div class="w-6 h-0.5 bg-gray-700"/>
-              <div class="w-6 h-0.5 bg-gray-700"/>
+              <div class="w-6 h-0.5 bg-gray-700" />
+              <div class="w-6 h-0.5 bg-gray-700" />
+              <div class="w-6 h-0.5 bg-gray-700" />
             </div>
             เมนู
           </button>
         </div>
 
-        <!-- DROPDOWN CARD -->
         <transition name="slide-down">
-          <div
-            v-if="isSidebarOpen"
-            class="bg-white rounded-xl shadow p-4 space-y-4"
-          >
-            <div>
-              <p class="font-medium mb-2">จัดการคำสั่งซื้อ</p>
+          <div v-if="isSidebarOpen" class="bg-white rounded-xl shadow p-4 space-y-4">
+            <div
+              v-for="(section, sectionIndex) in menuSections"
+              :key="section.title"
+              :class="sectionIndex > 0 ? 'border-t pt-3' : ''"
+            >
+              <p class="font-medium mb-2">{{ section.title }}</p>
               <ul class="text-sm space-y-2 text-gray-600">
-                <li class="text-primary font-medium">รายการสั่งซื้อทั้งหมด</li>
-                <li>รายการสินค้าค้างส่ง</li>
-                <li>ติดตามสถานะการจัดส่ง</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">การเงินและชำระเงิน</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ชำระเงิน / อัปโหลดหลักฐาน</li>
-                <li>จ่ายชำระหนี้ Advice สนญ.</li>
-                <li>รายการเคลื่อนไหวบัญชี</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">งานบริการและติดตามสถานะเคลม</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ตรวจสอบสถานะการแจ้งเคลม</li>
-                <li>สินค้าเคลมรอตัดสินใจ</li>
-                <li>รายงานการส่งคืน</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">ข้อมูลบัญชี</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ข้อมูลส่วนตัวดีลเลอร์</li>
-                <li>รายชื่อไฟล์อัปโหลด</li>
-                <li>เปลี่ยนรหัสผ่าน</li>
+                <li
+                  v-for="(item, itemIndex) in section.items"
+                  :key="item"
+                  :class="sectionIndex === 0 && itemIndex === 0 ? 'text-primary font-medium' : ''"
+                >
+                  {{ item }}
+                </li>
               </ul>
             </div>
 
             <div class="pt-4">
-              <button
-                class="w-full border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium"
-              >
+              <button class="w-full border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium">
                 ⏻ ออกจากระบบ
               </button>
             </div>
@@ -113,27 +100,21 @@ const isSidebarOpen = ref(false);
         </transition>
       </div>
 
-      <!-- 4 : Header content -->
-      <div
-        class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3"
-      >
-        <div
-          class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2"
-        >
+      <div class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3">
+        <div class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2">
           📄 รายการสั่งซื้อทั้งหมด
         </div>
         <div class="px-5 py-4">
-          <div class="flex gap-6 text-sm border-b">
+          <div class="flex gap-6 text-sm border-b overflow-x-auto whitespace-nowrap">
             <span
-              class="text-primary border-b-2 border-primary pb-2 cursor-pointer"
+              v-for="tab in orderTabs"
+              :key="tab"
+              class="pb-2 cursor-pointer border-b-2 transition-colors"
+              :class="activeOrderTab === tab ? 'text-primary border-primary' : 'text-gray-500 border-transparent'"
+              @click="activeOrderTab = tab"
             >
-              ทั้งหมด (99)
+              {{ tab }} ({{ orderCount }})
             </span>
-            <span class="text-gray-500 cursor-pointer">ที่ต้องชำระ (99)</span>
-            <span class="text-gray-500 cursor-pointer">รอตรวจสอบ (99)</span>
-            <span class="text-gray-500 cursor-pointer">กำลังจัดส่ง (99)</span>
-            <span class="text-gray-500 cursor-pointer">สำเร็จ (99)</span>
-            <span class="text-gray-500 cursor-pointer">ยกเลิก (99)</span>
           </div>
 
           <div class="mt-4">
@@ -146,95 +127,34 @@ const isSidebarOpen = ref(false);
         </div>
       </div>
 
-      <!-- 5 : Sidebar -->
-      <div
-        class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2"
-      >
-        <!-- content -->
+      <div class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2">
         <div class="p-4 space-y-5 flex-1">
-          <!-- จัดการคำสั่งซื้อ -->
-          <div>
+          <div v-for="(section, sectionIndex) in menuSections" :key="section.title">
             <div class="flex items-center gap-2 mb-2">
-              <span class="font-medium text-gray-800">จัดการคำสั่งซื้อ</span>
+              <span class="font-medium text-gray-800">{{ section.title }}</span>
             </div>
 
             <ul class="text-sm space-y-2">
               <li
-                class="flex items-center justify-between text-primary font-medium cursor-pointer"
+                v-for="(item, itemIndex) in section.items"
+                :key="item"
+                class="cursor-pointer"
+                :class="sectionIndex === 0 && itemIndex === 0 ? 'flex items-center justify-between text-primary font-medium' : 'text-gray-600 hover:text-primary'"
               >
-                <span>รายการสั่งซื้อทั้งหมด</span>
+                <span>{{ item }}</span>
                 <span
+                  v-if="sectionIndex === 0 && itemIndex === 0"
                   class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
                 >
-                  99
+                  {{ orderCount }}
                 </span>
               </li>
-
-              <li class="text-gray-600 hover:text-primary cursor-pointer">
-                รายการสินค้าค้างส่ง
-              </li>
-              <li class="text-gray-600 hover:text-primary cursor-pointer">
-                ติดตามสถานะการจัดส่ง
-              </li>
             </ul>
+
+            <div v-if="sectionIndex < menuSections.length - 1" class="border-t border-gray-200 mt-4" />
           </div>
-
-          <div class="border-t border-gray-200" />
-
-          <!-- การเงินและชำระเงิน -->
-          <div>
-            <p class="font-medium mb-2">การเงินและชำระเงิน</p>
-            <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-primary cursor-pointer">
-                ชำระเงิน / อัปโหลดหลักฐาน
-              </li>
-              <li class="hover:text-primary cursor-pointer">
-                จ่ายชำระหนี้ Advice สนญ.
-              </li>
-              <li class="hover:text-primary cursor-pointer">
-                รายการเคลื่อนไหวบัญชี
-              </li>
-            </ul>
-          </div>
-
-          <div class="border-t border-gray-200" />
-
-          <!-- งานบริการ -->
-          <div>
-            <p class="font-medium mb-2">งานบริการและติดตามสถานะเคลม</p>
-            <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-primary cursor-pointer">
-                ตรวจสอบสถานะการแจ้งเคลม
-              </li>
-              <li class="hover:text-primary cursor-pointer">
-                สินค้าเคลมรอตัดสินใจ
-              </li>
-              <li class="hover:text-primary cursor-pointer">รายงานการส่งคืน</li>
-            </ul>
-          </div>
-
-          <div class="border-t border-gray-200" />
-
-          <!-- ข้อมูลบัญชี -->
-          <div>
-            <p class="font-medium mb-2">ข้อมูลบัญชี</p>
-            <ul class="text-sm text-gray-600 space-y-2">
-              <li class="hover:text-primary cursor-pointer">
-                ข้อมูลส่วนตัวดีลเลอร์
-              </li>
-              <li class="hover:text-primary cursor-pointer">
-                รายชื่อไฟล์อัปโหลด
-              </li>
-              <li class="hover:text-primary cursor-pointer">
-                เงื่อนไขการจัดส่ง
-              </li>
-              <li class="hover:text-primary cursor-pointer">เปลี่ยนรหัสผ่าน</li>
-            </ul>
-          </div>
-          <div class="mt-auto p-4 pt-3 border-t border-gray-200" />
         </div>
 
-        <!-- logout -->
         <div class="mt-auto p-4 mb-3">
           <button
             class="w-full flex items-center justify-center gap-2 border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium hover:bg-red-600 hover:text-white hover:border-red-600 active:bg-red-700 active:border-red-700 transition"
@@ -244,10 +164,7 @@ const isSidebarOpen = ref(false);
         </div>
       </div>
 
-      <!-- 6 : Main content -->
-      <div
-        class="bg-white rounded-xl shadow flex flex-col col-span-1 lg:col-span-4 lg:row-span-5 lg:col-start-3 lg:row-start-2"
-      >
+      <div class="bg-white rounded-xl shadow flex flex-col col-span-1 lg:col-span-4 lg:row-span-5 lg:col-start-3 lg:row-start-2">
         <div class="flex-1 flex flex-col items-center justify-center p-6">
           <img
             src="https://cdn-icons-png.flaticon.com/512/679/679821.png"

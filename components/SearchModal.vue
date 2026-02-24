@@ -149,7 +149,7 @@
                     <div
                       class="text-[18px] font-bold text-gray-900 whitespace-nowrap"
                     >
-                      ฿{{ product.price.toLocaleString() }}
+                      ฿{{ formatNumber(product.price) }}
                     </div>
 
                     <div
@@ -160,13 +160,13 @@
                         v-if="product.discount"
                         class="bg-red-700 text-white text-[11px] px-3 py-0.5 rounded-full whitespace-nowrap"
                       >
-                        -฿{{ product.discount.toLocaleString() }}
+                        -฿{{ formatNumber(product.discount) }}
                       </div>
 
                       <div
                         class="text-[12px] text-gray-400 line-through whitespace-nowrap"
                       >
-                        ฿{{ product.oldPrice.toLocaleString() }}
+                        ฿{{ formatNumber(product.oldPrice) }}
                       </div>
                     </div>
 
@@ -216,26 +216,6 @@
             >
               <img :src="banner.image" class="w-full h-36 object-cover" >
             </a>
-
-            <a
-              v-for="banner in banners"
-              :key="banner.id"
-              :href="banner.link"
-              target="_blank"
-              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
-            >
-              <img :src="banner.image" class="w-full h-36 object-cover" >
-            </a>
-
-            <a
-              v-for="banner in banners"
-              :key="banner.id"
-              :href="banner.link"
-              target="_blank"
-              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
-            >
-              <img :src="banner.image" class="w-full h-36 object-cover" >
-            </a>
           </div>
         </div>
       </div>
@@ -258,6 +238,7 @@ const emit = defineEmits<{
   // eslint-disable-next-line no-unused-vars
   (e: 'update:modelValue', value: boolean): void;
 }>();
+const { formatNumber } = useThaiFormatters();
 
 const close = () => {
   emit('update:modelValue', false);

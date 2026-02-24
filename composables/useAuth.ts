@@ -4,6 +4,7 @@ import type { CartItem } from '~/types/cart';
 
 export const useAuth = () => {
 const currentUserId = useState<number | null>('active-user-id', () => 202); 
+  const { getRolePrice: calculateRolePrice } = useRolePricing();
   
   const { users: allUsers } = useUser();
 
@@ -64,14 +65,7 @@ const currentUserId = useState<number | null>('active-user-id', () => 202);
 
   // 4. Helper for Role Based Pricing
   const getRolePrice = (basePrice: number) => {
-    if (!currentUser.value) return basePrice;
-    const multipliers = {
-      Technician: 0.96, // 4% off
-      Dealer: 0.95,     // 5% off
-      Franchise: 0.94   // 6% off
-    };
-    const role = currentUser.value.role as keyof typeof multipliers;
-    return basePrice * (multipliers[role] || 1);
+    return calculateRolePrice(basePrice, currentUser.value?.role);
   };
 
   return { 

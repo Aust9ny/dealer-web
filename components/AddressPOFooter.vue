@@ -4,8 +4,12 @@ import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
 import { Icon } from '@iconify/vue';
 import { useLoading } from '@/composables/useLoading';
+import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
+import { usePOPricing } from '@/composables/usePOPricing';
 
 const { isLoading, startLoading, stopLoading } = useLoading();
+const { formatCurrency, formatThaiDateTime, runWithLoading } = usePOFooterHelpers();
+const { getOrderSubtotal, getGrandTotal } = usePOPricing();
 const router = useRouter();
 const route = useRoute();
 const { getPOById } = useMockPO();
@@ -18,81 +22,53 @@ const po = computed(() => getPOById(poId.value));
 
 // ... (Logic คำนวณราคาคงเดิม) ...
 const subtotal = computed(() => {
-  if (!po.value) return 0;
-  return po.value.items.reduce(
-    (sum, item) => sum + item.priceAtPurchase * item.quantity,
-    0,
-  );
+  return getOrderSubtotal(po.value);
 });
-const vat = computed(() => subtotal.value * 0.07);
-const grandTotal = computed(() => subtotal.value + vat.value);
+const grandTotal = computed(() => getGrandTotal(subtotal.value));
 
 /**
  * 🟢 PRIMARY ACTION HANDLER
  * เปลี่ยนจากการเรียก nextStep() เป็น router.push()
  */
-const handleMainAction = () => {
-  startLoading();
-
-  setTimeout(() => {
+const handleMainAction = async () => {
+  await runWithLoading({ startLoading, stopLoading }, async () => {
     if (currentStep.value === 1) {
       // หน้า 1 (Check) -> ไปหน้า Address
-      router.push(`/po/${poId.value}/address`);
+      await router.push(`/po/${poId.value}/address`);
     } else if (currentStep.value === 2) {
       // หน้า 2 (Address) -> ไปหน้า Payment
-      router.push(`/po/${poId.value}/payment`);
+      await router.push(`/po/${poId.value}/payment`);
     } else {
       // หน้า 3 (Payment) -> ยืนยันการชำระเงิน
       // console.log('Final Payment Triggered');
     }
-    stopLoading();
-  }, 500);
+  });
 };
 
 /**
  * 🟢 SECONDARY ACTION HANDLER
  * เปลี่ยนจากการเรียก prevStep() เป็น router.push()
  */
-const handleSecondaryAction = () => {
-  startLoading();
-
-  setTimeout(() => {
+const handleSecondaryAction = async () => {
+  await runWithLoading({ startLoading, stopLoading }, async () => {
     if (currentStep.value === 3) {
       // หน้า 3 (Payment) -> ถอยกลับไป Address
-      router.push(`/po/${poId.value}/address`);
+      await router.push(`/po/${poId.value}/address`);
     } else if (currentStep.value === 2) {
       // หน้า 2 (Address) -> ถอยกลับไปหน้าแรก (Index)
-      router.push(`/po/${poId.value}`);
+      await router.push(`/po/${poId.value}`);
     } else {
       // หน้า 1 (Check) -> กลับไปเลือกสินค้าเพิ่ม (Logic เดิมของคุณ)
       const from = route.query.from as string;
       if (from && from.startsWith('/category')) {
-        router.push(from);
+        await router.push(from);
       } else if (po.value?.id) {
-        router.push(`/category/${po.value.id}`);
+        await router.push(`/category/${po.value.id}`);
       } else {
-        router.push('/category');
+        await router.push('/category');
       }
     }
-    stopLoading();
-  }, 300);
-};
-
-// ... (formatCurrency, formatThaiDateTime คงเดิม) ...
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('th-TH', {
-    style: 'currency',
-    currency: 'THB',
-    maximumFractionDigits: 0,
-  }).format(value);
-};
-
-const formatThaiDateTime = (value: string) => {
-  return new Intl.DateTimeFormat('th-TH', {
-    dateStyle: 'short',
-    timeStyle: 'medium',
-    timeZone: 'Asia/Bangkok',
-  }).format(new Date(value));
+  });
 };
 </script>
 

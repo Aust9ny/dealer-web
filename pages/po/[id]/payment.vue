@@ -2,6 +2,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { usePOPricing } from '@/composables/usePOPricing';
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -12,6 +13,7 @@ const props = defineProps<{
   formatPrice: (val: number) => string;
   formatDate: (dateStr: string , showTime?: boolean) => string;
 }>();
+const { getEffectiveQuantity } = usePOPricing();
 
 const getStockStatus = (item: any) => {
   const stock = item.product.stock || 0;
@@ -32,6 +34,11 @@ const getStockStatus = (item: any) => {
     colorClass: 'text-emerald-600',
     bgClass: 'bg-emerald-50',
   };
+};
+
+const getLineTotal = (item: any) => {
+  const price = item.priceAtPurchase ?? 0;
+  return price * getEffectiveQuantity(item);
 };
 
 // const route = useRoute();
@@ -254,9 +261,7 @@ const goBack = () => {
                       >
                       <div class="text-right">
                         <p class="text-[10px] font-black text-slate-800">
-                          ฿{{
-                            formatPrice(item.priceAtPurchase * item.quantity)
-                          }}
+                          ฿{{ formatPrice(getLineTotal(item)) }}
                         </p>
                         <p
                           class="text-[9px] font-black uppercase tracking-tighter mt-1 px-1.5 py-0.5 rounded"
@@ -326,7 +331,7 @@ const goBack = () => {
                 >
                   <span>ยอดก่อน Vat:</span>
                   <span class="text-slate-800 font-black"
-                    >฿{{ formatPrice(subtotal - vat) }}</span
+                    >฿{{ formatPrice(subtotal) }}</span
                   >
                 </div>
 

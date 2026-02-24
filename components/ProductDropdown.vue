@@ -12,10 +12,12 @@ interface Props {
 
 // 🟢 Auth contains our global cart state and addToCart function
 const { currentUser, addToCart } = useAuth();
+const { getRoleMultiplier } = useRolePricing();
+const { formatNumber } = useThaiFormatters();
 
 const { getProductUrl } = useProductUrl();
 
-defineProps<Props>();
+const props = defineProps<Props>();
 const emit = defineEmits(['toggle']);
 
 // 🟢 Notification Logic
@@ -30,11 +32,18 @@ useScrollLock(showNotifyModal);
 const cartQuantities = ref<Record<number, number>>({});
 
 // 🟢 Price Logic based on Role
-const getRolePrice = (basePrice: number) => {
-    if (!currentUser.value) return basePrice;
-    const multipliers = { Technician: 0.96, Dealer: 0.95, Franchise: 0.94 };
-    return basePrice * (multipliers[currentUser.value.role as keyof typeof multipliers] || 1);
-};
+const roleMultiplier = computed(() => {
+    return getRoleMultiplier(currentUser.value?.role);
+});
+
+const rolePriceById = computed<Record<number, number>>(() =>
+    props.products.reduce((acc, product) => {
+        acc[product.id] = product.price * roleMultiplier.value;
+        return acc;
+    }, {} as Record<number, number>)
+);
+
+const rolePrice = (product: Product) => rolePriceById.value[product.id] ?? product.price;
 
 // 🟢 Action: Add to Cart
 const handleAdd = (product: Product) => {
@@ -63,7 +72,7 @@ const handleNotifySubmit = async () => {
 <template>
     <div class="w-full mb-1">
 <button
-    class="sticky top-17 md:top-24 z-60 w-full flex items-center justify-between bg-white/95 backdrop-blur-sm border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-md hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
+    class="sticky top-4  z-60 w-full flex items-center justify-between bg-white/95 backdrop-blur-sm border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-md hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
     @click="emit('toggle')"
 >
     <div class="flex space-x-1 w-full text-sm items-center">
@@ -154,12 +163,12 @@ const handleNotifySubmit = async () => {
 
                                 <td
                                     class="p-3 text-center font-bold bg-slate-50/50 border-b border-r border-slate-100 text-slate-400">
-                                    ฿{{ product.price.toLocaleString() }}
+                                    ฿{{ formatNumber(product.price) }}
                                 </td>
 
                                 <td
                                     class="p-3 text-center font-black bg-blue-50 text-[#0D95DA] border-b border-r border-blue-100">
-                                    ฿{{ getRolePrice(product.price).toLocaleString() }}
+                                    ฿{{ formatNumber(rolePrice(product)) }}
                                 </td>
 
                                 <td class="p-3 border-b border-r border-slate-100 text-center">
@@ -171,7 +180,7 @@ const handleNotifySubmit = async () => {
 
                                 <td
                                     class="p-3 text-center font-bold bg-emerald-50 text-emerald-800 border-b border-r border-emerald-100">
-                                    ฿{{ (getRolePrice(product.price) * 0.98).toLocaleString() }}
+                                    ฿{{ formatNumber(rolePrice(product) * 0.98) }}
                                 </td>
 
                                 <td

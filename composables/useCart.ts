@@ -4,6 +4,7 @@ import type { UserCart, CartItem } from '~/types/cart';
 
 export const useCart = () => {
   const { currentUser } = useAuth();
+  const { getRolePrice: calculateRolePrice } = useRolePricing();
 
   // 1. Get the current active (default) cart
   const activeCart = computed(() => {
@@ -60,9 +61,7 @@ export const useCart = () => {
 
   // Helper: Get Price based on user role (Same logic as we used in pages)
   const getRolePrice = (basePrice: number) => {
-    if (!currentUser.value) return basePrice;
-    const multipliers = { Technician: 0.96, Dealer: 0.95, Franchise: 0.94 };
-    return basePrice * (multipliers[currentUser.value.role] || 1);
+    return calculateRolePrice(basePrice, currentUser.value?.role);
   };
 
   return {
