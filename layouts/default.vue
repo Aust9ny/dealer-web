@@ -27,6 +27,7 @@ const mainPaddingClass = computed(() => {
     <main :class="['pt-20 sm:pt-24 md:pt-23', mainPaddingClass]">
       <slot />
     </main>
+    <BackToTop/>
 
     <Footer v-if="footerType === 'default'" />
     <SelectedPOFooter v-if="footerType === 'selected'" />
