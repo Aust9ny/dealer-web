@@ -76,9 +76,8 @@ const handleContinue = () => {
         เลือกใบสั่งซื้อ ({{ purchaseOrders.length }})
       </h2>
 
-      <!-- List -->
-      <div class="p-3 max-h-125 overflow-y-auto border border-slate-200 rounded-lg">
-        <div
+        <!-- List -->
+        <div class="p-3 max-h-[50vh] md:max-h-125 overflow-y-auto border border-slate-200 rounded-lg">        <div
           v-for="po in purchaseOrders"
           :key="po.id"
           class="px-4 py-3 rounded-lg cursor-pointer text-sm transition flex justify-between items-center"
