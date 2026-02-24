@@ -1,8 +1,13 @@
-<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import type { Product } from '@/types/product';
 import type { StyleValue } from 'vue' ;// นำเข้า Type
+
+interface CategoryNode {
+  id: number;
+  name: string;
+  icon: string;
+  subCats: string[];
+}
 
 // 🟢 STATES & REFS
 const isSidebarOpen = ref(true);
@@ -13,7 +18,7 @@ const globalLoading = useState('global-loading', () => false);
 const viewMode = ref<'grid' | 'list'>('list');
 
 const isQuickSelectOpen = ref(false);
-const tempCategory = ref<any>(null);
+const tempCategory = ref<CategoryNode | null>(null);
 const flyoutOffset = ref(0);
 const isFlipped = ref(false);
 
@@ -21,64 +26,12 @@ const searchQuery = ref('');
 const stockStatus = ref<'ทั้งหมด' | 'มีของ' | 'ของหมด'>('ทั้งหมด');
 
 const { products } = useDashboard();
-
-// 🟢 COMPUTED: FILTERING
-const filteredProducts = computed(() => {
-  let result = [...products.value];
-  if (activeSubCategory.value) {
-    result = result.filter(
-      (p) =>
-        p.category?.toLowerCase() === activeSubCategory.value.toLowerCase(),
-    );
-  }
-  if (activeSubTag.value !== 'ALL') {
-    result = result.filter((p) => p.tag === activeSubTag.value);
-  }
-  if (searchQuery.value) {
-    const q = searchQuery.value.toLowerCase();
-    result = result.filter(
-      (p) =>
-        p.name.toLowerCase().includes(q) ||
-        p.sku.toLowerCase().includes(q) ||
-        p.brand.toLowerCase().includes(q),
-    );
-  }
-  if (stockStatus.value !== 'ทั้งหมด') {
-    result = result.filter((p) =>
-      stockStatus.value === 'มีของ' ? (p.stock ?? 0) > 0 : (p.stock ?? 0) === 0,
-    );
-  }
-  return result;
-});
-
-// 🟢 COMPUTED: GROUPING
-const productsBySubTag = computed(() => {
-  const groups: Record<string, Product[]> = {};
-  filteredProducts.value.forEach((p) => {
-    const key = p.tag || 'อื่นๆ';
-    if (!groups[key]) groups[key] = [];
-    groups[key].push(p);
-  });
-  return Object.entries(groups)
-    .sort(([a], [b]) => b.localeCompare(a, undefined, { numeric: true }))
-    .reduce(
-      (acc, [k, v]) => {
-        acc[k] = v;
-        return acc;
-      },
-      {} as Record<string, Product[]>,
-    );
-});
-
-const currentSubCatTags = computed(() => {
-  const tags = new Set<string>();
-  products.value
-    .filter(
-      (p) =>
-        p.category?.toLowerCase() === activeSubCategory.value.toLowerCase(),
-    )
-    .forEach((p) => p.tag && tags.add(p.tag));
-  return Array.from(tags).sort();
+const { filteredProducts, productsBySubTag, currentSubCatTags } = useCategoryFilters({
+  products,
+  activeSubCategory,
+  activeSubTag,
+  searchQuery,
+  stockStatus,
 });
 
 // 🟢 STATIC DATA
@@ -102,14 +55,14 @@ const baseCategories = [
 const categories = Array.from({ length: 15 }, (_, i) => ({
   id: i + 1,
   ...baseCategories[i % baseCategories.length],
-}));
+})) as CategoryNode[];
 const activeCategoryName = computed(
   () =>
     categories.find((c) => c.id === activeCategory.value)?.name || 'Categories',
 );
 
 // 🟢 ACTIONS
-const toggleCategory = (cat: any, event: MouseEvent) => {
+const toggleCategory = (cat: CategoryNode, event: MouseEvent) => {
   if (!isSidebarOpen.value) {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
     isFlipped.value = rect.top + 350 > window.innerHeight;
@@ -123,7 +76,7 @@ const toggleCategory = (cat: any, event: MouseEvent) => {
   }
 };
 
-const selectMainCategory = (cat: any) => {
+const selectMainCategory = (cat: CategoryNode) => {
   tempCategory.value = cat;
 };
 

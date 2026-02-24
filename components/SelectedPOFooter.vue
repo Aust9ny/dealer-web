@@ -4,8 +4,12 @@ import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
 import { Icon } from '@iconify/vue';
 import { useLoading } from '@/composables/useLoading';
+import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
+import { usePOPricing } from '@/composables/usePOPricing';
 
-const { isLoading, startLoading } = useLoading();
+const { isLoading, startLoading, stopLoading } = useLoading();
+const { formatCurrency, formatThaiDateTime, runWithLoading } = usePOFooterHelpers();
+const { getOrderSubtotal, getGrandTotal } = usePOPricing();
 const router = useRouter();
 
 const route = useRoute();
@@ -14,31 +18,16 @@ const { getPOById } = useMockPO();
 const poId = computed(() => route.params.id as string);
 const po = computed(() => getPOById(poId.value));
 const hasPO = computed(() => !!po.value);
-const goToPO = () => {
+const displayTotal = computed(() => getGrandTotal(getOrderSubtotal(po.value)));
+const goToPO = async () => {
   if (!hasPO.value) {
-    router.push('/category'); // หน้าเริ่มสร้างใหม่
+    await router.push('/category');
     return;
   }
 
-  startLoading();
-
-  setTimeout(() => {
-    router.push(`/po/${po.value?.id}`);
-  }, 1500);
-};
-const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat('th-TH', {
-    style: 'currency',
-    currency: 'THB',
-  }).format(value);
-};
-
-const formatThaiDateTime = (value: string) => {
-  return new Intl.DateTimeFormat('th-TH', {
-    dateStyle: 'short',
-    timeStyle: 'medium',
-    timeZone: 'Asia/Bangkok',
-  }).format(new Date(value));
+  await runWithLoading({ startLoading, stopLoading }, async () => {
+    await router.push(`/po/${po.value?.id}`);
+  });
 };
 </script>
 
@@ -100,7 +89,7 @@ const formatThaiDateTime = (value: string) => {
           <div
             class="text-xl md:text-3xl font-black text-[#2D5A9E] wrap-break-word"
           >
-            {{ formatCurrency(po?.totalAmount ?? 0) }}
+            {{ formatCurrency(displayTotal) }}
           </div>
           <div class="hidden md:block text-[10px] text-slate-400 font-medium">
             (ราคานี้รวมภาษีมูลค่าเพิ่ม / Vat แล้ว)

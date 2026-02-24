@@ -8,16 +8,16 @@ export const useDashboard = () => {
   const endDate = ref<string | null>(null);
   
 
-  const banner1 = ref<Banner[]>([
+  const banner1 = useState<Banner[]>('dashboard-banner1', () => [
     { id: 1, image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=1920&auto=format&fit=crop', link: 'https://www.advice.co.th/article/activity-promotion', alt: 'GPU Update' },
     { id: 2, image: 'https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=1920&auto=format&fit=crop', link: 'https://www.advice.co.th/article/activity-promotion', alt: 'Cybersecurity' },
   ]);
 
-  const banner2 = ref<Banner[]>([
+  const banner2 = useState<Banner[]>('dashboard-banner2', () => [
     { id: 4, image: 'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1920&auto=format&fit=crop', link: 'https://www.advice.co.th/article/activity-promotion', alt: 'AI Tech' },
   ]);
 
-    const products = ref<Product[]>([
+    const products = useState<Product[]>('dashboard-products', () => [
     { id: 1, sku: 'ZTC-4060TI', brand: 'ZOTAC', name: 'VGA ZOTAC GEFORCE RTX 4060 TI TWIN EDGE SPIDERMAN OC - 8GB GDDR6', price: 13300, category: 'VGA', image: 'https://m.media-amazon.com/images/I/81H2tfnNReL._AC_SL1500_.jpg', specs: '12GB / GDDR6X / 192-bit / PCIe4.0 / 1xHDMI / 3xDp', promotion: 'แถมฟรี | เมื่อซื้อ GeForce RTX 3080 Blac', warranty: 'ประกัน 3-3-3', delivery: 'จัดส่งด่วน 3-5 ชม. ฟรี', views: '900k', isHot: true , stock: 598 },
     { id: 2, sku: 'ZTC-4060TI', brand: 'ZOTAC', name: 'VGA ZOTAC GEFORCE RTX 4060 TI TWIN EDGE SPIDERMAN OC - 8GB GDDR6', price: 13300, category: 'VGA', image: 'https://m.media-amazon.com/images/I/81H2tfnNReL._AC_SL1500_.jpg', specs: '12GB / GDDR6X / 192-bit / PCIe4.0 / 1xHDMI / 3xDp', promotion: 'แถมฟรี | เมื่อซื้อ GeForce RTX 3080 Blac', warranty: 'ประกัน 3-3-3', delivery: 'จัดส่งด่วน 3-5 ชม. ฟรี', views: '900k', isHot: true , stock: 2},
     { id: 3, sku: 'ZTC-4060TI', brand: 'ZOTAC', name: 'VGA ZOTAC GEFORCE RTX 4060 TI TWIN EDGE SPIDERMAN OC - 8GB GDDR6', price: 13300, category: 'VGA', image: 'https://m.media-amazon.com/images/I/81H2tfnNReL._AC_SL1500_.jpg', specs: '12GB / GDDR6X / 192-bit / PCIe4.0 / 1xHDMI / 3xDp', promotion: 'แถมฟรี | เมื่อซื้อ GeForce RTX 3080 Blac', warranty: 'ประกัน 3-3-3', delivery: 'จัดส่งด่วน 3-5 ชม. ฟรี', views: '900k', isHot: true },
@@ -28,7 +28,7 @@ export const useDashboard = () => {
     { id: 21, sku: 'INT-I5-14600K', brand: 'INTEL', name: 'CPU INTEL CORE I5-14600K 3.5 GHz (SOCKET LGA 1700)', price: 11900, category: 'CPU', image: 'https://img.advice.co.th/images_nas/pic_product4/A0154873/A0154873OK_BIG_1.jpg', specs: '14 Cores / 20 Threads / 5.3 GHz Turbo', promotion: 'ลดพิเศษ 500.- เมื่อซื้อพร้อมบอร์ด', warranty: 'ประกัน 3-3-3', delivery: 'จัดส่งด่วน 3-5 ชม.', views: '1.2M', isHot: true },
     { id: 22, sku: 'AMD-R7-7800X3D', brand: 'AMD', name: 'CPU AMD RYZEN 7 7800X3D 4.2 GHz (SOCKET AM5)', price: 15500, category: 'CPU', image: 'https://img.advice.co.th/images_nas/pic_product4/A0168235/A0168235OK_BIG_1.jpg', specs: '8 Cores / 16 Threads / 96MB L3 Cache', promotion: 'แถมเกม Star Wars Outlaws', warranty: 'ประกัน 3-0-0', delivery: 'ส่งฟรีทั่วประเทศ', views: '2.5M', isHot: true },
     {
-    id: 21,
+    id: 26,
     sku: 'APL-IP15PM-256-BLU',
     name: 'iPhone 15 Pro Max 256GB Blue Titanium',
     brand: 'Apple',
@@ -43,7 +43,7 @@ export const useDashboard = () => {
     isNew: true
   },
   {
-    id: 22,
+    id: 27,
     sku: 'APL-IP16-128-PNK',
     name: 'iPhone 16 128GB Pink',
     brand: 'Apple',
@@ -136,11 +136,11 @@ export const useDashboard = () => {
   { id: 117, sku: 'APL-IP17P-256', brand: 'APPLE', name: 'iPhone 17 Pro Max (Concept Version)', price: 52900, category: 'iPhone', image: 'https://img.advice.co.th/images_nas/pic_product4/A0170017/A0170017_1.jpg', specs: '6.9" / A19 Pro / Under-display Face ID', promotion: 'Pre-order Exclusive', warranty: '1 Year AppleCare', delivery: 'ส่งฟรี', views: '9M', isHot: true, tag: 'iPhone 17' },
     ]);
 
-  const newList = ref<News[]>([
+  const newList = useState<News[]>('dashboard-news-list', () => [
     { id: 1, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
-    { id: 1, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
-    { id: 1, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
-    { id: 1, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
+    { id: 2, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
+    { id: 3, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
+    { id: 4, title: 'New GPU Release', link: '#', description: 'Latest news...', date: '2024-06-01', image: 'https://img.advice.co.th/images_nas/advice_activity/202602022186856919.jpg', alt: 'GPU' },
   ]);
   
   const stats = [

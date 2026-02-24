@@ -3,8 +3,7 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
 
 const props = defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  items: any[];
+  items: unknown[];
   title?: string;
   itemsPerRow?: number;
   autoPlay?: boolean;
@@ -129,7 +128,7 @@ onUnmounted(() => {
       @touchend="handleTouchEnd"
     >
       <button
-        v-if="shouldShowArrows" 
+        v-if="totalPages > 1 && shouldShowArrows"
         class="nav-btn left-2 md:left-4"
         :disabled="currentIndex === 0" 
         @click="prev()"
@@ -154,7 +153,7 @@ onUnmounted(() => {
       </div>
 
       <button
-        v-if="shouldShowArrows"
+        v-if="totalPages > 1 && shouldShowArrows"
         class="nav-btn right-2 md:right-4"
         :disabled="currentIndex >= items.length - visibleItems"
         @click="next()"

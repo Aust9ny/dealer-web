@@ -66,7 +66,7 @@
     <div class="mt-4 pt-4 border-t border-slate-50 relative">
       <div class="flex items-start justify-between" :class="[viewMode === 'grid' ? 'mb-4' : '']">
         <div class="flex flex-col">
-          <span class="text-xl font-black text-slate-900 leading-none">฿{{ product.price.toLocaleString() }}</span>
+          <span class="text-xl font-black text-slate-900 leading-none">฿{{ formatNumber(product.price) }}</span>
         </div>
 
         <div class="flex flex-col gap-1 items-end ">
@@ -117,5 +117,6 @@ defineProps<{
 }>();
 
 const { getProductUrl } = useProductUrl();
+const { formatNumber } = useThaiFormatters();
 
 </script>

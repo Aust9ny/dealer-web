@@ -1,47 +1,31 @@
 <script setup lang="ts">
 import { useMockPO } from '@/composables/useMockPO';
+import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
+import { usePOPricing } from '@/composables/usePOPricing';
 
 const route = useRoute();
 const { getPOById } = useMockPO();
+const { formatNumber, formatThaiDate } = usePOFooterHelpers();
+const { getOrderSubtotal, getVat, getGrandTotal } = usePOPricing();
 
 // 🟢 1. ดึงข้อมูล PO จาก ID ใน URL
 const poId = computed(() => route.params.id as string);
 const po = ref(getPOById(poId.value));
 
-// 🟢 2. คำนวณราคากลาง (Shared Calculations) - ปรับปรุงใหม่
+// 🟢 2. คำนวณราคากลาง (Shared Calculations)
 // หน้าลูก (index, address, payment) จะใช้ค่าชุดเดียวกันจากที่นี่
 const subtotal = computed(() => {
-  if (!po.value) return 0;
-  
-  return po.value.items.reduce((sum, item) => {
-    const price = item.priceAtPurchase;
-    const orderQty = item.quantity || 0;
-    const stockQty = item.product.stock || 0;
-    
-    // 💡 Logic: ใช้จำนวนที่น้อยกว่าระหว่าง "จำนวนที่สั่ง" กับ "จำนวนที่มีในสต็อก"
-    // ถ้าสต็อกเป็น 0 หรือติดลบ (สินค้าหมด) ยอดจะเป็น 0 ทันที
-    const actualQty = Math.max(0, Math.min(orderQty, stockQty));
-    
-    return sum + (price * actualQty);
-  }, 0);
+  return getOrderSubtotal(po.value);
 });
 
-const vat = computed(() => subtotal.value * 0.07);
-const grandTotal = computed(() => subtotal.value + vat.value);
+const vat = computed(() => getVat(subtotal.value));
+const grandTotal = computed(() => getGrandTotal(subtotal.value));
 
 // 🟢 3. Helper Functions สำหรับจัดการ Format
-const formatPrice = (val: number) => new Intl.NumberFormat('th-TH').format(val);
+const formatPrice = (val: number) => formatNumber(val);
 
 const formatDate = (dateStr: string , timeStr: boolean) => {
-  if (!dateStr) return '';
-  if (!timeStr) return new Intl.DateTimeFormat('th-TH', { 
-    dateStyle: 'short', 
-    // timeStyle: 'short' 
-  }).format(new Date(dateStr));
-  if (timeStr) return new Intl.DateTimeFormat('th-TH', { 
-    dateStyle: 'short', 
-    timeStyle: 'medium' 
-  }).format(new Date(dateStr));
+  return formatThaiDate(dateStr, timeStr);
 };
 
 const removePOItem = (productId: number) => {
@@ -57,7 +41,7 @@ if (!po.value) {
 </script>
 
 <template>
-  <div class="min-h-screen bg-slate-100 p-2 md:p-4 pt-2 md:pt-4 pb-40 md:pb-32">
+  <div class="min-h-screen bg-slate-100 p-2 md:p-4">
     <div class="max-w-350 mx-auto w-full">
 
       <NuxtPage 

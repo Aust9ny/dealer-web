@@ -47,11 +47,12 @@ onBeforeUnmount(() => {
 });
 
 const router = useRouter();
-const { getAllPO, getLatestPO } = useMockPO();
-const totalPO = computed(() => getAllPO().length);
+const { userOrders, getLatestUserPO } = useMockPO();
+const totalPO = computed(() => userOrders.value.length);
+const latestUserPO = computed(() => getLatestUserPO.value);
 
 const goToLatestPO = () => {
-  const latest = getLatestPO();
+  const latest = latestUserPO.value;
 
   if (!latest) {
     router.push('/po'); // หน้า list
@@ -101,6 +102,16 @@ const handleLogout = () => {
   logout();
   showAccountMenu.value = false;
 };
+
+const trendingKeywords = [
+  'RTX 4090 AORUS MASTER',
+  'MacBook Air 2023',
+  'iPhone 14',
+  'คอมประกอบ Intel',
+  'งบจำกัด',
+];
+
+const searchHistory = ['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080'];
 
 const mobileDropdownRef = ref<HTMLElement | null>(null);
 const desktopDropdownRef = ref<HTMLElement | null>(null);
@@ -181,99 +192,18 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
           <!-- MOBILE DROPDOWN -->
           <div
             v-if="showAccountMenu"
-            class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-200"
+            class="absolute right-0 top-full mt-2 w-64 z-200"
             @click.stop
           >
-            <!-- ชื่อผู้ใช้งาน -->
-            <div
-              v-if="currentUser"
-              class="px-4 py-3 bg-slate-50 border-b border-gray-100"
-            >
-              <p
-                class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
-              >
-                ชื่อผู้ใช้งาน
-              </p>
-              <p class="text-sm font-bold text-slate-800">
-                {{ currentUser.fname }} {{ currentUser.lname }}
-              </p>
-            </div>
-            <div class="p-2">
-              <p
-                class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest"
-              >
-                สลับสิทธิ์การเข้าชม (Mock)
-              </p>
-              <div
-                v-for="role in roles"
-                :key="role.name"
-                class="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all"
-                :class="[
-                  currentUser?.role === role.name
-                    ? 'bg-blue-50'
-                    : 'hover:bg-gray-50',
-                ]"
-                @click="handleSwitchRole(role.name)"
-              >
-                <Icon :icon="role.icon" class="w-5 h-5" :class="role.color" />
-                <div class="flex flex-col">
-                  <span
-                    class="text-xs font-bold"
-                    :class="
-                      currentUser?.role === role.name
-                        ? 'text-primary'
-                        : 'text-gray-700'
-                    "
-                    >{{ role.name }}</span
-                  >
-                  <span
-                    v-if="currentUser?.role === role.name"
-                    class="text-[9px] text-blue-400 font-medium italic"
-                    >กำลังใช้งาน</span
-                  >
-                </div>
-                <Icon
-                  v-if="currentUser?.role === role.name"
-                  icon="mdi:check-circle"
-                  class="ml-auto w-4 h-4 text-primary"
-                />
-              </div>
-            </div>
-
-            <div class="h-px bg-gray-100 mx-3 mt-1" />
-            <div class="py-1">
-              <div
-                class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-                @click="goToLatestPO"
-              >
-                <span>การสั่งซื้อของฉัน</span>
-                <span
-                  class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
-                  >{{ totalPO }}</span
-                >
-              </div>
-              <div
-                class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-              >
-                การเงินเเละการชำระเงิน
-              </div>
-
-              <NuxtLink
-                to="/Dealer_Profile"
-                class="block px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-                @click="showAccountMenu = false"
-              >
-                บัญชีของฉัน
-              </NuxtLink>
-
-              <div
-                class="px-4 py-3 text-sm text-red-500 font-bold cursor-pointer hover:bg-red-50 transition flex items-center gap-2"
-                @click="handleLogout"
-              >
-                <Icon icon="mdi:logout" class="w-4 h-4" />
-                ออกจากระบบ
-              </div>
-            </div>
+            <AccountMenuContent
+              :current-user="currentUser"
+              :roles="roles"
+              :total-p-o="totalPO"
+              @switch-role="handleSwitchRole"
+              @go-po="goToLatestPO"
+              @logout="handleLogout"
+              @close="showAccountMenu = false"
+            />
           </div>
         </div>
       </div>
@@ -346,98 +276,17 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         </button>
         <div
           v-if="showAccountMenu"
-          class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-120"
+          class="absolute right-0 top-full mt-2 w-64 z-120"
         >
-          <!-- ชื่อผู้ใช้งาน -->
-          <div
-            v-if="currentUser"
-            class="px-4 py-3 bg-slate-50 border-b border-gray-100"
-          >
-            <p
-              class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
-            >
-              ชื่อผู้ใช้งาน
-            </p>
-            <p class="text-sm font-bold text-slate-800">
-              {{ currentUser.fname }} {{ currentUser.lname }}
-            </p>
-          </div>
-          <div class="p-2">
-            <p
-              class="px-3 py-2 text-[10px] font-black text-slate-400 uppercase tracking-widest"
-            >
-              สลับสิทธิ์การเข้าชม (Mock)
-            </p>
-            <div
-              v-for="role in roles"
-              :key="role.name"
-              class="flex items-center gap-3 px-3 py-2 rounded-xl cursor-pointer transition-all"
-              :class="[
-                currentUser?.role === role.name
-                  ? 'bg-blue-50'
-                  : 'hover:bg-gray-50',
-              ]"
-              @click="handleSwitchRole(role.name)"
-            >
-              <Icon :icon="role.icon" class="w-5 h-5" :class="role.color" />
-              <div class="flex flex-col">
-                <span
-                  class="text-xs font-bold"
-                  :class="
-                    currentUser?.role === role.name
-                      ? 'text-primary'
-                      : 'text-gray-700'
-                  "
-                  >{{ role.name }}</span
-                >
-                <span
-                  v-if="currentUser?.role === role.name"
-                  class="text-[9px] text-blue-400 font-medium italic"
-                  >กำลังใช้งาน</span
-                >
-              </div>
-              <Icon
-                v-if="currentUser?.role === role.name"
-                icon="mdi:check-circle"
-                class="ml-auto w-4 h-4 text-primary"
-              />
-            </div>
-          </div>
-
-          <div class="h-px bg-gray-100 mx-3 mt-1" />
-          <div class="py-1">
-            <div
-              class="flex items-center px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-              @click="goToLatestPO"
-            >
-              <span>การสั่งซื้อของฉัน</span>
-              <span
-                class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center"
-                >{{ totalPO }}</span
-              >
-            </div>
-            <div
-              class="px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-            >
-              การเงินเเละการชำระเงิน
-            </div>
-
-            <NuxtLink
-              to="/Dealer_Profile"
-              class="block px-4 py-3 text-sm text-gray-800 cursor-pointer hover:bg-gray-50 transition"
-              @click="showAccountMenu = false"
-            >
-              บัญชีของฉัน
-            </NuxtLink>
-
-            <div
-              class="px-4 py-3 text-sm text-red-500 font-bold cursor-pointer hover:bg-red-50 transition flex items-center gap-2"
-              @click="handleLogout"
-            >
-              <Icon icon="mdi:logout" class="w-4 h-4" />
-              ออกจากระบบ
-            </div>
-          </div>
+          <AccountMenuContent
+            :current-user="currentUser"
+            :roles="roles"
+            :total-p-o="totalPO"
+            @switch-role="handleSwitchRole"
+            @go-po="goToLatestPO"
+            @logout="handleLogout"
+            @close="showAccountMenu = false"
+          />
         </div>
       </div>
     </div>
@@ -447,13 +296,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
     v-model="showSearchModal"
     :trending-products="trendingProducts"
     :banners="banner1"
-    :trending-keywords="[
-      'RTX 4090 AORUS MASTER',
-      'MacBook Air 2023',
-      'iPhone 14',
-      'คอมประกอบ Intel',
-      'งบจำกัด',
-    ]"
-    :search-history="['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080']"
+    :trending-keywords="trendingKeywords"
+    :search-history="searchHistory"
   />
 </template>

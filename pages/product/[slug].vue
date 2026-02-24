@@ -10,6 +10,8 @@ const slug = route.params.slug as string;
 
 // 🟢 1. Logic from composables (Nuxt auto-imports these)
 const { currentUser } = useAuth();
+const { getRoleMultiplier } = useRolePricing();
+const { formatNumber } = useThaiFormatters();
 const {
     showNotifyModal, targetProduct, notifyForm, isSubmitted,
     isEmailValid, isTelValid, openNotifyModal, onlyNumeric, isSuccess, resetNotifyState
@@ -27,16 +29,9 @@ const quantity = ref('');
 // Pricing Tiers Logic
 const priceTiers = computed(() => {
     const basePrice = products.value?.price || 0;
-    
-    const multipliers = {
-        Technician: 0.96,
-        Dealer: 0.95,
-        Franchise: 0.94
-    };
 
     // Determine current user role price
-    const userRole = currentUser.value?.role as keyof typeof multipliers;
-    const roleMultiplier = multipliers[userRole] || 1;
+    const roleMultiplier = getRoleMultiplier(currentUser.value?.role);
     const rolePrice = basePrice * roleMultiplier;
 
     const tiers = [
@@ -166,7 +161,7 @@ const handleNotifySubmit = async () => {
                                 <span 
                                     class="text-lg font-black text-slate-900"
                                 >
-                                    ฿{{ tier.price.toLocaleString() }}
+                                    ฿{{ formatNumber(tier.price) }}
                                 </span>
                             </div>
                         </div>

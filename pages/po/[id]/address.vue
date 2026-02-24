@@ -3,6 +3,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import AddressSelectionModal from '~/components/AddressSelectionModal.vue';
+import { usePOPricing } from '@/composables/usePOPricing';
 
 // 🟢 1. รับ PROPS จากไฟล์แม่ [id].vue
 const props = defineProps<{
@@ -17,6 +18,7 @@ const props = defineProps<{
 const { getFullAddress } = useUser();
 const { currentUser } = useAuth();
 const router = useRouter();
+const { getEffectiveQuantity } = usePOPricing();
 
 // 🟢 2. STATE MANAGEMENT
 const isAddressModalOpen = ref(false);
@@ -94,6 +96,11 @@ const getStockStatus = (item: any) => {
   if (stock <= 0) return { text: 'สินค้าหมด', colorClass: 'text-red-500', bgClass: 'bg-red-50' };
   if (stock < item.quantity) return { text: `สินค้าไม่พอ (เหลือ ${stock})`, colorClass: 'text-orange-500', bgClass: 'bg-orange-50' };
   return { text: 'พร้อมส่งครบ', colorClass: 'text-emerald-600', bgClass: 'bg-emerald-50' };
+};
+
+const getLineTotal = (item: any) => {
+  const price = item.priceAtPurchase ?? 0;
+  return price * getEffectiveQuantity(item);
 };
 
 // Sync Default Address on Load
@@ -281,7 +288,7 @@ watch(savedAddresses, (newAddrs) => {
                       <span class="text-[11px] text-slate-400 font-bold">x{{ item.quantity }}</span>
                     </div>
                     <div class="text-right">
-                      <p class="text-[11px] font-black text-slate-800">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
+                      <p class="text-[11px] font-black text-slate-800">฿{{ formatPrice(getLineTotal(item)) }}</p>
                       <p
                         class="text-[8px] font-black uppercase tracking-tighter mt-1 px-1.5 py-0.5 rounded-full"
                         :class="[getStockStatus(item).colorClass, getStockStatus(item).bgClass]">
@@ -304,7 +311,7 @@ watch(savedAddresses, (newAddrs) => {
 
             <div class="space-y-2 pt-2 text-[12px] font-bold text-slate-400">
               <div class="flex justify-between">
-                <span>ยอดสินค้ารวม:</span><span class="text-slate-800 font-black">฿{{ formatPrice(subtotal - 4110) }}</span>
+                <span>ยอดสินค้ารวม:</span><span class="text-slate-800 font-black">฿{{ formatPrice(subtotal + 4110) }}</span>
               </div>
               <div class="flex justify-between text-[#0D95DA]">
                 <span>ส่วนลด (DEALER2026):</span><span class="font-black">-฿{{ formatPrice(4110) }}</span>
