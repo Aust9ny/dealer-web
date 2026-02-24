@@ -19,12 +19,10 @@ const handleClickOutside = (event: MouseEvent) => {
   const target = event.target as Node;
 
   const clickedOutsideMobile =
-    mobileDropdownRef.value &&
-    !mobileDropdownRef.value.contains(target);
+    mobileDropdownRef.value && !mobileDropdownRef.value.contains(target);
 
   const clickedOutsideDesktop =
-    desktopDropdownRef.value &&
-    !desktopDropdownRef.value.contains(target);
+    desktopDropdownRef.value && !desktopDropdownRef.value.contains(target);
 
   if (showAccountMenu.value && clickedOutsideMobile && clickedOutsideDesktop) {
     showAccountMenu.value = false;
@@ -110,7 +108,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
 
 <template>
   <header
-    class="fixed top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
+    class="relative fixed top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
   >
     <div
       v-if="showSearchModal"
@@ -132,6 +130,32 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         <Icon icon="mdi:magnify" class="w-6 h-6 text-gray-700" />
       </button>
 
+      <!-- MOBILE SEARCH BAR -->
+<div
+  v-if="showSearchModal"
+  class="fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 md:hidden z-[150]"
+>
+  <div class="relative w-full">
+    <Icon
+      icon="mdi:magnify"
+      class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+    />
+
+    <input
+      type="text"
+      placeholder="ค้นหาสินค้า..."
+      class="w-full h-11 pl-12 pr-12 border border-gray-300 rounded-full bg-white transition focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary shadow-sm"
+      autofocus
+    >
+
+    <button
+      class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition"
+      @click="closeSearch"
+    >
+      <Icon icon="mdi:close" class="w-5 h-5 text-gray-500" />
+    </button>
+  </div>
+</div>
       <button class="relative" @click="goToLatestPO">
         <Icon icon="mdi:clipboard-text-outline" class="w-6 h-6 text-gray-700" />
         <span
@@ -141,7 +165,6 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
           {{ totalPO }}
         </span>
       </button>
-
       <div class="flex md:hidden items-center gap-3 ml-auto">
         <div ref="mobileDropdownRef" class="relative">
           <button

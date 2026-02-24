@@ -1,22 +1,28 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed left-0 right-0 bottom-0 top-36 md:top-22 z-140 flex items-start justify-center px-2 pb-2"
+    class="fixed top-16 left-0 right-0 bottom-0 md:left-0 md:right-0 md:bottom-0 md:top-22 z-140 flex items-end md:items-start justify-center"
   >
     <!-- Overlay -->
     <div class="absolute inset-0" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-full md:w-425 max-w-[98vw] h-[calc(100vh-10rem)] md:h-[80vh] overflow-hidden bg-white border border-gray-300 rounded-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
+      class="relative w-full md:w-425 h-[90vh] md:h-[80vh] bg-white rounded-t-3xl md:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.25)] md:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] overflow-hidden"
     >
-      <div class="grid grid-cols-1 md:grid-cols-12 min-h-full max-h-full overflow-y-auto md:overflow-hidden">
+      <div
+        class="flex flex-col md:grid md:grid-cols-12 min-h-full max-h-full overflow-y-auto md:overflow-hidden"
+      >
         <!-- Col 1 -->
-        <div class="md:col-span-3 relative flex flex-col border-b md:border-b-0">
-          <div class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
+        <div
+          class="md:col-span-3 relative flex flex-col border-b md:border-b-0"
+        >
+          <div
+            class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"
+          />
 
           <!-- Trending -->
-          <div class="p-4 md:p-5">
+          <div class="px-4 py-5 md:p-5">
             <div class="text-[15px] font-bold text-gray-900 mb-4">
               📈 เทรนด์การค้นหาช่วงนี้
             </div>
@@ -39,12 +45,12 @@
           </div>
 
           <!-- เส้นคั่น -->
-          <div class="px-4 md:px-5">
-            <div class="h-px w-4/4 bg-gray-400"/>
+          <div class="px-4 py-5 md:p-5">
+            <div class="h-px w-4/4 bg-gray-400" />
           </div>
 
           <!-- History -->
-          <div class="p-4 md:p-5">
+          <div class="px-4 py-5 md:p-5">
             <div class="flex items-center justify-between mb-4">
               <div class="text-[15px] font-bold text-gray-900">
                 🕘 ประวัติที่คุณเคยค้นหา
@@ -75,8 +81,13 @@
         </div>
 
         <!-- Col 2 : Products -->
-        <div class="md:col-span-5 md:col-start-4 relative flex flex-col md:max-h-[80vh] border-b md:border-b-0">
-          <div class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"/>
+        <div
+          class="md:col-span-5 md:col-start-4 relative flex flex-col md:max-h-[80vh] border-b md:border-b-0"
+        >
+          <!-- เส้นแบ่ง desktop -->
+          <div
+            class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-300"
+          />
 
           <!-- Header -->
           <div
@@ -93,78 +104,76 @@
           </div>
 
           <!-- Product List -->
-          <div class="flex-1 overflow-y-auto px-3 md:px-4 pb-4 md:pb-6">
+          <div class="flex-1 overflow-y-auto px-4 md:px-4 pb-4 md:pb-6">
             <div
               v-for="product in trendingProducts"
               :key="product.id"
-              class="flex flex-col sm:flex-row gap-3 md:gap-4 px-2 md:px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
+              class="flex flex-col sm:flex-row gap-2 md:gap-3 px-2 md:px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
             >
               <!-- Image -->
               <div
-                class="w-full sm:w-24 h-32 sm:h-24 flex items-center justify-center bg-gray-50 rounded-lg"
+                class="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg"
               >
-                <img :src="product.image" class="max-h-20 object-contain">
+                <img
+                  :src="product.image"
+                  class="max-h-20 max-w-full object-contain"
+                >
               </div>
 
               <!-- Content Wrapper -->
-              <div class="flex-1 flex justify-between">
-                <!-- LEFT : Info -->
-                <div class="flex flex-col justify-between pr-4">
-                  <!-- Brand -->
+              <div class="flex-1 flex justify-between min-w-0">
+                <!-- LEFT -->
+                <div class="flex flex-col justify-between pr-4 min-w-0">
                   <div
                     class="text-[11px] font-semibold text-blue-600 tracking-wide"
                   >
                     {{ product.brand }}
                   </div>
 
-                  <!-- Name -->
                   <div
                     class="text-[13px] text-gray-800 leading-snug line-clamp-2"
                   >
                     {{ product.name }}
                   </div>
 
-                  <!-- Spec -->
                   <div class="text-[12px] text-gray-400 line-clamp-1">
                     {{ product.spec }}
                   </div>
                 </div>
 
-                <!-- RIGHT : Price -->
+                <!-- RIGHT -->
                 <div
-                class="flex flex-col items-start sm:items-end justify-between text-left sm:text-right min-w-0 sm:min-w-42.5"
+                  class="flex flex-col items-start sm:items-end justify-between text-left sm:text-right min-w-0 sm:min-w-[170px]"
                 >
-                  <div class="flex flex-col items-end gap-1">
-                    <!-- Current Price -->
-
-                    <div class="text-[18px] font-bold text-gray-900">
+                  <div class="flex flex-col items-start sm:items-end gap-1">
+                    <div
+                      class="text-[18px] font-bold text-gray-900 whitespace-nowrap"
+                    >
                       ฿{{ product.price.toLocaleString() }}
                     </div>
 
-                    <!-- Old price + Discount badge -->
-
                     <div
                       v-if="product.oldPrice"
-                      class="flex items-center gap-2"
+                      class="flex items-center gap-2 flex-wrap sm:flex-nowrap"
                     >
-                      <!-- Discount Oval -->
                       <div
                         v-if="product.discount"
-                        class="bg-red-700 text-white text-[11px] px-3 py-0.5 rounded-full"
+                        class="bg-red-700 text-white text-[11px] px-3 py-0.5 rounded-full whitespace-nowrap"
                       >
                         -฿{{ product.discount.toLocaleString() }}
                       </div>
 
-                      <!-- Old Price -->
-                      <div class="text-[12px] text-gray-400 line-through">
+                      <div
+                        class="text-[12px] text-gray-400 line-through whitespace-nowrap"
+                      >
                         ฿{{ product.oldPrice.toLocaleString() }}
                       </div>
                     </div>
-                    <!-- Online Only -->
+
                     <div class="text-[10px] text-gray-400">
                       *ราคานี้เฉพาะออนไลน์เท่านั้น
                     </div>
-                    <!-- Ready Point -->
+
                     <div
                       v-if="product.readyPoint"
                       class="text-[11px] text-green-600 font-medium"
@@ -180,7 +189,9 @@
 
         <!-- Col 3 : Banner -->
 
-        <div class="md:col-span-4 md:col-start-9 p-4 md:p-5 flex flex-col md:max-h-[80vh]">
+        <div
+          class="md:col-span-4 md:col-start-9 p-4 md:p-5 flex flex-col md:max-h-[80vh]"
+        >
           <!-- Header -->
 
           <div class="flex items-center justify-between mb-5 shrink-0">
@@ -203,7 +214,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover">
+              <img :src="banner.image" class="w-full h-36 object-cover" >
             </a>
 
             <a
@@ -213,7 +224,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover">
+              <img :src="banner.image" class="w-full h-36 object-cover" >
             </a>
 
             <a
@@ -223,7 +234,7 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover">
+              <img :src="banner.image" class="w-full h-36 object-cover" >
             </a>
           </div>
         </div>
