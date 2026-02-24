@@ -73,7 +73,7 @@ const goBack = () => {
       <nav class="flex flex-col gap-4 w-full">
         <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
           
-          <div class="flex items-center gap-1 group justify-center bg-white">
+          <div class="flex items-center gap-1 group  bg-white">
             <div class="flex border border-slate-300 p-1 pr-3 rounded-lg text-slate-300 shadow-2md py-2" @click="goBack">
               <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors justify-center items-center">
                 <Icon
@@ -82,7 +82,7 @@ const goBack = () => {
                 />
               </div>
               <button
-                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-semibold text-[6px] md:text-base active:scale-95"
+                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-semibold text-sm md:text-base active:scale-95"
               >
                 แก้ไขที่อยู่จัดส่ง / ภาษี
               </button>
