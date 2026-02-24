@@ -89,19 +89,21 @@ const getReadyToShipStatus = (item: any) => {
       <nav class="flex flex-col gap-4 w-full">
         <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
           
-          <div class="flex items-center gap-1 group">
-            <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
-              <Icon
-                icon="mdi:chevron-left"
-                class="w-5 h-5 text-slate-400 group-hover:text-[#0D95DA] transition-all"
-              />
+          <div 
+            class="flex items-center gap-1 group bg-white">
+            <div class="flex border border-slate-300 p-1 pr-3 rounded-lg text-slate-300 shadow-2md py-2 bg-white" @click="goBack">
+              <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
+                <Icon
+                  icon="mdi:chevron-left"
+                  class="w-6 h-6 text-slate-400 group-hover:text-[#0D95DA] transition-all"
+                />
+              </div>
+              <button
+                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
+              >
+                เลือกสินค้าเพิ่ม
+              </button>
             </div>
-            <button
-              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
-              @click="goBack"
-            >
-              ย้อนกลับไปจัดการที่อยู่
-            </button>
           </div>
 
           <div class="w-full md:w-auto flex justify-center md:justify-end pt-2 md:pt-0 border-t border-slate-100 md:border-none">
@@ -245,7 +247,12 @@ const getReadyToShipStatus = (item: any) => {
           </div>
 
           <div class="lg:hidden flex flex-col gap-3 px-1 w-full"> <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center mb-1 w-full"> <div class="flex items-center gap-3">
-                <input v-model="isAllSelected" type="checkbox" class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" id="selectAllMob">
+                <input 
+                  id="selectAllMob"
+                  v-model="isAllSelected" 
+                  type="checkbox" 
+                  class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" 
+                >
                 <label for="selectAllMob" class="text-sm font-bold text-slate-700">เลือกสินค้าทั้งหมด</label>
               </div>
               <span class="bg-slate-100 px-2 py-1 rounded text-[10px] font-black text-slate-500">{{ po.items.length }} รายการ</span>
@@ -268,7 +275,10 @@ const getReadyToShipStatus = (item: any) => {
                       <p class="text-[#0D95DA] text-[10px] font-black uppercase tracking-tighter">{{ item.product.brand }}</p>
                       <h3 class="text-[13px] font-bold text-slate-800 leading-snug line-clamp-2">{{ item.product.name }}</h3>
                     </div>
-                    <button @click="removeProduct(item.product.id)" class="text-slate-300 active:text-red-500 p-1 shrink-0">
+                    <button 
+                      class="text-slate-300 active:text-red-500 p-1 shrink-0"
+                      @click="removeProduct(item.product.id)" 
+                    >
                       <Icon icon="mdi:close-circle-outline" class="w-5 h-5" />
                     </button>
                   </div>

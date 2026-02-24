@@ -118,22 +118,24 @@ watch(savedAddresses, (newAddrs) => {
         <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
           
           <div class="flex items-center gap-1 group">
-            <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
-              <Icon
-                icon="mdi:chevron-left"
-                class="w-5 h-5 text-slate-400 group-hover:text-[#0D95DA] transition-all"
-              />
+            <div class="flex border border-slate-300 p-1 pr-3 rounded-lg text-slate-300 shadow-2md py-2 bg-white" @click="goBack">
+              <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
+                <Icon
+                  icon="mdi:chevron-left"
+                  class="w-6 h-6 text-slate-400 group-hover:text-[#0D95DA] transition-all"
+                />
+              </div>
+              <button
+                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
+              >
+                ตรวจสอบรายการ
+              </button>
             </div>
-            <button
-              class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
-              @click="goBack"
-            >
-              ย้อนกลับไปจัดการที่อยู่
-            </button>
+
           </div>
 
           <div class="w-full md:w-auto flex justify-center md:justify-end pt-2 md:pt-0 border-t border-slate-100 md:border-none">
-            <div class="w-full max-w-[400px] md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
+            <div class="w-full max-w-100 md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
               <POStepper />
             </div>
           </div>
@@ -161,7 +163,7 @@ watch(savedAddresses, (newAddrs) => {
               </div>
             </div>
 
-            <div v-else class="border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 flex flex-col items-center justify-center min-h-[180px] group hover:border-[#0D95DA] transition-all cursor-pointer" @click="openModal('shipping')">
+            <div v-else class="border-2 border-dashed border-slate-200 rounded-2xl p-6 bg-slate-50 flex flex-col items-center justify-center min-h-45 group hover:border-[#0D95DA] transition-all cursor-pointer" @click="openModal('shipping')">
               <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
                 <Icon icon="mdi:map-marker-plus-outline" class="w-6 h-6 text-slate-300 group-hover:text-[#0D95DA]" />
               </div>
