@@ -220,11 +220,11 @@ watch(savedAddresses, (newAddrs) => {
           <h2 class="text-lg md:text-xl font-black text-slate-800 mb-6 uppercase tracking-tight">วิธีการชำระเงิน</h2>
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <button
-v-for="method in ['bank', 'qr']" :key="method" class="relative border-2 rounded-2xl p-6 text-sm font-black flex items-center gap-4 transition-all w-full group"
+              v-for="method in ['bank', 'qr']" :key="method" class="relative border-2 rounded-2xl p-6 text-sm font-black flex items-center gap-4 transition-all w-full group"
               :class="selectedPayment === method ? 'border-[#0D95DA] bg-blue-50/50 text-[#0D95DA]' : 'border-slate-100 text-slate-500 hover:border-slate-200'"
               @click="selectedPayment = method">
               <div
-class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all"
+                class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 transition-all"
                 :class="selectedPayment === method ? 'border-[#0D95DA]' : 'border-slate-300'">
                 <div v-if="selectedPayment === method" class="w-2.5 h-2.5 rounded-full bg-[#0D95DA] animate-in zoom-in duration-200" />
               </div>
@@ -276,11 +276,14 @@ class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 t
                     <span class="text-[11px]  text-slate-600 truncate">{{ item.product.specs || "No specs" }}</span>
                   </div>
                   <div class="flex justify-between items-end mt-1">
-                    <span class="text-[11px] text-slate-400 font-bold">x{{ item.quantity }}</span>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[11px] text-slate-400 bold"> {{ item.product.warranty }}</span>
+                      <span class="text-[11px] text-slate-400 font-bold">x{{ item.quantity }}</span>
+                    </div>
                     <div class="text-right">
                       <p class="text-[11px] font-black text-slate-800">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</p>
                       <p
-class="text-[8px] font-black uppercase tracking-tighter mt-1 px-1.5 py-0.5 rounded-full"
+                        class="text-[8px] font-black uppercase tracking-tighter mt-1 px-1.5 py-0.5 rounded-full"
                         :class="[getStockStatus(item).colorClass, getStockStatus(item).bgClass]">
                         {{ getStockStatus(item).text }}
                       </p>

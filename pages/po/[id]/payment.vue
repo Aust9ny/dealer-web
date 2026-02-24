@@ -244,9 +244,10 @@ const goBack = () => {
                     >
                       {{ item.product.name }}
                     </p>
-                    <p class="text-[10px] text-slate-400 mb-1">
-                      {{ item.product.specs || "No specs" }}
-                    </p>
+                    <div class="flex flex-col gap-1">
+                      <span class="text-[11px] text-slate-400 bold"> {{ item.product.warranty }}</span>
+                      <span class="text-[11px] text-slate-400 font-bold">x{{ item.quantity }}</span>
+                    </div>
                     <div class="flex justify-between items-center">
                       <span class="text-sm text-slate-400 font-bold"
                         >x{{ item.quantity }}</span

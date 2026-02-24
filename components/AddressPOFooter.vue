@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from "vue-router";
-import { computed } from "vue";
-import { useMockPO } from "@/composables/useMockPO";
-import { Icon } from "@iconify/vue";
-import { useLoading } from "@/composables/useLoading";
+import { useRoute, useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useMockPO } from '@/composables/useMockPO';
+import { Icon } from '@iconify/vue';
+import { useLoading } from '@/composables/useLoading';
 
 const { isLoading, startLoading, stopLoading } = useLoading();
 const router = useRouter();
@@ -66,12 +66,12 @@ const handleSecondaryAction = () => {
     } else {
       // หน้า 1 (Check) -> กลับไปเลือกสินค้าเพิ่ม (Logic เดิมของคุณ)
       const from = route.query.from as string;
-      if (from && from.startsWith("/category")) {
+      if (from && from.startsWith('/category')) {
         router.push(from);
       } else if (po.value?.id) {
         router.push(`/category/${po.value.id}`);
       } else {
-        router.push("/category");
+        router.push('/category');
       }
     }
     stopLoading();
@@ -80,18 +80,18 @@ const handleSecondaryAction = () => {
 
 // ... (formatCurrency, formatThaiDateTime คงเดิม) ...
 const formatCurrency = (value: number) => {
-  return new Intl.NumberFormat("th-TH", {
-    style: "currency",
-    currency: "THB",
+  return new Intl.NumberFormat('th-TH', {
+    style: 'currency',
+    currency: 'THB',
     maximumFractionDigits: 0,
   }).format(value);
 };
 
 const formatThaiDateTime = (value: string) => {
-  return new Intl.DateTimeFormat("th-TH", {
-    dateStyle: "short",
-    timeStyle: "medium",
-    timeZone: "Asia/Bangkok",
+  return new Intl.DateTimeFormat('th-TH', {
+    dateStyle: 'short',
+    timeStyle: 'medium',
+    timeZone: 'Asia/Bangkok',
   }).format(new Date(value));
 };
 </script>

@@ -4,6 +4,7 @@ import { useRoute, useRouter  } from 'vue-router';
 import { computed } from 'vue';
 import { useMockPO } from '@/composables/useMockPO';
 
+// eslint-disable-next-line no-unused-vars
 const router = useRouter();
 
 const route = useRoute();
@@ -35,7 +36,7 @@ const formatThaiDateTime = (value: string) => {
     class="fixed bottom-0 left-0 right-0 bg-white shadow-lg z-99 border-t-4 border-t-primary"
   >
     <div
-      class="max-w-screen-xl mx-auto px-6 py-4 flex items-center justify-between"
+      class="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between"
     >
       <!-- ซ้าย -->
       <div class="flex items-center gap-4">
