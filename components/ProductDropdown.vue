@@ -63,7 +63,7 @@ const handleNotifySubmit = async () => {
 <template>
     <div class="w-full mb-1">
         <button
-            class="sticky top-16 sm:top-20 md:top-24 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
+            class="sticky top-4 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
             @click="emit('toggle')">
             <div class="flex space-x-1 w-full text-sm items-center">
                 <span class="text-slate-800 font-bold">{{ label || activeSubTag }}</span>

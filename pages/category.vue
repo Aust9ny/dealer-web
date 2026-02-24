@@ -2,6 +2,7 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import type { Product } from '@/types/product';
+import type { StyleValue } from 'vue' ;// นำเข้า Type
 
 // 🟢 STATES & REFS
 const isSidebarOpen = ref(true);
@@ -162,6 +163,31 @@ watch(
   },
   { immediate: true },
 );
+
+const { $viewport } = useNuxtApp();
+
+// Computed Style เพื่อให้การแสดงผลบน Desktop ดูเหมือน Popout จริงๆ
+const desktopStyles = computed((): StyleValue => { // กำหนด Return Type
+  if (!import.meta.client || !$viewport.isGreaterOrEquals('lg')) return {};
+
+  const baseLeft = isSidebarOpen.value ? '280px' : '92px';
+
+  const styles: Record<string, string | number> = {
+    left: baseLeft,
+    width: '340px',
+    position: 'fixed'
+  };
+
+  if (isFlipped.value) {
+    styles.bottom = `${window.innerHeight - (flyoutOffset.value + 48)}px`;
+    styles.top = 'auto';
+  } else {
+    styles.top = `${flyoutOffset.value - 12}px`;
+    styles.bottom = 'auto';
+  }
+
+  return styles as StyleValue;
+});
 </script>
 
 <template>
@@ -433,154 +459,136 @@ watch(
     </div>
 
     <Transition name="fade">
+    <div
+      v-if="isQuickSelectOpen"
+      class="fixed inset-0 z-200"
+      :class="[
+        $viewport.isGreaterOrEquals('lg') 
+          ? 'pointer-events-none' 
+          : 'flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-md'
+      ]"
+    >
       <div
-        v-if="isQuickSelectOpen"
-        class="fixed inset-0 z-100 flex items-center justify-center p-4"
+        class="absolute inset-0 pointer-events-auto"
+        @click="isQuickSelectOpen = false"
+      />
+
+      <div
+        class="bg-white w-full shadow-2xl z-10 flex flex-col overflow-hidden transition-all duration-300 pointer-events-auto border border-slate-200"
+        :class="[
+          $viewport.isGreaterOrEquals('lg') 
+            ? 'fixed rounded-4xl w-85' 
+            : 'relative rounded-[2.5rem] min-h-125 max-h-[82vh]'
+        ]"
+        :style="desktopStyles"
       >
         <div
-          class="absolute inset-0 bg-slate-900/60 backdrop-blur-md transition-opacity"
-          @click="isQuickSelectOpen = false"
+          v-if="$viewport.isGreaterOrEquals('lg') && !isSidebarOpen"
+          class="absolute -left-2 w-4 h-4 bg-white rotate-45 border-l border-b border-slate-200 z-[-1]"
+          :class="isFlipped ? 'bottom-8' : 'top-8'"
         />
 
-        <div
-          class="bg-white w-full max-w-md rounded-[2.5rem] shadow-2xl z-10 flex flex-col overflow-hidden relative transition-all duration-300 min-h-120 max-h-[82vh]"
-          :class="[
-            $viewport.isGreaterOrEquals('lg') && !isSidebarOpen
-              ? 'absolute'
-              : 'relative',
-          ]"
-          :style="
-            $viewport.isGreaterOrEquals('lg') && !isSidebarOpen
-              ? isFlipped
-                ? { bottom: `${flyoutOffset}px`, left: '88px' }
-                : { top: `${flyoutOffset}px`, left: '88px' }
-              : {}
-          "
-        >
-          <div
-            v-if="$viewport.isGreaterOrEquals('lg') && !isSidebarOpen"
-            class="absolute -left-1.5 w-3 h-3 bg-white rotate-45 border-l border-b border-slate-200"
-            :class="isFlipped ? 'bottom-6' : 'top-6'"
-          />
-
-          <div
-            class="p-6 border-b bg-slate-50/50 flex items-center justify-between shrink-0"
-          >
-            <div class="flex items-center gap-3">
-              <button
-                v-if="tempCategory && !$viewport.isGreaterOrEquals('lg')"
-                class="p-2 bg-white rounded-full shadow-sm text-primary active:scale-90 transition-transform"
-                @click="tempCategory = null"
-              >
-                <Icon icon="mdi:arrow-left" class="w-5 h-5" />
-              </button>
-              <div
-                v-else
-                class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-xl"
-              >
-                {{ tempCategory?.icon || "📦" }}
-              </div>
-              <div>
-                <span class="block font-bold text-slate-800 leading-tight">
-                  {{ tempCategory ? tempCategory.name : "เลือกหมวดหมู่หลัก" }}
-                </span>
-                <span
-                  class="text-[10px] text-slate-400 font-bold uppercase tracking-wider"
-                >
-                  {{
-                    tempCategory
-                      ? "ระบุหมวดหมู่ย่อยที่คุณต้องการ"
-                      : "เลือกหัวข้อสินค้าที่ต้องการค้นหา"
-                  }}
-                </span>
-              </div>
-            </div>
+        <div class="p-5 border-b bg-slate-50/50 flex items-center justify-between shrink-0">
+          <div class="flex items-center gap-3">
             <button
-              class="p-2 hover:bg-white rounded-full text-slate-400 transition-colors"
-              @click="isQuickSelectOpen = false"
+              v-if="tempCategory && !$viewport.isGreaterOrEquals('lg')"
+              class="p-2 bg-white rounded-full shadow-sm text-[#0D95DA] active:scale-90 transition-transform"
+              @click="tempCategory = null"
             >
-              <Icon icon="mdi:close" class="w-6 h-6" />
+              <Icon icon="mdi:arrow-left" class="w-5 h-5" />
+            </button>
+            
+            <div v-else class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-xl border border-slate-100">
+              {{ tempCategory?.icon || "📦" }}
+            </div>
+
+            <div>
+              <span class="block font-black text-slate-800 leading-tight">
+                {{ tempCategory ? tempCategory.name : "เลือกหมวดหมู่หลัก" }}
+              </span>
+              <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">
+                {{ tempCategory ? "ระบุหมวดหมู่ย่อย" : "Inventory Quick Select" }}
+              </span>
+            </div>
+          </div>
+
+          <button
+            class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors"
+            @click="isQuickSelectOpen = false"
+          >
+            <Icon icon="mdi:close" class="w-5 h-5" />
+          </button>
+        </div>
+
+        <div class="flex-1 p-3 overflow-y-auto space-y-1 scrollbar-hide bg-white">
+          
+          <div v-if="!tempCategory" class="grid grid-cols-1 gap-1">
+            <button
+              v-for="cat in categories"
+              :key="cat.id"
+              class="flex items-center gap-4 p-3.5 rounded-2xl hover:bg-blue-50/50 transition-all text-left border border-transparent hover:border-blue-100 group"
+              @click="selectMainCategory(cat)"
+            >
+              <span class="text-2xl bg-slate-50 w-11 h-11 flex items-center justify-center rounded-xl group-hover:bg-white transition-colors shadow-sm">
+                {{ cat.icon }}
+              </span>
+              <div class="flex-1">
+                <span class="font-bold text-slate-700 block text-sm">{{ cat.name }}</span>
+                <span class="text-[10px] text-slate-400 font-medium">
+                  {{ cat.subCats.length }} หมวดหมู่ย่อย
+                </span>
+              </div>
+              <Icon
+                icon="mdi:chevron-right"
+                class="text-slate-300 group-hover:text-[#0D95DA] transition-all transform group-hover:translate-x-1"
+              />
             </button>
           </div>
 
-          <div
-            class="flex-1 p-4 overflow-y-auto space-y-1 scrollbar-hide bg-white"
-          >
-            <div v-if="!tempCategory" class="grid grid-cols-1 gap-2">
-              <button
-                v-for="cat in categories"
-                :key="cat.id"
-                class="flex items-center gap-4 p-4 rounded-2xl hover:bg-slate-50 transition-all text-left border border-transparent hover:border-slate-100 group"
-                @click="selectMainCategory(cat)"
-              >
-                <span
-                  class="text-2xl bg-slate-100 w-12 h-12 flex items-center justify-center rounded-2xl group-hover:bg-white transition-colors"
-                >
-                  {{ cat.icon }}
-                </span>
-                <div class="flex-1">
-                  <span class="font-bold text-slate-700 block">{{
-                    cat.name
-                  }}</span>
-                  <span class="text-[10px] text-slate-400"
-                    >{{ cat.subCats.length }} หมวดหมู่ย่อย</span
-                  >
-                </div>
-                <Icon
-                  icon="mdi:chevron-right"
-                  class="text-slate-300 group-hover:text-primary transition-colors"
-                />
-              </button>
-            </div>
-
-            <div v-else class="space-y-2">
-              <button
-                v-for="sub in tempCategory.subCats"
-                :key="sub"
-                class="w-full p-4 rounded-2xl text-left flex items-center justify-between transition-all group border border-transparent"
-                :class="
-                  activeSubCategory === sub
-                    ? 'bg-blue-50 text-[#0D95DA] font-bold border-blue-100 shadow-sm'
-                    : 'hover:bg-slate-50 text-slate-600'
-                "
-                @click="handleModalSelect(tempCategory.id, sub)"
-              >
-                <div class="flex items-center gap-3">
-                  <div
-                    class="w-1.5 h-1.5 rounded-full bg-primary transition-transform duration-300"
-                    :class="activeSubCategory === sub ? 'scale-100' : 'scale-0'"
-                  />
-                  <span class="text-sm md:text-base">{{ sub }}</span>
-                </div>
-                <Icon
-                  :icon="
-                    activeSubCategory === sub
-                      ? 'mdi:check-circle'
-                      : 'mdi:chevron-right'
-                  "
-                  class="w-5 h-5"
-                  :class="
-                    activeSubCategory === sub
-                      ? 'text-primary'
-                      : 'text-slate-300'
-                  "
-                />
-              </button>
-            </div>
-          </div>
-
-          <div
-            class="p-4 bg-slate-50/50 text-center border-t border-slate-100 shrink-0"
-          >
-            <p
-              class="text-[10px] text-slate-400 font-bold uppercase tracking-widest"
+          <div v-else class="space-y-1">
+            <button 
+              v-if="$viewport.isGreaterOrEquals('lg')"
+              class="w-full mb-2 flex items-center gap-2 px-3 py-1 text-[10px] font-black text-[#0D95DA] hover:underline"
+              @click="tempCategory = null"
             >
-              Dealer Inventory Management
-            </p>
+              <Icon icon="mdi:arrow-left" class="w-3 h-3" /> ย้อนกลับไปหมวดหมู่หลัก
+            </button>
+
+            <button
+              v-for="sub in tempCategory.subCats"
+              :key="sub"
+              class="w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all group border border-transparent"
+              :class="
+                activeSubCategory === sub
+                  ? 'bg-blue-50 text-[#0D95DA] font-bold border-blue-100'
+                  : 'hover:bg-slate-50 text-slate-600'
+              "
+              @click="handleModalSelect(tempCategory.id, sub)"
+            >
+              <div class="flex items-center gap-3">
+                <div
+                  class="w-1.5 h-1.5 rounded-full bg-[#0D95DA] transition-all duration-300"
+                  :class="activeSubCategory === sub ? 'scale-100 opacity-100' : 'scale-0 opacity-0'"
+                />
+                <span class="text-sm">{{ sub }}</span>
+              </div>
+              <Icon
+                :icon="activeSubCategory === sub ? 'mdi:check-circle' : 'mdi:chevron-right'"
+                class="w-4 h-4"
+                :class="activeSubCategory === sub ? 'text-[#0D95DA]' : 'text-slate-300'"
+              />
+            </button>
           </div>
         </div>
+
+        <div class="p-4 bg-slate-50/50 text-center border-t border-slate-100 shrink-0">
+          <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">
+            Dealer Management System
+          </p>
+        </div>
       </div>
-    </Transition>
+    </div>
+  </Transition>
   </div>
 </template>
 
