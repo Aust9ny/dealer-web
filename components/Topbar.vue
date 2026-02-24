@@ -158,7 +158,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
           <!-- MOBILE DROPDOWN -->
           <div
             v-if="showAccountMenu"
-            class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-[200]"
+            class="absolute right-0 top-full mt-2 w-64 bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden z-200"
             @click.stop
           >
             <!-- ชื่อผู้ใช้งาน -->
