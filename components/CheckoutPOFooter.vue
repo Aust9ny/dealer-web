@@ -1,3 +1,4 @@
+<!-- eslint-disable @typescript-eslint/no-unused-vars -->
 <script setup lang="ts">
 import { useRoute, useRouter  } from 'vue-router';
 import { computed } from 'vue';
