@@ -85,7 +85,7 @@ const getReadyToShipStatus = (item: any) => {
 
 <template>
   <div class="flex flex-col w-full min-h-screen">
-<div class="w-full mb-4 md:mb-8 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl shadow-sm md:shadow-none">
+    <div class="w-full mb-4 md:mb-8 bg-white md:bg-transparent p-3 md:p-0 rounded-2xl shadow-sm md:shadow-none">
       <nav class="flex flex-col gap-4 w-full">
         <div class="flex flex-col md:flex-row gap-4 md:items-center justify-between w-full">
           
@@ -105,7 +105,7 @@ const getReadyToShipStatus = (item: any) => {
           </div>
 
           <div class="w-full md:w-auto flex justify-center md:justify-end pt-2 md:pt-0 border-t border-slate-100 md:border-none">
-            <div class="w-full max-w-[400px] md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
+            <div class="w-full max-w-100 md:w-auto scale-95 md:scale-100 origin-center md:origin-right">
               <POStepper />
             </div>
           </div>
@@ -114,45 +114,41 @@ const getReadyToShipStatus = (item: any) => {
       </nav>
     </div>
 
-    <div class="flex flex-col lg:flex-row gap-3 items-start overflow-visible">
-      <aside
-        :class="[isSidebarOpen ? 'lg:w-64 lg:hover:w-80' : 'lg:w-20']"
-        class="w-full lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-10 border-t-primary shadow-md shrink-0 "
-      >
-        <div
-          class="p-4 flex justify-between items-center border-b h-16 shrink-0"
-        >
-          <span v-if="isSidebarOpen" class="font-bold  text-[#0D95DA]"
-            >เลือกใบสั่งซื้อ ({{ userOrders.length }})</span
-          >
-          <!-- <button
-            class="hover:bg-slate-100 p-1.5 rounded-lg"
-            @click="isSidebarOpen = !isSidebarOpen"
-          >
-            <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
-          </button> -->
-        </div>
-        <nav class="flex-1 overflow-y-auto p-3 space-y-2 scrollbar-thin">
-          <NuxtLink
-            v-for="order in userOrders"
-            :key="order.id"
-            :to="`/po/${order.id}`"
-            class="flex items-center gap-3 p-3 rounded-xl transition-all border border-transparent"
-            :class="[
-              po.id === order.id
-                ? 'bg-blue-50 text-[#0D95DA] border-blue-100'
-                : 'hover:bg-slate-50 text-slate-600',
-            ]"
-          >
-            <p v-if="isSidebarOpen" class="font-bold text-[14px] truncate">
-              #{{ order.id }} | {{ formatDate(order.createdAt,false) }} | ฿ {{ formatPrice(order.totalAmount) }}
-            </p>
-          </NuxtLink>
-        </nav>
-      </aside>
+    <div class="flex flex-col lg:flex-row gap-3 items-stretch w-full overflow-visible">
+    <aside
+      :class="[isSidebarOpen ? 'lg:w-64 lg:hover:w-80' : 'lg:w-20']"
+      class="w-full lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-8 lg:border-t-10 border-t-primary shadow-md shrink-0"
+    >
+      <div class="p-4 flex justify-between items-center border-b h-14 lg:h-16 shrink-0">
+        <span class="font-bold text-[#0D95DA] text-sm lg:text-base">
+          เลือกใบสั่งซื้อ ({{ userOrders.length }})
+        </span>
+      </div>
 
-      <main class="flex-1 flex flex-col min-w-0 gap-3 pb-6 md:pb-32">
-        <div v-if="currentStep === 1">
+      <nav class="flex flex-row lg:flex-col overflow-x-auto lg:overflow-y-auto p-2 lg:p-3 gap-2 scrollbar-hide lg:scrollbar-thin">
+        <NuxtLink
+          v-for="order in userOrders"
+          :key="order.id"
+          :to="`/po/${order.id}`"
+          class="flex-none lg:flex items-center gap-3 p-3 rounded-xl transition-all border border-transparent whitespace-nowrap lg:whitespace-normal"
+          :class="[
+            po.id === order.id
+              ? 'bg-blue-50 text-[#0D95DA] border-blue-100 shadow-sm'
+              : 'bg-slate-50 lg:bg-transparent text-slate-600 hover:bg-slate-100',
+          ]"
+        >
+          <div class="flex items-center gap-2">
+            <Icon icon="mdi:file-document-outline" class="lg:hidden w-4 h-4" />
+            <p class="font-bold text-[13px] lg:text-[14px]">
+              #{{ order.id }} <span class="hidden lg:inline">| {{ formatDate(order.createdAt, false) }} | ฿ {{ formatPrice(order.totalAmount) }}</span>
+            </p>
+          </div>
+        </NuxtLink>
+      </nav>
+    </aside>
+
+      <main class="w-full flex-1 flex flex-col min-w-0 gap-4 pb-10 md:pb-32">
+        <div v-if="currentStep === 1" class="w-full">
         <header class="bg-white border-b border-slate-200 p-3 md:p-4 shadow-sm rounded-2xl border-t-8 border-t-primary mb-3">
           <div v-if="po" class="flex flex-col lg:flex-row justify-between lg:items-center gap-3 px-1 md:px-2">
             
@@ -192,223 +188,153 @@ const getReadyToShipStatus = (item: any) => {
           </div>
         </header>
 
-          <section
-            v-if="po"
-            class="bg-white rounded-2xl border border-slate-200 shadow-md overflow-hidden StyledReceipt"
-          >
-            <div class="overflow-x-auto scrollbar-thin">
-              <table class="w-full text-left border-separate border-spacing-0">
-                <thead class="bg-slate-50 sticky top-0 z-30">
-                  <tr
-                    class="text-[11px] uppercase text-slate-500 font-black tracking-tighter"
-                  >
-                    <th
-                      class="p-4 w-12 text-center sticky left-0 z-10 bg-slate-50 border-b border-r border-slate-200"
-                    >
-                      <input
-                        v-model="isAllSelected"
-                        type="checkbox"
-                        class="rounded cursor-pointer"
-                      >
-                    </th>
-                    <th
-                      class="p-4 text-center border-b border-r border-slate-200"
-                    >
-                      รูปสินค้า
-                    </th>
-                    <th
-                      class="p-4 border-b border-r border-slate-200 min-w-62.5"
-                    >
-                      ชื่อสินค้า
-                    </th>
-                    <th class="p-4 border-b border-r border-slate-200">
-                      รายละเอียด
-                    </th>
-                    <th
-                      class="p-4 text-center border-b border-r border-slate-200"
-                    >
-                      จำนวนสั่ง
-                    </th>
-                    <th
-                      class="p-4 text-right border-b border-r border-slate-200"
-                    >
-                      ราคา/หน่วย
-                    </th>
-                    <th
-                      class="p-4 text-right border-b border-r border-slate-200 bg-blue-50/50"
-                    >
-                      ราคารวม
-                    </th>
-                    <th
-                      class="p-4 text-center border-b border-r border-slate-200"
-                    >
-                      สถานะพร้อมส่ง
-                    </th>
-                    <th class="p-4 text-center border-b border-slate-200">
-                      จัดการ
-                    </th>
-                  </tr>
-                </thead>
-                <tbody class="text-[12px] bg-white">
-                  <tr
-                    v-for="item in po.items"
-                    :key="item.product.id"
-                    class="hover:bg-slate-50/80 transition-colors group"
-                    :class="{
-                      'opacity-50 grayscale-[0.3]':
-                        !checkedItems[item.product.id],
-                    }"
-                  >
-                    <td
-                      class="p-4 text-center sticky left-0 z-10 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100"
-                    >
-                      <input
-                        v-model="checkedItems[item.product.id]"
-                        type="checkbox"
-                        :disabled="(item.product.stock ?? 0) <= 0"
-                        class="rounded cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
-                      >
-                    </td>
-                    <td
-                      class="p-4 text-center border-b border-r border-slate-100"
-                    >
-                      <img
-                        :src="item.product.image"
-                        class="w-12 h-12 mx-auto object-contain bg-white rounded-lg p-1 border border-slate-200"
-                      >
-                    </td>
-                    <td
-                      class="p-4 font-bold border-b border-r border-slate-200"
-                    >
-                      <p
-                        class="text-[#0D95DA] text-[10px] uppercase font-black"
-                      >
-                        {{ item.product.brand }}
-                      </p>
-                      <p class="line-clamp-2 text-slate-800">
-                        {{ item.product.name }}
-                      </p>
-                    </td>
-                    <td
-                      class="p-4 text-slate-400 italic text-[10px] border-b border-r border-slate-100"
-                    >
-                      {{ item.product.specs }}
-                    </td>
-                    <td
-                      class="p-4 text-center border-b border-r border-slate-100"
-                    >
-                      <input
-                        :value="item.quantity ?? 0"
-                        type="number"
-                        :min="0"
-                        :disabled="(item.product.stock ?? 0) <= 0"
-                        class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black transition-opacity"
-                        :class="{
-                          'opacity-50 cursor-not-allowed bg-slate-100':
-                            (item.product.stock ?? 0) <= 0,
-                        }"
-                        @input="
-                          item.quantity =
-                            Number(($event.target as HTMLInputElement).value) ||
-                            0
-                        "
-                        @change="validateQuantity(item)"
-                      >
-                    </td>
-                    <td
-                      class="p-4 text-right font-bold text-slate-500 border-b border-r border-slate-100"
-                    >
-                      ฿{{ formatPrice(item.priceAtPurchase) }}
-                    </td>
-                    <td
-                      class="p-4 text-right font-black text-slate-900 border-b border-r border-slate-200 bg-blue-50/20"
-                    >
-                      ฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}
-                    </td>
-                    <td
-                      class="p-4 text-center border-b border-r border-slate-100"
-                    >
-                      <span
-                        :class="getReadyToShipStatus(item)?.color"
-                        class="px-3 py-1 rounded-full text-[10px] font-black uppercase whitespace-nowrap"
-                        >{{ getReadyToShipStatus(item)?.text }}</span
-                      >
-                    </td>
-                    <td class="p-4 text-center border-b border-slate-100">
-                      <button
-                        class="text-slate-300 hover:text-red-500 p-2"
-                        @click="removeProduct(item.product.id)"
-                      >
-                        <Icon icon="mdi:trash-can-outline" class="w-5 h-5" />
-                      </button>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+        <section
+          v-if="po"
+          class="bg-transparent lg:bg-white rounded-2xl lg:border lg:border-slate-200 lg:shadow-md overflow-hidden StyledReceipt w-full"
+        >
+          <div class="hidden lg:block overflow-x-auto scrollbar-thin">
+            <table class="w-full text-left border-separate border-spacing-0">
+              <thead class="bg-slate-50 sticky top-0 z-30">
+                <tr class="text-[11px] uppercase text-slate-500 font-black tracking-tighter">
+                  <th class="p-4 w-12 text-center sticky left-0 z-10 bg-slate-50 border-b border-r border-slate-200">
+                    <input v-model="isAllSelected" type="checkbox" class="rounded cursor-pointer">
+                  </th>
+                  <th class="p-4 text-center border-b border-r border-slate-200">รูปสินค้า</th>
+                  <th class="p-4 border-b border-r border-slate-200 min-w-62.5">ชื่อสินค้า</th>
+                  <th class="p-4 border-b border-r border-slate-200 min-w-62.5">รายละเอียด</th>
+                  <th class="p-4 text-center border-b border-r border-slate-200">จำนวนสั่ง</th>
+                  <th class="p-4 text-right border-b border-r border-slate-200">ราคา/หน่วย</th>
+                  <th class="p-4 text-right border-b border-r border-slate-200 bg-blue-50/50">ราคารวม</th>
+                  <th class="p-4 text-center border-b border-r border-slate-200">สถานะพร้อมส่ง</th>
+                  <th class="p-4 text-center border-b border-slate-200">จัดการ</th>
+                </tr>
+              </thead>
+              <tbody class="text-[12px] bg-white">
+                <tr v-for="item in po.items" :key="item.product.id" class="hover:bg-slate-50/80 transition-colors group" :class="{ 'opacity-50 grayscale-[0.3]': !checkedItems[item.product.id] }">
+                  <td class="p-4 text-center sticky left-0 z-10 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100">
+                    <input v-model="checkedItems[item.product.id]" type="checkbox" :disabled="(item.product.stock ?? 0) <= 0" class="rounded cursor-pointer disabled:opacity-30">
+                  </td>
+                  <td class="p-4 text-center border-b border-r border-slate-100">
+                    <img :src="item.product.image" class="w-12 h-12 mx-auto object-contain bg-white rounded-lg p-1 border border-slate-200">
+                  </td>
+                  <td class="p-4 font-bold border-b border-r border-slate-200">
+                    <p class="text-[#0D95DA] text-[10px] uppercase font-black">{{ item.product.brand }}</p>
+                    <p class="line-clamp-2 text-slate-800">{{ item.product.name }}</p>
+                  </td>
+                  <td class="p-4 text-slate-400 italic text-[10px] border-b border-r border-slate-100">
+                    <div class="xs:min-w-30 line-clamp-2">
+                      {{ item.product.specs || '' }}
+                    </div>
+                  </td>
+                  <td class="p-4 text-center border-b border-r border-slate-100">
+                    <input v-model.number="item.quantity" type="number" :min="0" :disabled="(item.product.stock ?? 0) <= 0" class="w-16 bg-slate-50 border border-slate-200 rounded-lg py-1 px-2 text-center font-black" @change="validateQuantity(item)">
+                  </td>
+                  <td class="p-4 text-right font-bold text-slate-500 border-b border-r border-slate-100">฿{{ formatPrice(item.priceAtPurchase) }}</td>
+                  <td class="p-4 text-right font-black text-slate-900 border-b border-r border-slate-200 bg-blue-50/20">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</td>
+                  <td class="p-4 text-center border-b border-r border-slate-100">
+                    <span :class="getReadyToShipStatus(item)?.color" class="px-3 py-1 rounded-full text-[10px] font-black uppercase whitespace-nowrap">{{ getReadyToShipStatus(item)?.text }}</span>
+                  </td>
+                  <td class="p-4 text-center border-b border-slate-100">
+                    <button class="text-slate-300 hover:text-red-500 p-2" @click="removeProduct(item.product.id)">
+                      <Icon icon="mdi:trash-can-outline" class="w-5 h-5" />
+                    </button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="lg:hidden flex flex-col gap-3 px-1 w-full"> <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 flex justify-between items-center mb-1 w-full"> <div class="flex items-center gap-3">
+                <input v-model="isAllSelected" type="checkbox" class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary" id="selectAllMob">
+                <label for="selectAllMob" class="text-sm font-bold text-slate-700">เลือกสินค้าทั้งหมด</label>
+              </div>
+              <span class="bg-slate-100 px-2 py-1 rounded text-[10px] font-black text-slate-500">{{ po.items.length }} รายการ</span>
             </div>
 
-            <div
-              class="p-4 md:p-8 border-t border-slate-100 flex justify-end bg-white "
-            >
-              <div class="w-full max-w-md space-y-3 bg-white">
-                <div
-                  class="flex justify-between text-sm font-bold text-slate-600"
-                >
-                  <span>สินค้าทั้งหมด ({{ po?.items.length }} ชิ้น):</span
-                  ><span>฿{{ formatPrice(subtotal + 4110) }}</span>
-                </div>
-                <div
-                  class="flex justify-between items-center text-sm font-bold text-slate-600"
-                >
-                  <div class="flex items-center gap-3 justify-center">
-                    <span> ส่วนลด: </span>
-                    <span
-                      class="inline-flex items-center gap-1 bg-blue-50 text-[#0D95DA] px-2 py-0.5 rounded border border-blue-200 text-xs font-black"
-                    >
-                      #DEALER2026
-                      <Icon icon="mdi:close" class="w-3 h-3 cursor-pointer" />
-                    </span>
+            <div 
+              v-for="item in po.items" 
+              :key="item.product.id"
+              class="w-full bg-white p-4 rounded-2xl border border-slate-200 shadow-sm transition-all relative overflow-hidden" 
+              :class="{ 'opacity-60 grayscale-[0.5]': !checkedItems[item.product.id] }"
+            > <div class="flex gap-4 w-full"> <div class="flex flex-col items-center gap-3 shrink-0">
+                  <input v-model="checkedItems[item.product.id]" :disabled="(item.product.stock ?? 0) <= 0" type="checkbox" class="w-6 h-6 rounded border-slate-300">
+                  <div class="w-16 h-16 bg-slate-50 rounded-xl border border-slate-100 p-1 flex items-center justify-center">
+                    <img :src="item.product.image" class="w-full h-full object-contain">
                   </div>
-                  <span class="text-slate-800">-฿{{ formatPrice(4110) }}</span>
                 </div>
-                <div
-                  class="flex justify-between text-sm font-bold pt-2 border-t border-dashed"
-                >
-                  <span>ยอดก่อน Vat:</span>
-                  <span class="text-slate-800 font-black"
-                    >฿{{ formatPrice(subtotal - vat) }}</span
-                  >
-                </div>
-                <div
-                  class="flex justify-between text-sm font-bold text-slate-600"
-                >
-                  <span>ยอด Vat7%:</span
-                  ><span class="text-slate-800 font-black"
-                    >฿{{ formatPrice(vat) }}</span
-                  >
-                </div>
-                <div class="mt-4 pt-4 border-t-2 border-slate-800">
-                  <div
-                    class="bg-slate-50/80 p-6 flex justify-between items-center rounded-sm"
-                  >
-                    <div class="flex flex-col">
-                      <span class="text-lg font-black text-slate-800 uppercase">
-                        ยอดรวมสุทธิทั้งหมด:
-                      </span>
-                      <span class="text-[10px] text-slate-400 font-medium">
-                        (ราคานี้รวมภาษีมูลค่าเพิ่ม / Vat แล้ว)
-                      </span>
+
+                <div class="flex-1 min-w-0 flex flex-col">
+                  <div class="flex justify-between items-start gap-2 w-full"> <div class="min-w-0 flex-1">
+                      <p class="text-[#0D95DA] text-[10px] font-black uppercase tracking-tighter">{{ item.product.brand }}</p>
+                      <h3 class="text-[13px] font-bold text-slate-800 leading-snug line-clamp-2">{{ item.product.name }}</h3>
                     </div>
-                    <span class="text-2xl font-black text-[#2D5A9E]">
-                      ฿{{ formatPrice(grandTotal) }}
-                    </span>
+                    <button @click="removeProduct(item.product.id)" class="text-slate-300 active:text-red-500 p-1 shrink-0">
+                      <Icon icon="mdi:close-circle-outline" class="w-5 h-5" />
+                    </button>
                   </div>
-                  <div class="mt-2 border-b-2 border-slate-800" />
-                  <div class="mt-0.5 border-b border-slate-800" />
+
+                  <p class="text-[10px] text-slate-400 italic mt-1 line-clamp-1 border-b border-slate-50 pb-2 w-full">{{ item.product.specs }}</p>
+
+                  <div class="mt-3 flex justify-between items-end w-full"> <div class="flex flex-col">
+                      <span class="text-[10px] text-slate-400 font-bold uppercase">ราคารวม</span>
+                      <span class="text-base font-black text-slate-900">฿{{ formatPrice(item.priceAtPurchase * item.quantity) }}</span>
+                      <span class="text-[9px] text-slate-400">@ ฿{{ formatPrice(item.priceAtPurchase) }}</span>
+                    </div>
+
+                    <div class="flex flex-col items-end gap-2 shrink-0">
+                      <span :class="getReadyToShipStatus(item)?.color" class="px-2 py-0.5 rounded-full text-[9px] font-black uppercase">
+                        {{ getReadyToShipStatus(item)?.text }}
+                      </span>
+                      <div class="flex items-center bg-slate-100 rounded-lg p-0.5 border border-slate-200">
+                        <button class="px-2 text-slate-500 font-bold" @click="item.quantity > 0 ? item.quantity-- : 0; validateQuantity(item)">-</button>
+                        <input v-model.number="item.quantity" type="number" class="w-10 bg-transparent text-center font-black text-xs outline-none" @change="validateQuantity(item)">
+                        <button class="px-2 text-slate-500 font-bold" @click="item.quantity++; validateQuantity(item)">+</button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
-          </section>
+          </div>
+
+          <div class="p-5 md:p-8 border-t border-slate-100 flex justify-end bg-white mt-6 lg:mt-0">
+            <div class="w-full max-w-md space-y-3 bg-white">
+              <div class="flex justify-between text-sm font-bold text-slate-600">
+                <span>สินค้าทั้งหมด ({{ po?.items.length }} ชิ้น):</span>
+                <span>฿{{ formatPrice(subtotal + 4110) }}</span>
+              </div>
+              <div class="flex justify-between items-center text-sm font-bold text-slate-600">
+                <div class="flex items-center gap-3 justify-center">
+                  <span>ส่วนลด:</span>
+                  <span class="inline-flex items-center gap-1 bg-blue-50 text-[#0D95DA] px-2 py-0.5 rounded border border-blue-200 text-xs font-black">
+                    #DEALER2026
+                    <Icon icon="mdi:close" class="w-3 h-3 cursor-pointer" />
+                  </span>
+                </div>
+                <span class="text-slate-800">-฿{{ formatPrice(4110) }}</span>
+              </div>
+              <div class="flex justify-between text-sm font-bold pt-2 border-t border-dashed">
+                <span>ยอดก่อน Vat:</span>
+                <span class="text-slate-800 font-black">฿{{ formatPrice(subtotal - vat) }}</span>
+              </div>
+              <div class="flex justify-between text-sm font-bold text-slate-600">
+                <span>ยอด Vat7%:</span>
+                <span class="text-slate-800 font-black">฿{{ formatPrice(vat) }}</span>
+              </div>
+              <div class="mt-4 pt-4 border-t-2 border-slate-800">
+                <div class="bg-slate-50/80 p-4 md:p-6 flex justify-between items-center rounded-sm">
+                  <div class="flex flex-col">
+                    <span class="text-base md:text-lg font-black text-slate-800 uppercase">ยอดรวมสุทธิ:</span>
+                    <span class="text-[9px] md:text-[10px] text-slate-400 font-medium">(รวม Vat 7% แล้ว)</span>
+                  </div>
+                  <span class="text-xl md:text-2xl font-black text-[#2D5A9E]">฿{{ formatPrice(grandTotal) }}</span>
+                </div>
+                <div class="mt-2 border-b-2 border-slate-800" />
+                <div class="mt-0.5 border-b border-slate-800" />
+              </div>
+            </div>
+          </div>
+        </section>
         </div>
       </main>
     </div>

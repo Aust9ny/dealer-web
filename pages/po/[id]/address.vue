@@ -265,7 +265,7 @@ class="w-5 h-5 rounded-full border-2 flex items-center justify-center shrink-0 t
               <span class="text-xs font-black text-slate-800">{{ po?.items.length }} รายการ</span>
             </div>
 
-            <div class="max-h-[300px] overflow-y-auto space-y-3 pr-1 scrollbar-thin">
+            <div class="max-h-75 overflow-y-auto space-y-3 pr-1 scrollbar-thin">
               <div v-for="item in po?.items" :key="item.product.id" class="flex gap-3 p-3 rounded-xl bg-slate-50/50 border border-slate-100">
                 <img :src="item.product.image" class="w-12 h-12 object-contain bg-white rounded-lg p-1 border border-slate-200 shrink-0">
                 <div class="flex-1 min-w-0">
