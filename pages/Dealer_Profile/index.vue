@@ -42,6 +42,77 @@ const isSidebarOpen = ref(false);
         </div>
       </div>
 
+      <!-- 7 : Mobile Menu Card -->
+      <div class="col-span-1 lg:hidden">
+        <div class="bg-white rounded-xl shadow overflow-hidden">
+          <!-- MENU BUTTON -->
+          <button
+            class="w-full flex items-center gap-3 font-medium p-6"
+            :class="isSidebarOpen ? 'border-b' : ''"
+            @click="isSidebarOpen = !isSidebarOpen"
+          >
+            <div class="space-y-1">
+              <div class="w-6 h-0.5 bg-gray-700"/>
+              <div class="w-6 h-0.5 bg-gray-700"/>
+              <div class="w-6 h-0.5 bg-gray-700"/>
+            </div>
+            เมนู
+          </button>
+        </div>
+
+        <!-- DROPDOWN CARD -->
+        <transition name="slide-down">
+          <div
+            v-if="isSidebarOpen"
+            class="bg-white rounded-xl shadow p-4 space-y-4"
+          >
+            <div>
+              <p class="font-medium mb-2">จัดการคำสั่งซื้อ</p>
+              <ul class="text-sm space-y-2 text-gray-600">
+                <li class="text-primary font-medium">รายการสั่งซื้อทั้งหมด</li>
+                <li>รายการสินค้าค้างส่ง</li>
+                <li>ติดตามสถานะการจัดส่ง</li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-3">
+              <p class="font-medium mb-2">การเงินและชำระเงิน</p>
+              <ul class="text-sm space-y-2 text-gray-600">
+                <li>ชำระเงิน / อัปโหลดหลักฐาน</li>
+                <li>จ่ายชำระหนี้ Advice สนญ.</li>
+                <li>รายการเคลื่อนไหวบัญชี</li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-3">
+              <p class="font-medium mb-2">งานบริการและติดตามสถานะเคลม</p>
+              <ul class="text-sm space-y-2 text-gray-600">
+                <li>ตรวจสอบสถานะการแจ้งเคลม</li>
+                <li>สินค้าเคลมรอตัดสินใจ</li>
+                <li>รายงานการส่งคืน</li>
+              </ul>
+            </div>
+
+            <div class="border-t pt-3">
+              <p class="font-medium mb-2">ข้อมูลบัญชี</p>
+              <ul class="text-sm space-y-2 text-gray-600">
+                <li>ข้อมูลส่วนตัวดีลเลอร์</li>
+                <li>รายชื่อไฟล์อัปโหลด</li>
+                <li>เปลี่ยนรหัสผ่าน</li>
+              </ul>
+            </div>
+
+            <div class="pt-4">
+              <button
+                class="w-full border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium"
+              >
+                ⏻ ออกจากระบบ
+              </button>
+            </div>
+          </div>
+        </transition>
+      </div>
+
       <!-- 4 : Header content -->
       <div
         class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3"
@@ -189,77 +260,6 @@ const isSidebarOpen = ref(false);
             🛒 เปิดสั่งซื้อสินค้าทันที
           </button>
         </div>
-      </div>
-
-      <!-- 7 : Mobile Menu Card -->
-      <div class="col-span-1 lg:hidden">
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-          <!-- MENU BUTTON -->
-          <button
-            class="w-full flex items-center gap-3 font-medium p-6"
-            :class="isSidebarOpen ? 'border-b' : ''"
-            @click="isSidebarOpen = !isSidebarOpen"
-          >
-            <div class="space-y-1">
-              <div class="w-6 h-0.5 bg-gray-700"/>
-              <div class="w-6 h-0.5 bg-gray-700"/>
-              <div class="w-6 h-0.5 bg-gray-700"/>
-            </div>
-            เมนู
-          </button>
-        </div>
-
-        <!-- DROPDOWN CARD -->
-        <transition name="slide-down">
-          <div
-            v-if="isSidebarOpen"
-            class="bg-white rounded-xl shadow p-4 space-y-4"
-          >
-            <div>
-              <p class="font-medium mb-2">จัดการคำสั่งซื้อ</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li class="text-primary font-medium">รายการสั่งซื้อทั้งหมด</li>
-                <li>รายการสินค้าค้างส่ง</li>
-                <li>ติดตามสถานะการจัดส่ง</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">การเงินและชำระเงิน</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ชำระเงิน / อัปโหลดหลักฐาน</li>
-                <li>จ่ายชำระหนี้ Advice สนญ.</li>
-                <li>รายการเคลื่อนไหวบัญชี</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">งานบริการและติดตามสถานะเคลม</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ตรวจสอบสถานะการแจ้งเคลม</li>
-                <li>สินค้าเคลมรอตัดสินใจ</li>
-                <li>รายงานการส่งคืน</li>
-              </ul>
-            </div>
-
-            <div class="border-t pt-3">
-              <p class="font-medium mb-2">ข้อมูลบัญชี</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li>ข้อมูลส่วนตัวดีลเลอร์</li>
-                <li>รายชื่อไฟล์อัปโหลด</li>
-                <li>เปลี่ยนรหัสผ่าน</li>
-              </ul>
-            </div>
-
-            <div class="pt-4">
-              <button
-                class="w-full border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium"
-              >
-                ⏻ ออกจากระบบ
-              </button>
-            </div>
-          </div>
-        </transition>
       </div>
     </div>
   </div>

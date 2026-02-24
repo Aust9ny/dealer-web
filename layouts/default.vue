@@ -13,7 +13,7 @@ const footerType = computed(() => {
 const mainPaddingClass = computed(() => {
   if (footerType.value === 'address') return 'pb-44 md:pb-32';
   if (footerType.value === 'selected') return 'pb-36 md:pb-22';
-  return 'pb-28 md:pb-24';
+  return '';
 });
 
 </script>

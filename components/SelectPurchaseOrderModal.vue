@@ -77,7 +77,7 @@ const handleContinue = () => {
       </h2>
 
       <!-- List -->
-      <div class="p-3 max-h-125 overflow-y-auto">
+      <div class="p-3 max-h-125 overflow-y-auto border border-slate-200 rounded-lg">
         <div
           v-for="po in purchaseOrders"
           :key="po.id"

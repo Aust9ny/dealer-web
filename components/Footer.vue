@@ -3,15 +3,7 @@ import { Icon } from '@iconify/vue';
 </script>
 <template>
   <footer class="bg-white border-t border-slate-300">
-    <div
-        class="max-w-screen-2xl mx-auto
-       pl-8 pr-4 md:px-6 lg:px-12
-       py-12
-       grid grid-cols-1 
-       md:grid-cols-2
-       xl:grid-cols-[3fr_2fr_2fr_2fr_2fr]
-       gap-8"
-              >
+    <div class="max-w-screen-2xl mx-auto pl-8 pr-4 md:px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-8">
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
