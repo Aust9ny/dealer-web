@@ -264,9 +264,7 @@ const isMenuOpen = ref(false);
         </main>
       </div>
       <div class="rounded-2xl p-2 md:p-4 mt-5">
-        <div
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10"
-        >
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-10 max-w-xs mx-auto sm:max-w-none">
           <div
             v-for="(item, index) in quickAccessItems"
             :key="index"
