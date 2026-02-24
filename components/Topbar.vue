@@ -119,7 +119,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
 
 <template>
   <header
-    class="relative fixed top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
+    class="relative top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
   >
     <div
       v-if="showSearchModal"
@@ -144,7 +144,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
       <!-- MOBILE SEARCH BAR -->
 <div
   v-if="showSearchModal"
-  class="fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 md:hidden z-[150]"
+  class="fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 md:hidden z-150"
 >
   <div class="relative w-full">
     <Icon
