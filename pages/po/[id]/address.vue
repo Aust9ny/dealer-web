@@ -126,7 +126,7 @@ watch(savedAddresses, (newAddrs) => {
                 />
               </div>
               <button
-                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-bold text-sm md:text-base active:scale-95"
+                class="text-slate-500 hover:text-[#0D95DA] transition-colors font-semibold text-sm md:text-base active:scale-95"
               >
                 ตรวจสอบรายการ
               </button>
