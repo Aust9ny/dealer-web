@@ -108,7 +108,7 @@ const formatThaiDateTime = (value: string) => {
         </div>
 
         <button
-          class="w-auto md:w-auto px-6 md:px-8 py-2.5 md:py-3 bg-[#2D5A9E] text-white rounded-xl font-black text-base md:text-base hover:bg-[#1A3D6E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-60 disabled:cursor-not-allowed mx-auto md:mx-0"
+          class="w-full md:w-auto px-6 md:px-8 py-2.5 md:py-3 bg-[#2D5A9E] text-white rounded-xl font-black text-base md:text-base hover:bg-[#1A3D6E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-60 disabled:cursor-not-allowed mx-auto md:mx-0"
           :disabled="hasPO && isLoading"
           @click="goToPO"
         >
