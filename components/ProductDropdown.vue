@@ -62,17 +62,20 @@ const handleNotifySubmit = async () => {
 
 <template>
     <div class="w-full mb-1">
-        <button
-            class="sticky top-4 z-60 w-full flex items-center justify-between bg-white border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-sm hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
-            @click="emit('toggle')">
-            <div class="flex space-x-1 w-full text-sm items-center">
-                <span class="text-slate-800 font-bold">{{ label || activeSubTag }}</span>
-                <span class="text-slate-400 font-bold text-xs">({{ products.length }} รายการ)</span>
-            </div>
-            <Icon
-                icon="mdi:chevron-down" class="w-5 h-5 text-slate-400 transition-transform duration-300"
-                :class="{ 'rotate-180': isOpen }" />
-        </button>
+<button
+    class="sticky top-17 md:top-24 z-60 w-full flex items-center justify-between bg-white/95 backdrop-blur-sm border border-slate-300 px-3 md:px-4 py-4 md:py-6 rounded-2xl shadow-md hover:bg-slate-50 transition-all text-left border-t-4 border-t-[#B0D7EB]"
+    @click="emit('toggle')"
+>
+    <div class="flex space-x-1 w-full text-sm items-center">
+        <span class="text-slate-800 font-bold">{{ label || activeSubTag }}</span>
+        <span class="text-slate-400 font-bold text-xs">({{ products.length }} รายการ)</span>
+    </div>
+    <Icon
+        icon="mdi:chevron-down" 
+        class="w-5 h-5 text-slate-400 transition-transform duration-300"
+        :class="{ 'rotate-180': isOpen }" 
+    />
+</button>
         <Transition
             enter-active-class="transition-[max-height,opacity] duration-500 ease-in-out"
             enter-from-class="max-h-0 opacity-0" enter-to-class="max-h-[5000px] opacity-100"

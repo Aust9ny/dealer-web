@@ -51,7 +51,7 @@ const formatThaiDateTime = (value: string) => {
     >
       <!-- ซ้าย -->
       <div
-        class="flex items-center gap-3 md:gap-4 md:flex-row flex-col md:items-center items-center text-center md:text-left"
+        class="flex items-center gap-3 md:gap-4 md:flex-row flex-col md:items-center text-center md:text-left"
       >
         <div
           class="w-9 h-9 md:w-12 md:h-12 rounded-xl bg-blue-50 flex items-center justify-center border border-blue-100 shrink-0"
@@ -98,7 +98,7 @@ const formatThaiDateTime = (value: string) => {
             ยอดรวมสุทธิทั้งหมด:
           </div>
           <div
-            class="text-xl md:text-3xl font-black text-[#2D5A9E] break-words"
+            class="text-xl md:text-3xl font-black text-[#2D5A9E] wrap-break-word"
           >
             {{ formatCurrency(po?.totalAmount ?? 0) }}
           </div>

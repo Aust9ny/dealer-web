@@ -3,7 +3,8 @@ import { ref, computed, onMounted, onUnmounted } from 'vue';
 import { Icon } from '@iconify/vue';
 
 const props = defineProps<{
-  items: unknown[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  items: any[];
   title?: string;
   itemsPerRow?: number;
   autoPlay?: boolean;
@@ -21,7 +22,7 @@ const touchEnd = ref(0);
 const shouldShowArrows = computed(() => props.showArrows !== false);
 
 const totalPages = computed(() => {
-  if (!props.items) return 0;
+  if (!props.items?.length) return 0;
   return Math.ceil(props.items.length / visibleItems.value);
 });
 
@@ -35,21 +36,19 @@ const transformOffset = computed(() => {
   return -(currentIndex.value * (100 / visibleItems.value));
 });
 
+// Logic: เลื่อนไปข้างหน้า (ห้ามวนกลับถ้าใช้ Disabled Button)
 const next = () => {
   if (!props.items?.length) return;
   if (currentIndex.value + visibleItems.value < props.items.length) {
     currentIndex.value += visibleItems.value;
-  } else {
-    currentIndex.value = 0;
   }
 };
 
+// Logic: เลื่อนย้อนกลับ
 const prev = () => {
   if (!props.items?.length) return;
   if (currentIndex.value - visibleItems.value >= 0) {
     currentIndex.value -= visibleItems.value;
-  } else {
-    currentIndex.value = Math.max(0, (totalPages.value - 1) * visibleItems.value);
   }
 };
 
@@ -81,10 +80,8 @@ const handleTouchMove = (e: TouchEvent) => {
 const handleTouchEnd = () => {
   const swipeDistance = touchStart.value - touchEnd.value;
   const threshold = 50;
-
   if (swipeDistance > threshold) next();
   else if (swipeDistance < -threshold) prev();
-
   isPaused.value = false;
 };
 
@@ -100,13 +97,8 @@ const stopTimer = () => {
   if (autoSlideTimer.value) clearInterval(autoSlideTimer.value);
 };
 
-const resetSlider = () => {
-  currentIndex.value = 0;
-  startTimer();
-};
-
 defineExpose({
-  resetSlider,
+  resetSlider: () => { currentIndex.value = 0; startTimer(); },
   currentIndex
 });
 
@@ -123,7 +115,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="carousel-container">
+  <div class="carousel-container overflow-hidden">
     <div class="flex items-center justify-between mb-4 md:mx-14 px-4 md:px-0">
       <slot name="header-action" />
     </div>
@@ -137,8 +129,9 @@ onUnmounted(() => {
       @touchend="handleTouchEnd"
     >
       <button
-        v-if="totalPages > 1 && shouldShowArrows"
-        class="nav-btn left-0 hidden md:flex"
+        v-if="shouldShowArrows" 
+        class="nav-btn left-2 md:left-4"
+        :disabled="currentIndex === 0" 
         @click="prev()"
       >
         <Icon icon="mdi:chevron-left" class="w-6 h-6" />
@@ -161,8 +154,9 @@ onUnmounted(() => {
       </div>
 
       <button
-        v-if="totalPages > 1 && shouldShowArrows"
-        class="nav-btn right-0 hidden md:flex"
+        v-if="shouldShowArrows"
+        class="nav-btn right-2 md:right-4"
+        :disabled="currentIndex >= items.length - visibleItems"
         @click="next()"
       >
         <Icon icon="mdi:chevron-right" class="w-6 h-6" />
@@ -173,7 +167,7 @@ onUnmounted(() => {
       <button
         v-for="(_, i) in totalPages" :key="i"
         class="h-1.5 transition-all duration-300 rounded-full"
-        :class="currentPage === i ? 'w-8 md:w-10 bg-[#2196F3]' : 'w-1.5 md:w-2 bg-slate-300'"
+        :class="currentPage === i ? 'w-8 md:w-10 bg-[#2196F3]' : 'w-1.5 md:w-2 bg-slate-300 hover:bg-slate-400'"
         @click="currentIndex = i * visibleItems"
       />
     </div>
@@ -188,27 +182,34 @@ onUnmounted(() => {
   z-index: 30;
   width: 44px;
   height: 44px;
+  display: none; /* ซ่อนบนมือถือเพื่อใช้ swipe แทน */
   align-items: center;
   justify-content: center;
   border-radius: 9999px;
   background-color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
   border: 1px solid #e2e8f0;
   color: #1e293b;
-  opacity: 0;
+  opacity: 0.6;
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.nav-btn:hover {
+@media (min-width: 768px) {
+  .nav-btn { display: flex; }
+  .group:hover .nav-btn { opacity: 1; }
+}
+
+.nav-btn:hover:not(:disabled) {
   background-color: #2196F3;
   color: white;
   border-color: #2196F3;
+  transform: translateY(-50%) scale(1.1);
 }
 
-@media (min-width: 768px) {
-  .group:hover .nav-btn {
-    opacity: 1;
-  }
+.nav-btn:disabled {
+  opacity: 0.15 !important;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
 .flex {
