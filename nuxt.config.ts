@@ -8,7 +8,13 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       tailwindcss(),
-    ]
+    ],
+    server: {
+      allowedHosts: [
+        'dispatch-queens-injection-counting.trycloudflare.com', // ใส่ชื่อที่มันแจ้ง error มา
+        '.trycloudflare.com' // หรือใส่แบบ wildcard เพื่อให้ครอบคลุมทุกลิงก์ของ Cloudflare
+      ]
+    }
   },
 
   modules: [
