@@ -19,7 +19,8 @@ const props = defineProps<{
 
 const router = useRouter();
 const { getSubtotalFromItems, getVat, getGrandTotal, getEffectiveQuantity } = usePOPricing();
-
+const { isLoading, startLoading, stopLoading } = useLoading();
+const { runWithLoading } = usePOFooterHelpers();
 const { userOrders, updatePOItemQuantity } = useMockPO();
 
 // 2. Local UI State (เฉพาะหน้านี้)
@@ -80,10 +81,6 @@ const effectiveVat = computed(() => {
   return getVat(effectiveSubtotal.value);
 });
 
-const goBack = () => {
-  router.push('/');
-};
-
 // 4. Validation Logic
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const validateQuantity = (item: any) => {
@@ -122,6 +119,12 @@ const getReadyToShipStatus = (item: any) => {
     color: 'text-orange-600 bg-orange-50',
   };
 };
+
+const goToCategory = async () => {
+  await runWithLoading({ startLoading, stopLoading }, async () => {
+    await router.push(`/category/${props.po.id}`);
+  });
+};
 </script>
 
 <template>
@@ -132,7 +135,7 @@ const getReadyToShipStatus = (item: any) => {
           
           <div 
             class="flex items-center gap-1 group bg-white">
-            <div class="flex border border-slate-300 p-1 pr-3 rounded-lg text-slate-300 shadow-2md py-2 bg-white" @click="goBack">
+            <div class="flex border border-slate-300 p-1 pr-3 rounded-lg text-slate-300 shadow-2md py-2 bg-white">
               <div class="p-1.5 md:p-0 rounded-full group-hover:bg-blue-50 transition-colors">
                 <Icon
                   icon="mdi:chevron-left"
@@ -141,6 +144,8 @@ const getReadyToShipStatus = (item: any) => {
               </div>
               <button
                 class="text-slate-500 hover:text-[#0D95DA] transition-colors font-semibold text-sm md:text-base active:scale-95"
+                :disabled="isLoading"
+                @click="goToCategory"
               >
                 เลือกสินค้าเพิ่ม
               </button>
