@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { useAuth } from '~/composables/auth/useAuth';
+
 const { currentUser } = useAuth();
 const isSidebarOpen = ref(false);
 const activeOrderTab = ref('ทั้งหมด');

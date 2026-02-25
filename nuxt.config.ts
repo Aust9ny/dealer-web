@@ -24,7 +24,33 @@ export default defineNuxtConfig({
     '@nuxt/scripts',
     '@nuxt/test-utils',
     '@nuxt/fonts',
-    'nuxt-viewport'
+    'nuxt-viewport',
+    '@nuxtjs/i18n',
+  ],
+
+  i18n: {
+    // v10 resolves paths from `restructureDir` (default: "i18n"), so keep it at project root.
+    restructureDir: '.',
+    detectBrowserLanguage: false,
+    // 1. บอกให้ Nuxt ใช้ไฟล์ config แยกที่เราสร้างไว้
+    vueI18n: './i18n.config.ts', 
+    
+    // 2. กำหนดกลยุทธ์ (Strategy) แนะนำให้ใช้ 'no_prefix' ถ้าไม่ต้องการให้ URL เปลี่ยนเป็น /en/category
+    strategy: 'no_prefix',
+    
+    // 3. กำหนดภาษาเริ่มต้น
+    defaultLocale: 'th',
+    locales: [
+      { code: 'th', iso: 'th-TH', language: 'th-TH' },
+      { code: 'en', iso: 'en-US', language: 'en-US' }
+    ],
+  },
+
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false,
+    },
   ],
   viewport: {
     // ตั้งค่า breakpoints ตามที่คุณต้องการ (หรือใช้ค่าเริ่มต้น)

@@ -21,9 +21,9 @@ const mainPaddingClass = computed(() => {
 <template>
   <div class="min-h-screen">
     <LoadingScreen />
-
+    
     <Topbar />
-
+    
     <main :class="['', mainPaddingClass]">
       <slot />
     </main>

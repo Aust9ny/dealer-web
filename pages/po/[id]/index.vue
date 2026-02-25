@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import type { PurchaseOrder as PO } from '@/types/purchase-order';
-import { usePOPricing } from '@/composables/usePOPricing';
+import { usePOPricing } from '@/composables/po/usePOPricing';
+import { useLoading } from '~/composables/shared/useLoading';
+import { usePOFooterHelpers } from '~/composables/po/usePOFooterHelpers';
+import { useMockPO } from '~/composables/po/useMockPO';
 
 // 1. รับ Props จากหน้าแม่ [id].vue
 const props = defineProps<{

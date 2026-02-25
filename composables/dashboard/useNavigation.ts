@@ -1,4 +1,4 @@
-// composables/useNavigation.ts
+// composables/dashboard/useNavigation.ts
 export const useNavigation = () => {
   const menuGroups = [
     {

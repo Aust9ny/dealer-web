@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useMockPO } from '@/composables/useMockPO';
-import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
-import { usePOPricing } from '@/composables/usePOPricing';
+import { useMockPO } from '@/composables/po/useMockPO';
+import { usePOFooterHelpers } from '@/composables/po/usePOFooterHelpers';
+import { usePOPricing } from '@/composables/po/usePOPricing';
 
 const route = useRoute();
 const { getPOById } = useMockPO();

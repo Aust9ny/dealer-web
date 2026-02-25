@@ -2,8 +2,10 @@
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import AddressSelectionModal from '~/components/AddressSelectionModal.vue';
-import { usePOPricing } from '@/composables/usePOPricing';
+import AddressSelectionModal from '~/components/po/AddressSelectionModal.vue';
+import { usePOPricing } from '@/composables/po/usePOPricing';
+import { useUser } from '~/composables/auth/useUser';
+import { useAuth } from '~/composables/auth/useAuth';
 
 // 🟢 1. รับ PROPS จากไฟล์แม่ [id].vue
 const props = defineProps<{
@@ -49,15 +51,15 @@ const selectedTaxAddressId = ref<number | string>('');
 // 🟢 3. COMPUTED ADDRESSES (Handle First Use)
 const currentAddress = computed(() => {
   if (savedAddresses.value.length === 0) return null;
-  return savedAddresses.value.find((a) => a.id === selectedAddressId.value) || 
-         savedAddresses.value.find((a) => a.isDefault) || 
+  return savedAddresses.value.find((a: any) => a.id === selectedAddressId.value) || 
+         savedAddresses.value.find((a: any) => a.isDefault) || 
          savedAddresses.value[0];
 });
 
 const currentTaxAddress = computed(() => {
   if (savedAddresses.value.length === 0) return null;
-  return savedAddresses.value.find((a) => a.id === selectedTaxAddressId.value) ||
-         savedAddresses.value.find((a) => a.isTaxAddress) ||
+  return savedAddresses.value.find((a: any) => a.id === selectedTaxAddressId.value) ||
+         savedAddresses.value.find((a: any) => a.isTaxAddress) ||
          savedAddresses.value[0];
 });
 
@@ -77,7 +79,7 @@ const handleAddressAdd = (newAddr: any) => {
   if (!currentUser.value) return;
   const id = Date.now();
   if (newAddr.isDefault) {
-    currentUser.value.addresses.forEach((a) => (a.isDefault = false));
+    currentUser.value.addresses.forEach((a: any) => (a.isDefault = false));
   }
   currentUser.value.addresses.push({ id, ...newAddr });
 
@@ -107,11 +109,11 @@ const getLineTotal = (item: any) => {
 watch(savedAddresses, (newAddrs) => {
   if (newAddrs.length > 0) {
     if (!selectedAddressId.value) {
-      const def = newAddrs.find((a) => a.isDefault);
+      const def = newAddrs.find((a: any) => a.isDefault);
       selectedAddressId.value = def ? def.id : newAddrs[0].id;
     }
     if (!selectedTaxAddressId.value) {
-      const taxDef = newAddrs.find((a) => a.isTaxAddress);
+      const taxDef = newAddrs.find((a: any) => a.isTaxAddress);
       selectedTaxAddressId.value = taxDef ? taxDef.id : newAddrs[0].id;
     }
   }
@@ -251,7 +253,7 @@ watch(savedAddresses, (newAddrs) => {
         </div>
       </div>
 
-      <div class="lg:col-span-4 lg:sticky lg:top-24">
+      <div class="lg:col-span-4 lg:sticky lg:top-0">
         <div class="bg-white rounded-xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt">
           <div class="p-4 md:p-6 border-b border-slate-100 flex justify-between items-center bg-white border-t-10 border-t-primary rounded-xl">
             <div class="flex items-center gap-3 md:gap-4">

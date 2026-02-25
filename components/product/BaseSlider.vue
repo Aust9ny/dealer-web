@@ -11,7 +11,9 @@ const props = defineProps<{
   interval?: number;
 }>();
 
-const visibleItems = ref(1);
+// ตั้งค่าเริ่มต้นให้สอดคล้องกับพฤติกรรม CSS ของเรา
+const visibleItems = ref(props.itemsPerRow || 5); 
+
 const currentIndex = ref(0);
 const isPaused = ref(false);
 const autoSlideTimer = ref<ReturnType<typeof setInterval> | null>(null);
@@ -60,11 +62,12 @@ const handleTouchStart = (e: TouchEvent) => {
 const updateVisibleItems = () => {
   if (typeof window === 'undefined') return;
   const width = window.innerWidth;
+  
   if (props.itemsPerRow === 1) {
     visibleItems.value = 1;
   } else {
-    const desktop = props.itemsPerRow || 5;
-    if (width >= 1280) visibleItems.value = desktop;
+    // ต้องให้ตัวเลขชุดนี้ตรงกับ Class ที่เขียนใน Template (w-1/2, w-1/3...)
+    if (width >= 1280) visibleItems.value = props.itemsPerRow || 5;
     else if (width >= 1024) visibleItems.value = 4;
     else if (width >= 768) visibleItems.value = 3;
     else if (width >= 640) visibleItems.value = 2;
@@ -144,8 +147,11 @@ onUnmounted(() => {
           <div
             v-for="(item, index) in items"
             :key="index"
-            class="flex-none p-1 md:p-2"
-            :style="{ width: `${100 / visibleItems}%` }"
+            class="flex-none p-1 md:p-2 transition-none"
+            :class="[
+              // กรณีพิเศษสำหรับ Banner ที่ต้องการ 1 รูปเสมอ
+              itemsPerRow === 1 ? 'w-full' : 'w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5'
+            ]"
           >
             <slot :item="item" />
           </div>

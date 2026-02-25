@@ -1,3 +1,5 @@
+import { useThaiFormatters } from '../shared/useThaiFormatters';
+
 interface LoadingControls {
   startLoading: () => void;
   stopLoading: () => void;

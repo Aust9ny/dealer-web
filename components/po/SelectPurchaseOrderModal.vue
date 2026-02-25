@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
-import { useScrollLock } from '@/composables/useScrollLock';
+import { useScrollLock } from '@/composables/shared/useScrollLock';
 import { useRouter } from 'vue-router';
-import { useMockPO } from '@/composables/useMockPO';
-import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
+import { useMockPO } from '@/composables/po/useMockPO';
+import { usePOFooterHelpers } from '@/composables/po/usePOFooterHelpers';
 
 const router = useRouter();
 const { formatCurrency, formatThaiDateTime } = usePOFooterHelpers();

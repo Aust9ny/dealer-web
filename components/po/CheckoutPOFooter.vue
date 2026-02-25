@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
 import { Icon } from '@iconify/vue';
-import { useMockPO } from '@/composables/useMockPO';
-import { useLoading } from '@/composables/useLoading';
-import { usePOFooterHelpers } from '@/composables/usePOFooterHelpers';
-import { usePOPricing } from '@/composables/usePOPricing';
+import { useMockPO } from '@/composables/po/useMockPO';
+import { useLoading } from '@/composables/shared/useLoading';
+import { usePOFooterHelpers } from '@/composables/po/usePOFooterHelpers';
+import { usePOPricing } from '@/composables/po/usePOPricing';
 
 const route = useRoute();
 const router = useRouter();

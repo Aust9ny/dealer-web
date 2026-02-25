@@ -1,8 +1,9 @@
+<!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
-import { useRouter } from "vue-router";
-import { computed } from "vue";
-import { useMockPO } from "@/composables/useMockPO";
-import { Icon } from "@iconify/vue";
+import { useRouter } from 'vue-router';
+import { computed } from 'vue';
+import { useMockPO } from '@/composables/po/useMockPO';
+import { Icon } from '@iconify/vue';
 
 const router = useRouter();
 const { userOrders, getLatestUserPO } = useMockPO();
@@ -16,7 +17,7 @@ const handleNavClick = (item: any, e: Event) => {
     const latest = latestUserPO.value;
 
     if (!latest) {
-      router.push("/po");
+      router.push('/po');
     } else {
       router.push(`/po/${latest.id}`);
     }
@@ -25,29 +26,29 @@ const handleNavClick = (item: any, e: Event) => {
 
 const navItems = [
   {
-    name: "หน้าแรก",
-    icon: "mdi:home-variant-outline",
-    activeIcon: "mdi:home-variant",
-    path: "/",
+    name: 'หน้าแรก',
+    icon: 'mdi:home-variant-outline',
+    activeIcon: 'mdi:home-variant',
+    path: '/',
   },
   {
-    name: "หมวดหมู่",
-    icon: "mdi:category-outline",
-    activeIcon: "mdi:category",
-    path: "/category",
+    name: 'หมวดหมู่',
+    icon: 'mdi:category-outline',
+    activeIcon: 'mdi:category',
+    path: '/category',
   },
   {
-    name: "ใบสั่งซื้อ",
-    icon: "mdi:file-document-outline",
-    activeIcon: "mdi:file-document",
-    path: "/po",
+    name: 'ใบสั่งซื้อ',
+    icon: 'mdi:file-document-outline',
+    activeIcon: 'mdi:file-document',
+    path: '/po',
     isPO: true,
   },
   {
-    name: "บัญชี",
-    icon: "mdi:account-outline",
-    activeIcon: "mdi:account",
-    path: "/Dealer_Profile",
+    name: 'บัญชี',
+    icon: 'mdi:account-outline',
+    activeIcon: 'mdi:account',
+    path: '/Dealer_Profile',
   },
 ];
 </script>
@@ -61,8 +62,8 @@ const navItems = [
         v-for="item in navItems"
         :key="item.name"
         :to="item.path"
-        @click="handleNavClick(item, $event)"
         class="flex flex-col items-center justify-center flex-1 transition-all duration-300 relative"
+        @click="handleNavClick(item, $event)"
       >
         <template #default="{ isActive }">
           <div
@@ -80,7 +81,7 @@ const navItems = [
               <!-- 🔴 Badge เฉพาะใบสั่งซื้อ -->
               <span
                 v-if="item.isPO && totalPO > 0"
-                class="absolute -top-2 -right-2 min-w-[18px] h-[18px] px-1 flex items-center justify-center bg-red-500 text-white text-[10px] rounded-full leading-none"
+                class="absolute -top-2 -right-2 min-w-4.5 h-4.5 px-1 flex items-center justify-center bg-red-500 text-white text-[10px] rounded-full leading-none"
               >
                 {{ totalPO }}
               </span>
