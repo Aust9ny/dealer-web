@@ -184,8 +184,8 @@ const goBack = () => {
         </div>
       </div>
 
-      <div class="lg:col-span-4 lg:sticky lg:top-24">
-        <div class="lg:col-span-4 lg:sticky lg:top-24">
+      <div class="lg:col-span-4 lg:sticky lg:top-2">
+        <div class="lg:col-span-4 ">
           <div
             class="bg-white rounded-2xl border border-slate-200 shadow-xl overflow-hidden relative StyledReceipt"
           >
