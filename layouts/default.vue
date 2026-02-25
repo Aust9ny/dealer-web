@@ -28,7 +28,7 @@ const mainPaddingClass = computed(() => {
       <slot />
     </main>
     <BackToTop/>
-
+    <BottomNav />
     <Footer v-if="footerType === 'default'" />
     <SelectedPOFooter v-if="footerType === 'selected'" />
     <AddressPOFooter v-if="footerType === 'address'" />
