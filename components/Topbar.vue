@@ -1,8 +1,21 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from 'vue-router';
-import { useMockPO } from '@/composables/useMockPO';
-import { Icon } from '@iconify/vue';
-import { watch, ref, onMounted, onBeforeUnmount } from 'vue';
+import { useRouter, useRoute } from "vue-router";
+import { useMockPO } from "@/composables/useMockPO";
+import { Icon } from "@iconify/vue";
+import { watch, ref, onMounted, onBeforeUnmount, computed } from "vue";
+const { menuGroups } = useNavigation();
+const isSidebarOpen = ref(false);
+const closeSidebar = () => {
+  isSidebarOpen.value = false;
+};
+
+onMounted(() => {
+  document.addEventListener("keydown", handleEscape);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener("keydown", handleEscape);
+});
 
 const route = useRoute();
 
@@ -31,19 +44,20 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // 3️⃣ ปิดเมื่อกด ESC
 const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     showAccountMenu.value = false;
+    closeSidebar();
   }
 };
 
 onMounted(() => {
-  document.addEventListener('mousedown', handleClickOutside);
-  document.addEventListener('keydown', handleEscape);
+  document.addEventListener("mousedown", handleClickOutside);
+  document.addEventListener("keydown", handleEscape);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('mousedown', handleClickOutside);
-  document.removeEventListener('keydown', handleEscape);
+  document.removeEventListener("mousedown", handleClickOutside);
+  document.removeEventListener("keydown", handleEscape);
 });
 
 const router = useRouter();
@@ -55,7 +69,7 @@ const goToLatestPO = () => {
   const latest = latestUserPO.value;
 
   if (!latest) {
-    router.push('/po'); // หน้า list
+    router.push("/po"); // หน้า list
     return;
   }
 
@@ -71,18 +85,18 @@ const showSearchModal = ref(false);
 
 // 🟢 Role List for Switcher
 const roles = [
-  { name: 'Technician', icon: 'mdi:tools', color: 'text-amber-500' },
-  { name: 'Dealer', icon: 'mdi:storefront-outline', color: 'text-primary' },
+  { name: "Technician", icon: "mdi:tools", color: "text-amber-500" },
+  { name: "Dealer", icon: "mdi:storefront-outline", color: "text-primary" },
   {
-    name: 'Franchise',
-    icon: 'mdi:office-building-marker-outline',
-    color: 'text-emerald-500',
+    name: "Franchise",
+    icon: "mdi:office-building-marker-outline",
+    color: "text-emerald-500",
   },
 ] as const;
 
 // 🟢 Dynamic Initials from Auth State
 const initials = computed(() => {
-  if (!currentUser.value) return '??';
+  if (!currentUser.value) return "??";
   return currentUser.value.fname.charAt(0) + currentUser.value.lname.charAt(0);
 });
 
@@ -94,7 +108,7 @@ const closeSearch = () => {
   showSearchModal.value = false;
 };
 
-const handleSwitchRole = (role: 'Technician' | 'Dealer' | 'Franchise') => {
+const handleSwitchRole = (role: "Technician" | "Dealer" | "Franchise") => {
   login(role);
 };
 
@@ -104,14 +118,14 @@ const handleLogout = () => {
 };
 
 const trendingKeywords = [
-  'RTX 4090 AORUS MASTER',
-  'MacBook Air 2023',
-  'iPhone 14',
-  'คอมประกอบ Intel',
-  'งบจำกัด',
+  "RTX 4090 AORUS MASTER",
+  "MacBook Air 2023",
+  "iPhone 14",
+  "คอมประกอบ Intel",
+  "งบจำกัด",
 ];
 
-const searchHistory = ['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080'];
+const searchHistory = ["ssd", "hdd", "cpu", "camera", "rtx 4080"];
 
 const mobileDropdownRef = ref<HTMLElement | null>(null);
 const desktopDropdownRef = ref<HTMLElement | null>(null);
@@ -126,6 +140,11 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
       class="fixed inset-0 bg-black/40 z-95"
       @click="closeSearch"
     />
+
+    <!-- HAMBURGER -->
+    <button class="md:hidden mr-3" @click="isSidebarOpen = true">
+      <Icon icon="mdi:menu" class="w-7 h-7 text-gray-800" />
+    </button>
 
     <NuxtLink to="/">
       <div class="flex items-center select-none">
@@ -142,40 +161,31 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
       </button>
 
       <!-- MOBILE SEARCH BAR -->
-<div
-  v-if="showSearchModal"
-  class="fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 md:hidden z-150"
->
-  <div class="relative w-full">
-    <Icon
-      icon="mdi:magnify"
-      class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
-    />
+      <div
+        v-if="showSearchModal"
+        class="fixed top-0 left-0 right-0 h-16 bg-white flex items-center px-4 md:hidden z-150"
+      >
+        <div class="relative w-full">
+          <Icon
+            icon="mdi:magnify"
+            class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400"
+          />
 
-    <input
-      type="text"
-      placeholder="ค้นหาสินค้า..."
-      class="w-full h-11 pl-12 pr-12 border border-gray-300 rounded-full bg-white transition focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary shadow-sm"
-      autofocus
-    >
+          <input
+            type="text"
+            placeholder="ค้นหาสินค้า..."
+            class="w-full h-11 pl-12 pr-12 border border-gray-300 rounded-full bg-white transition focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary shadow-sm"
+            autofocus
+          />
 
-    <button
-      class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition"
-      @click="closeSearch"
-    >
-      <Icon icon="mdi:close" class="w-5 h-5 text-gray-500" />
-    </button>
-  </div>
-</div>
-      <button class="relative" @click="goToLatestPO">
-        <Icon icon="mdi:clipboard-text-outline" class="w-6 h-6 text-gray-700" />
-        <span
-          v-if="totalPO"
-          class="absolute -top-2 -right-2 w-4 h-4 text-[10px] bg-red-500 text-white rounded-full flex items-center justify-center"
-        >
-          {{ totalPO }}
-        </span>
-      </button>
+          <button
+            class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100 transition"
+            @click="closeSearch"
+          >
+            <Icon icon="mdi:close" class="w-5 h-5 text-gray-500" />
+          </button>
+        </div>
+      </div>
       <div class="flex md:hidden items-center gap-3 ml-auto">
         <div ref="mobileDropdownRef" class="relative">
           <button
@@ -221,7 +231,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
               : 'border-gray-300 bg-white'
           "
           @focus="activateSearch"
-        >
+        />
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
         >
@@ -299,4 +309,74 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
     :trending-keywords="trendingKeywords"
     :search-history="searchHistory"
   />
+
+  <!-- OVERLAY -->
+  <transition name="fade">
+    <div
+      v-if="isSidebarOpen"
+      class="fixed inset-0 bg-black/40 z-140 md:hidden"
+      @click="closeSidebar"
+    />
+  </transition>
+
+  <!-- SIDEBAR -->
+  <transition name="slide-left">
+    <div
+      v-if="isSidebarOpen"
+      class="fixed top-0 left-0 h-full w-80 bg-white z-150 shadow-xl md:hidden flex flex-col"
+    >
+      <!-- HEADER -->
+      <div class="flex items-center justify-between p-4 border-b">
+        <div class="font-bold text-lg">เมนูจัดการ</div>
+        <button @click="closeSidebar">
+          <Icon icon="mdi:close" class="w-6 h-6" />
+        </button>
+      </div>
+
+      <!-- CONTENT -->
+      <div class="p-4 space-y-6 overflow-y-auto">
+        <div v-for="group in menuGroups" :key="group.title">
+          <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
+            <span class="text-lg">{{ group.icon }}</span>
+            {{ group.title }}
+          </h3>
+
+          <ul class="space-y-2 text-sm text-slate-600">
+            <li
+              v-for="link in group.links"
+              :key="link"
+              class="hover:text-[#2196F3] cursor-pointer transition"
+            >
+              {{ link }}
+            </li>
+          </ul>
+
+          <div class="mt-4 h-px w-full bg-slate-200" />
+        </div>
+      </div>
+    </div>
+  </transition>
 </template>
+<style scoped>
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.25s;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.slide-left-enter-active {
+  transition: transform 0.3s ease;
+}
+.slide-left-leave-active {
+  transition: transform 0.25s ease;
+}
+.slide-left-enter-from {
+  transform: translateX(-100%);
+}
+.slide-left-leave-to {
+  transform: translateX(-100%);
+}
+</style>
