@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { useRolePricing } from '~/composables/auth/useRolePricing';
+import { useNotifyLogic } from '~/composables/shared/useNotifyLogic';
+import { useProductUrl } from '~/composables/shared/useProductUrl';
+import { useScrollLock } from '~/composables/shared/useScrollLock';
+import { useThaiFormatters } from '~/composables/shared/useThaiFormatters';
+import { useAuth } from '~/composables/auth/useAuth';
 import type { Product } from '~/types/product';
 
 interface Props {
@@ -129,9 +135,13 @@ const handleNotifySubmit = async () => {
                                 <td
                                     class="p-2 sticky left-0 z-20 bg-white group-hover:bg-slate-50 border-b border-r border-slate-100">
                                     <NuxtLink :to="getProductUrl(product)" class="hover:scale-105 active:scale-95">
-                                        <img
+                                        <NuxtImg
                                             :src="product.image"
-                                            class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm">
+                                            :alt="product.name"
+                                            loading="lazy"
+                                            format="webp"
+                                            class="w-10 h-10 mx-auto object-contain bg-white rounded-md p-1 border border-slate-200 shadow-sm"
+                                        />
                                     </NuxtLink>
                                 </td>
 

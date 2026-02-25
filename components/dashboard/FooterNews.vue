@@ -28,9 +28,10 @@ newsList: News[];
             class="border border-slate-300 rounded-xl hover:shadow-lg hover:shadow-blue-400 hover:scale-105 transition-all p-2 flex flex-col " 
         >
             <a :href="news.link" target="_blank" rel="noopener noreferrer" class="flex flex-col h-full">
-                <img
-                :src="news.image" :alt="news.alt" 
-                    class="w-full h-48 object-cover rounded-xl shrink-0 mb-4">
+                <NuxtImg
+                    :src="news.image" :alt="news.alt" 
+                    class="w-full h-48 object-cover rounded-xl shrink-0 mb-4"
+                />
                 
                 <div class="flex flex-col flex-1">
                     <h3 class="text-lg font-bold text-slate-900 mb-2 line-clamp-1">{{ news.title }}</h3>

@@ -1,4 +1,7 @@
 <script setup lang="ts">
+import { useDashboard } from '~/composables/dashboard/useDashboard';
+import { useNavigation } from '~/composables/dashboard/useNavigation';
+
 // Nuxt auto-imports these functions
 const { menuGroups } = useNavigation();
 const {
@@ -16,6 +19,7 @@ const {
   quickAccessItems,
 } = useDashboard();
 const showModal = ref(false);
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const isMenuOpen = ref(false);
 </script>
 

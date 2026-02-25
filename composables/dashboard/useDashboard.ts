@@ -1,4 +1,4 @@
-// composables/useDashboard.ts
+// composables/dashboard/useDashboard.ts
 import type { Product } from '~/types/product';
 import type { Banner } from '~/types/banner';
 import type { News } from '~/types/news';

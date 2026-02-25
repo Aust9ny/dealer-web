@@ -75,7 +75,13 @@ const handleClose = () => {
                             </p>
 
                             <div class="flex gap-4 items-start bg-blue-50 p-4 rounded-2xl border border-blue-100">
-                                <img :src="product?.image" class="w-16 h-16 object-contain bg-white rounded-lg border border-slate-200 shrink-0">
+                                <NuxtImg 
+                                    :src="product?.image" 
+                                    :alt="product?.name"
+                                    loading= "lazy"
+                                    format="webp"
+                                    lass="w-16 h-16 object-contain bg-white rounded-lg border border-slate-200 shrink-0"
+                                />
                                 <div>
                                     <p class="text-[10px] text-blue-600 font-bold uppercase tracking-wider">กำลังติดตาม</p>
                                     <p class="text-sm font-bold text-slate-800 line-clamp-2">{{ product?.name }}</p>

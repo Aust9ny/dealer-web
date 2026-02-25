@@ -112,12 +112,15 @@
             >
               <!-- Image -->
               <div
-                class="w-full sm:w-24 h-32 sm:h-24 flex-shrink-0 flex items-center justify-center bg-gray-50 rounded-lg"
+                class="w-full sm:w-24 h-32 sm:h-24 shrink-0 flex items-center justify-center bg-gray-50 rounded-lg"
               >
-                <img
+                <NuxtImg
                   :src="product.image"
+                  :alt="product.name"
+                  loading="lazy"
+                  format="webp"
                   class="max-h-20 max-w-full object-contain"
-                >
+                />
               </div>
 
               <!-- Content Wrapper -->
@@ -143,7 +146,7 @@
 
                 <!-- RIGHT -->
                 <div
-                  class="flex flex-col items-start sm:items-end justify-between text-left sm:text-right min-w-0 sm:min-w-[170px]"
+                  class="flex flex-col items-start sm:items-end justify-between text-left sm:text-right min-w-0 sm:min-w-42.5"
                 >
                   <div class="flex flex-col items-start sm:items-end gap-1">
                     <div
@@ -214,7 +217,13 @@
               target="_blank"
               class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
             >
-              <img :src="banner.image" class="w-full h-36 object-cover" >
+              <NuxtImg 
+                :src="banner.image" 
+                :alt="banner.title" 
+                loading="lazy" 
+                format="webp"
+                class="w-full h-36 object-cover" 
+              />
             </a>
           </div>
         </div>
@@ -224,6 +233,8 @@
 </template>
 
 <script setup lang="ts">
+import { useThaiFormatters } from '~/composables/shared/useThaiFormatters';
+
 defineProps<{
   modelValue: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

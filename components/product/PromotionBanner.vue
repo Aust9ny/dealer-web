@@ -20,11 +20,13 @@ defineProps<{
           :href="(item as Banner).link || '#'" 
           class="block w-full aspect-4/1 md:aspect-8/3 overflow-hidden rounded-xl "
         >
-          <img 
+          <NuxtImg 
             :src="(item as Banner).image" 
             :alt="(item as Banner).alt || 'Promotion'" 
+            loading="lazy" 
+            format="webp"
             class="w-full h-full object-fill transition-transform duration-700 hover:scale-105"
-          >
+          />
         </a>
       </template>
     </BaseSlider>

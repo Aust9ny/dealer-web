@@ -1,6 +1,8 @@
 
 import type { Product } from '~/types/product';
 import type { UserCart, CartItem } from '~/types/cart';
+import { useAuth } from './useAuth';
+import { useRolePricing } from './useRolePricing';
 
 export const useCart = () => {
   const { currentUser } = useAuth();

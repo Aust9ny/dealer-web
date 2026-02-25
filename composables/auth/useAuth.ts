@@ -1,6 +1,8 @@
 
 import type { Product } from '~/types/product';
 import type { CartItem } from '~/types/cart';
+import { useRolePricing } from './useRolePricing';
+import { useUser } from './useUser';
 
 export const useAuth = () => {
 const currentUserId = useState<number | null>('active-user-id', () => 202); 

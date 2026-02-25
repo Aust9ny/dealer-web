@@ -2,7 +2,7 @@
 <!-- eslint-disable no-unused-vars -->
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
-import { usePOPricing } from '@/composables/usePOPricing';
+import { usePOPricing } from '@/composables/po/usePOPricing';
 
 const props = defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,4 +1,4 @@
-// composables/useNotifyLogic.ts
+// composables/shared/useNotifyLogic.ts
 import type { Product } from '~/types/product';
 
 export const useNotifyLogic = () => {

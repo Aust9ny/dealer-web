@@ -1,4 +1,4 @@
-// composables/useProductUrl.ts
+// composables/shared/useProductUrl.ts
 import type { Product } from '~/types/product';
 
 export const useProductUrl = () => {
