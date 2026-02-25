@@ -90,12 +90,6 @@ const initials = computed(() => {
                 </li>
               </ul>
             </div>
-
-            <div class="pt-4">
-              <button class="w-full border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium">
-                ⏻ ออกจากระบบ
-              </button>
-            </div>
           </div>
         </transition>
       </div>
