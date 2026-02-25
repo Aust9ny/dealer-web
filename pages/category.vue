@@ -134,7 +134,7 @@ const desktopStyles = computed((): StyleValue => {
 
         <nav class="flex-1 overflow-y-auto p-3 space-y-1 scrollbar-thin">
           <div v-for="cat in categories" :key="cat.id" class="flex flex-col">
-            <div @click="toggleCategory(cat, $event)" :aria-label="$t('aria.select_sub_cat', { name: cat.name })" class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1" :class="[activeCategory === cat.id ? 'text-primary font-bold bg-blue-50/50' : 'text-slate-900 hover:bg-slate-50', !isSidebarOpen ? 'justify-center p-2' : 'justify-between']">
+            <div :aria-label="$t('aria.select_sub_cat', { name: cat.name })" class="p-3 rounded-xl cursor-pointer flex items-center transition-all group m-1" :class="[activeCategory === cat.id ? 'text-primary font-bold bg-blue-50/50' : 'text-slate-900 hover:bg-slate-50', !isSidebarOpen ? 'justify-center p-2' : 'justify-between']" @click="toggleCategory(cat, $event)">
               <div class="flex items-center w-full" :class="[!isSidebarOpen ? 'justify-center' : 'gap-3']">
                 <div class="w-10 h-10 shrink-0 flex items-center justify-center rounded-full transition-all duration-300" :class="activeCategory === cat.id ? 'bg-primary text-white shadow-lg' : 'text-slate-400 group-hover:bg-white'">
                   <span class="text-xl">{{ cat.icon }}</span>
@@ -144,7 +144,7 @@ const desktopStyles = computed((): StyleValue => {
               <Icon v-if="isSidebarOpen" icon="mdi:chevron-down" class="w-4 h-4 opacity-50" :class="{ 'rotate-180': activeCategory === cat.id }" />
             </div>
             <div v-if="activeCategory === cat.id && isSidebarOpen" class="overflow-hidden bg-white mb-2">
-              <div v-for="sub in cat.subCats" :key="sub" @click="selectSubCategory(cat.id, sub)" :aria-label="$t('aria.select_sub_cat', { name: sub })" class="py-2.5 pl-12 pr-4 text-xs font-semibold cursor-pointer hover:text-[#0D95DA] hover:bg-slate-50 transition-colors" :class="activeSubCategory === sub ? 'text-[#0D95DA] bg-blue-50 rounded-lg' : 'text-slate-400'">
+              <div v-for="sub in cat.subCats" :key="sub" :aria-label="$t('aria.select_sub_cat', { name: sub })" class="py-2.5 pl-12 pr-4 text-xs font-semibold cursor-pointer hover:text-[#0D95DA] hover:bg-slate-50 transition-colors" :class="activeSubCategory === sub ? 'text-[#0D95DA] bg-blue-50 rounded-lg' : 'text-slate-400'" @click="selectSubCategory(cat.id, sub)">
                 {{ sub }}
               </div>
             </div>
@@ -168,10 +168,10 @@ const desktopStyles = computed((): StyleValue => {
                 <Icon icon="mdi:printer-outline" class="w-5 h-5" />
               </button>
               <div class="h-8 w-px bg-slate-200 mx-1" />
-              <button :aria-label="$t('aria.view_grid')" @click="viewMode = 'grid'" class="p-2 transition-all rounded-lg border" :class="[viewMode === 'grid' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']">
+              <button :aria-label="$t('aria.view_grid')" class="p-2 transition-all rounded-lg border" :class="[viewMode === 'grid' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']" @click="viewMode = 'grid'">
                 <Icon icon="mdi:view-grid-outline" class="w-5 h-5" />
               </button>
-              <button :aria-label="$t('aria.view_list')" @click="viewMode = 'list'" class="p-2 transition-all rounded-lg border" :class="[viewMode === 'list' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']">
+              <button :aria-label="$t('aria.view_list')" class="p-2 transition-all rounded-lg border" :class="[viewMode === 'list' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 hover:bg-slate-50 border-slate-200']" @click="viewMode = 'list'">
                 <Icon icon="mdi:format-list-bulleted" class="w-5 h-5" />
               </button>
             </div>
@@ -180,8 +180,8 @@ const desktopStyles = computed((): StyleValue => {
           <div class="space-y-4">
             <div class="flex items-center gap-2"><span class="text-slate-800 text-md text-semibold">{{ $t('category.series_filter') }}</span></div>
             <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
-              <button @click="activeSubTag = 'ALL'" :aria-label="$t('aria.select_sub_cat', { name: 'ALL' })" :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500 hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all">ALL</button>
-              <button v-for="tag in currentSubCatTags" :key="tag" @click="activeSubTag = tag" :aria-label="$t('aria.select_sub_cat', { name: tag })" :class="[activeSubTag === tag ? 'bg-primary text-white' : 'bg-white text-slate-500  hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all">{{ tag }}</button>
+              <button :aria-label="$t('aria.select_sub_cat', { name: 'ALL' })" :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500 hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = 'ALL'">ALL</button>
+              <button v-for="tag in currentSubCatTags" :key="tag" :aria-label="$t('aria.select_sub_cat', { name: tag })" :class="[activeSubTag === tag ? 'bg-primary text-white' : 'bg-white text-slate-500  hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = tag">{{ tag }}</button>
             </div>
           </div>
 
@@ -240,7 +240,7 @@ const desktopStyles = computed((): StyleValue => {
           </div>
           <div class="flex-1 p-3 overflow-y-auto space-y-1 scrollbar-hide bg-white">
             <div v-if="!tempCategory" class="grid grid-cols-1 gap-1">
-              <button v-for="cat in categories" :key="cat.id" @click="selectMainCategory(cat)" :aria-label="$t('aria.select_sub_cat', { name: cat.name })" class="flex items-center gap-4 p-3.5 rounded-2xl hover:bg-blue-50/50 transition-all text-left border border-transparent hover:border-blue-100 group">
+              <button v-for="cat in categories" :key="cat.id" :aria-label="$t('aria.select_sub_cat', { name: cat.name })" class="flex items-center gap-4 p-3.5 rounded-2xl hover:bg-blue-50/50 transition-all text-left border border-transparent hover:border-blue-100 group" @click="selectMainCategory(cat)">
                 <span class="text-2xl bg-slate-50 w-11 h-11 flex items-center justify-center rounded-xl group-hover:bg-white transition-colors shadow-sm">{{ cat.icon }}</span>
                 <div class="flex-1">
                   <span class="font-bold text-slate-700 block text-sm">{{ cat.name }}</span>
@@ -250,7 +250,7 @@ const desktopStyles = computed((): StyleValue => {
               </button>
             </div>
             <div v-else class="space-y-1">
-              <button v-for="sub in tempCategory.subCats" :key="sub" @click="handleModalSelect(tempCategory.id, sub)" :aria-label="$t('aria.select_sub_cat', { name: sub })" class="w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all group border border-transparent" :class="activeSubCategory === sub ? 'bg-blue-50 text-[#0D95DA] font-bold border-blue-100' : 'hover:bg-slate-50 text-slate-600'">
+              <button v-for="sub in tempCategory.subCats" :key="sub" :aria-label="$t('aria.select_sub_cat', { name: sub })" class="w-full p-3.5 rounded-2xl text-left flex items-center justify-between transition-all group border border-transparent" :class="activeSubCategory === sub ? 'bg-blue-50 text-[#0D95DA] font-bold border-blue-100' : 'hover:bg-slate-50 text-slate-600'" @click="handleModalSelect(tempCategory.id, sub)">
                 <div class="flex items-center gap-3">
                   <div class="w-1.5 h-1.5 rounded-full bg-[#0D95DA] transition-all duration-300" :class="activeSubCategory === sub ? 'scale-100 opacity-100' : 'scale-0 opacity-0'" />
                   <span class="text-sm">{{ sub }}</span>
