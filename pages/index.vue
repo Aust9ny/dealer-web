@@ -59,7 +59,7 @@ const isMenuOpen = ref(false);
         </aside>
         <!-- MOBILE ONLY -->
         <div class="lg:hidden col-span-12 space-y-4">
-          <!-- CARD 1 : ปุ่มเปิดบิล -->
+          <!-- ปุ่มเปิดบิล -->
           <div class="bg-white rounded-xl shadow p-4">
             <div
               class="w-full bg-primary text-white py-2 rounded-md text-center hover:bg-primary/90 transition cursor-pointer"
@@ -67,50 +67,6 @@ const isMenuOpen = ref(false);
             >
               เปิดบิลสั่งซื้อสินค้า
             </div>
-          </div>
-
-          <!-- CARD 2 : เมนูจัดการ -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <!-- HEADER -->
-            <button
-              class="w-full flex justify-between items-center p-4 font-bold text-slate-800"
-              :class="isMenuOpen ? 'border-b' : ''"
-              @click="isMenuOpen = !isMenuOpen"
-            >
-              เมนูจัดการ
-              <span
-                class="transition-transform duration-300"
-                :class="isMenuOpen ? 'rotate-180' : ''"
-              >
-                ▼
-              </span>
-            </button>
-
-            <!-- DROPDOWN -->
-            <transition name="slide-down">
-              <div v-if="isMenuOpen" class="p-4 space-y-6">
-                <div v-for="group in menuGroups" :key="group.title">
-                  <h3
-                    class="font-bold text-slate-800 flex items-center gap-2 mb-3"
-                  >
-                    <span class="text-lg">{{ group.icon }}</span>
-                    {{ group.title }}
-                  </h3>
-
-                  <ul class="space-y-2 text-sm text-slate-600">
-                    <li
-                      v-for="link in group.links"
-                      :key="link"
-                      class="hover:text-[#2196F3] cursor-pointer transition"
-                    >
-                      {{ link }}
-                    </li>
-                  </ul>
-
-                  <div class="mt-4 h-px w-full bg-slate-300" />
-                </div>
-              </div>
-            </transition>
           </div>
 
           <!-- Modal วางไว้ข้างนอกสุด -->
