@@ -1,5 +1,11 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
+import { useDashboard } from '~/composables/dashboard/useDashboard';
+import { useAuth } from '~/composables/auth/useAuth';
+import { useRolePricing } from '~/composables/auth/useRolePricing';
+import { useThaiFormatters } from '~/composables/shared/useThaiFormatters';
+import { useNotifyLogic } from '~/composables/shared/useNotifyLogic';
+import { useScrollLock } from '~/composables/shared/useScrollLock';
 
 const data = useDashboard();
 const product = data.products;
