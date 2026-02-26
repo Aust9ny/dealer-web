@@ -41,7 +41,7 @@ const navItems = [
     name: 'ใบสั่งซื้อ',
     icon: 'mdi:file-document-outline',
     activeIcon: 'mdi:file-document',
-    path: '/po',
+    path: '/po/[id]',
     isPO: true,
   },
   {
