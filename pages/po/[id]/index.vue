@@ -5,6 +5,7 @@ import { usePOPricing } from '@/composables/po/usePOPricing';
 import { useLoading } from '~/composables/shared/useLoading';
 import { usePOFooterHelpers } from '~/composables/po/usePOFooterHelpers';
 import { useMockPO } from '~/composables/po/useMockPO';
+import { usePOCheckoutState } from '~/composables/po/usePOCheckoutState';
 
 // 1. รับ Props จากหน้าแม่ [id].vue
 const props = defineProps<{
@@ -25,6 +26,24 @@ const { getSubtotalFromItems, getVat, getGrandTotal, getEffectiveQuantity } = us
 const { isLoading, startLoading, stopLoading } = useLoading();
 const { runWithLoading } = usePOFooterHelpers();
 const { userOrders, updatePOItemQuantity } = useMockPO();
+const { state: checkoutState, setStockChecked } = usePOCheckoutState();
+const isStockChecked = computed(() => checkoutState.value.stockChecked);
+
+useSeoMeta({
+  title: () => `PO #${props.po.id} | Review Order`,
+  description: () => `Review products and quantities for purchase order ${props.po.id}.`,
+  ogTitle: () => `PO #${props.po.id} | Review Order`,
+  ogDescription: () => `Review and update purchase order ${props.po.id}.`,
+  robots: 'noindex, nofollow',
+});
+
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+  ],
+});
 
 // 2. Local UI State (เฉพาะหน้านี้)
 const isSidebarOpen = ref(true);
@@ -95,6 +114,7 @@ const validateQuantity = (item: any) => {
 // This prevents aside totals from appearing one step behind.
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const syncQuantity = (item: any) => {
+  setStockChecked(false);
   validateQuantity(item);
 };
 
@@ -105,6 +125,7 @@ const getLineTotal = (item: any) => {
 };
 
 const removeProduct = (productId: number) => {
+  setStockChecked(false);
   props.removePOItem(productId);
   checkedItems.value[productId] = false;
 };
@@ -127,6 +148,10 @@ const goToCategory = async () => {
   await runWithLoading({ startLoading, stopLoading }, async () => {
     await router.push(`/category/${props.po.id}`);
   });
+};
+
+const handleCheckStock = () => {
+  setStockChecked(true);
 };
 </script>
 
@@ -167,8 +192,8 @@ const goToCategory = async () => {
 
     <div class="flex flex-col lg:flex-row gap-3 items-stretch w-full overflow-visible">
     <aside
-      :class="[isSidebarOpen ? 'lg:w-64 lg:hover:w-80' : 'lg:w-20']"
-      class="w-full lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-8 lg:border-t-10 border-t-primary shadow-md shrink-0"
+      :class="[isSidebarOpen ? 'lg:w-72 ' : 'lg:w-20']"
+      class="w-full lg:sticky lg:top-1 lg:h-[calc(100vh-120px)] bg-white transition-all duration-300 flex flex-col rounded-xl border-t-8 lg:border-t-10 border-t-primary shadow-md shrink-0"
     >
       <div class="p-4 flex justify-between items-center border-b h-14 lg:h-16 shrink-0">
         <span class="font-bold text-[#0D95DA] text-sm lg:text-base">
@@ -191,11 +216,12 @@ const goToCategory = async () => {
           <div class="flex items-center gap-2">
             <Icon icon="mdi:file-document-outline" class="lg:hidden w-4 h-4" />
             <p class="font-bold text-[13px] lg:text-[14px]">
-      #{{ order.id }} 
-      <span class="hidden lg:inline">
-        | {{ formatDate(order.createdAt, false) }} 
-        | ฿ {{ formatPrice(order.totalAmount) }} </span>
-        </p>
+            #{{ order.id }} 
+            <span class="hidden lg:inline">
+              | {{ formatDate(order.createdAt, false) }} 
+              | ฿ {{ formatPrice(order.totalAmount) }}
+            </span>
+            </p>
           </div>
         </NuxtLink>
       </nav>
@@ -228,8 +254,13 @@ const goToCategory = async () => {
             </div>
 
             <div class="flex items-center gap-2 md:gap-4">
-              <button class="bg-white text-slate-500 border border-slate-200 px-4 py-2 rounded-lg text-[11px] font-black flex items-center gap-2 hover:bg-slate-50 transition-all">
-                <Icon icon="mdi:magnify-scan" class="w-4 h-4" /> ตรวจสอบสต็อก
+              <button
+                class="px-4 py-2 rounded-lg text-[11px] font-black flex items-center gap-2 transition-all border"
+                :class="isStockChecked ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : 'bg-white text-slate-500 border-slate-200 hover:bg-slate-50'"
+                @click="handleCheckStock"
+              >
+                <Icon :icon="isStockChecked ? 'mdi:check-circle-outline' : 'mdi:magnify-scan'" class="w-4 h-4" />
+                {{ isStockChecked ? 'ตรวจสอบสต็อกแล้ว' : 'ตรวจสอบสต็อก' }}
               </button>
               
               <div class="h-8 bg-slate-200 w-px" />

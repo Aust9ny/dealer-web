@@ -7,6 +7,7 @@ import { useLoading } from '@/composables/shared/useLoading';
 import { usePOFooterHelpers } from '@/composables/po/usePOFooterHelpers';
 import { usePOPricing } from '@/composables/po/usePOPricing';
 import { usePOFlow } from '@/composables/po/usePOFlow';
+import { usePOCheckoutState } from '@/composables/po/usePOCheckoutState';
 
 
 
@@ -19,6 +20,7 @@ const { getPOById } = useMockPO();
 
 // เรายังเก็บ currentStep ไว้เพื่อแสดงข้อความบนปุ่ม แต่การย้ายหน้าจะใช้ Router แทน
 const { currentStep } = usePOFlow();
+const { state: checkoutState, isAddressReady, setAddressValidationAttempted } = usePOCheckoutState();
 
 const poId = computed(() => route.params.id as string);
 const po = computed(() => getPOById(poId.value));
@@ -28,18 +30,38 @@ const subtotal = computed(() => {
   return getOrderSubtotal(po.value);
 });
 const grandTotal = computed(() => getGrandTotal(subtotal.value));
+const isStepOneLocked = computed(
+  () => currentStep.value === 1 && !checkoutState.value.stockChecked,
+);
+const missingSelectionCount = computed(() => {
+  const state = checkoutState.value;
+  const options = [
+    state.shippingAddressSelected,
+    state.taxAddressSelected,
+    state.deliveryMethodSelected,
+    state.paymentMethodSelected,
+  ];
+  return options.filter((selected) => !selected).length;
+});
 
 /**
  * 🟢 PRIMARY ACTION HANDLER
  * เปลี่ยนจากการเรียก nextStep() เป็น router.push()
  */
 const handleMainAction = async () => {
+  if (isStepOneLocked.value) return;
+  if (currentStep.value === 2) {
+    setAddressValidationAttempted(true);
+    if (!isAddressReady.value) return;
+  }
+
   await runWithLoading({ startLoading, stopLoading }, async () => {
     if (currentStep.value === 1) {
       // หน้า 1 (Check) -> ไปหน้า Address
       await router.push(`/po/${poId.value}/address`);
     } else if (currentStep.value === 2) {
       // หน้า 2 (Address) -> ไปหน้า Payment
+      setAddressValidationAttempted(false);
       await router.push(`/po/${poId.value}/payment`);
     } else {
       // หน้า 3 (Payment) -> ยืนยันการชำระเงิน
@@ -129,7 +151,7 @@ const handleSecondaryAction = async () => {
         <div class="flex flex-col gap-2 w-full md:w-auto">
           <button
             class="w-full md:w-auto px-6 md:px-8 py-3 bg-[#2D5A9E] text-white rounded-xl font-black hover:bg-[#1A3D6E] transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-500/20 disabled:opacity-60"
-            :disabled="isLoading"
+            :disabled="isLoading || isStepOneLocked"
             @click="handleMainAction"
           >
             <template v-if="isLoading">
@@ -155,6 +177,16 @@ const handleSecondaryAction = async () => {
           >
             {{ currentStep > 1 ? "ย้อนกลับ" : "เลือกสินค้าเพิ่มเติม" }}
           </button>
+
+          <p v-if="isStepOneLocked" class="text-[11px] font-bold text-red-500 text-center md:text-right">
+            กรุณากด "ตรวจสอบสต็อก" ก่อนดำเนินการต่อ
+          </p>
+          <p
+            v-if="currentStep === 2 && checkoutState.addressValidationAttempted && !isAddressReady"
+            class="text-[11px] font-bold text-red-500 text-center md:text-right"
+          >
+            กรุณาเลือกข้อมูลให้ครบ 4 รายการก่อนชำระเงิน (ขาด {{ missingSelectionCount }} รายการ)
+          </p>
         </div>
       </div>
     </div>

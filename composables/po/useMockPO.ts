@@ -132,8 +132,13 @@ export const useMockPO = () => {
     return mockPOs.filter(po => po.userId === currentUser.value?.id);
   });
 
-  // 🟢 Find specific PO
-  const getPOById = (id: string) => mockPOs.find(po => po.id === id);
+  // 🟢 Find specific PO that belongs to the currently logged in user
+  const getPOById = (id: string) => {
+    if (!currentUser.value) return undefined;
+    return mockPOs.find(
+      po => po.id === id && po.userId === currentUser.value?.id,
+    );
+  };
   
   // 🟢 Get the absolute latest PO (useful for "Thank You" pages)
   const getLatestPO = () => {

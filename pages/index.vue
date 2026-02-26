@@ -21,6 +21,23 @@ const {
 const showModal = ref(false);
 // eslint-disable-next-line @typescript-eslint/no-unused-vars, no-unused-vars
 const isMenuOpen = ref(false);
+
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: 'Dealer Dashboard',
+  description: 'Dealer dashboard for orders, sales insights, and operational tools.',
+  ogTitle: 'Dealer Dashboard',
+  ogDescription: 'Secure dealer dashboard for day-to-day operations.',
+  robots: 'noindex, nofollow',
+});
 </script>
 
 <template>

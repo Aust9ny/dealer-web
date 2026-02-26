@@ -32,6 +32,23 @@ const products = computed(() => product.value.find(p => p.id === productId.value
 
 const quantity = ref('');
 
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: () => `${products.value?.name || 'Product'} | Product Detail`,
+  description: () => `Product detail for ${products.value?.name || 'selected product'}.`,
+  ogTitle: () => `${products.value?.name || 'Product'} | Product Detail`,
+  ogDescription: () => `Secure product detail page for ${products.value?.name || 'selected product'}.`,
+  robots: 'noindex, nofollow',
+});
+
 // Pricing Tiers Logic
 const priceTiers = computed(() => {
     const basePrice = products.value?.price || 0;

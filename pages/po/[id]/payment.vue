@@ -15,6 +15,22 @@ const props = defineProps<{
 }>();
 const { getEffectiveQuantity } = usePOPricing();
 
+useSeoMeta({
+  title: () => `PO #${props.po?.id} | Payment`,
+  description: () => `Complete payment for purchase order ${props.po?.id}.`,
+  ogTitle: () => `PO #${props.po?.id} | Payment`,
+  ogDescription: () => `Pay and confirm purchase order ${props.po?.id}.`,
+  robots: 'noindex, nofollow',
+});
+
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+  ],
+});
+
 const getStockStatus = (item: any) => {
   const stock = item.product.stock || 0;
   if (stock <= 0)
