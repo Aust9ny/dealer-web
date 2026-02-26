@@ -8,9 +8,11 @@ import AccountMenuContent from '@/components/layout/AccountMenuContent.vue';
 import SearchModal from '@/components/product/SearchModal.vue';
 import { Icon } from '@iconify/vue';
 import { watch, ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useScrollLock } from '~/composables/shared/useScrollLock'
 
 const { menuGroups } = useNavigation();
 const isSidebarOpen = ref(false);
+useScrollLock(isSidebarOpen);
 const closeSidebar = () => {
   isSidebarOpen.value = false;
 };
