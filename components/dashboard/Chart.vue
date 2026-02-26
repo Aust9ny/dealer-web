@@ -19,9 +19,9 @@ import {
 ChartJS.register(Title, Tooltip, Legend, Filler, LineElement, PointElement, CategoryScale, LinearScale);
 
 const props = defineProps<{
-  labels: string[];
+  labels: string[]; // หัวข้อของข้อมูล ใดๆ
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  datasets: any[];
+  datasets: any[]; // ข้อมูลของหัวข้อ ใดๆ
 }>();
 
 const computedChartData = computed(() => ({
