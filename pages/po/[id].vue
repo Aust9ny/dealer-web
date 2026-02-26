@@ -3,14 +3,34 @@ import { useMockPO } from '@/composables/po/useMockPO';
 import { usePOFooterHelpers } from '@/composables/po/usePOFooterHelpers';
 import { usePOPricing } from '@/composables/po/usePOPricing';
 
+definePageMeta({
+  middleware: 'po-owner',
+});
+
 const route = useRoute();
-const { getPOById } = useMockPO();
+const { userOrders } = useMockPO();
 const { formatNumber, formatThaiDate } = usePOFooterHelpers();
 const { getOrderSubtotal, getVat, getGrandTotal } = usePOPricing();
 
 // 🟢 1. ดึงข้อมูล PO จาก ID ใน URL
 const poId = computed(() => route.params.id as string);
-const po = ref(getPOById(poId.value));
+const po = computed(() => userOrders.value.find((order) => order.id === poId.value));
+
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+  ],
+});
+
+useSeoMeta({
+  title: () => `PO #${poId.value} | Order Details`,
+  description: () => `Securely view purchase order ${poId.value}.`,
+  ogTitle: () => `PO #${poId.value} | Order Details`,
+  ogDescription: () => `Secure access to purchase order ${poId.value}.`,
+  robots: 'noindex, nofollow',
+});
 
 // 🟢 2. คำนวณราคากลาง (Shared Calculations)
 // หน้าลูก (index, address, payment) จะใช้ค่าชุดเดียวกันจากที่นี่
@@ -30,14 +50,9 @@ const formatDate = (dateStr: string , timeStr: boolean) => {
 
 const removePOItem = (productId: number) => {
   if (po.value) {
-    po.value.items = po.value.items.filter(item => item.product.id !== productId);
+    po.value.items = po.value.items.filter((item) => item.product.id !== productId);
   }
 };
-
-// 🟢 4. Error Handling กรณีไม่พบ PO
-if (!po.value) {
-  throw createError({ statusCode: 404, statusMessage: 'ไม่พบรายการใบสั่งซื้อที่คุณต้องการ' });
-}
 </script>
 
 <template>
