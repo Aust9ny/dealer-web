@@ -1,24 +1,12 @@
 <script setup lang="ts">
 import { useAuth } from '~/composables/auth/useAuth';
-
+import { useNavigation } from '~/composables/dashboard/useNavigation';
+const { menuGroups } = useNavigation();
 const { currentUser } = useAuth();
-const isSidebarOpen = ref(false);
 const activeOrderTab = ref('ทั้งหมด');
-
-interface MenuSection {
-  title: string;
-  items: string[];
-}
-
 const orderCount = 99;
 const orderTabs = ['ทั้งหมด', 'ที่ต้องชำระ', 'รอตรวจสอบ', 'กำลังจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
 
-const menuSections: MenuSection[] = [
-  { title: 'จัดการคำสั่งซื้อ', items: ['รายการสั่งซื้อทั้งหมด', 'รายการสินค้าค้างส่ง', 'ติดตามสถานะการจัดส่ง'] },
-  { title: 'การเงินและชำระเงิน', items: ['ชำระเงิน / อัปโหลดหลักฐาน', 'จ่ายชำระหนี้ Advice สนญ.', 'รายการเคลื่อนไหวบัญชี'] },
-  { title: 'งานบริการและติดตามสถานะเคลม', items: ['ตรวจสอบสถานะการแจ้งเคลม', 'สินค้าเคลมรอตัดสินใจ', 'รายงานการส่งคืน'] },
-  { title: 'ข้อมูลบัญชี', items: ['ข้อมูลส่วนตัวดีลเลอร์', 'รายชื่อไฟล์อัปโหลด', 'เงื่อนไขการจัดส่ง', 'เปลี่ยนรหัสผ่าน'] },
-];
 
 const initials = computed(() => {
   const first = currentUser.value?.fname?.[0] || 'D';
@@ -58,44 +46,6 @@ const initials = computed(() => {
         </div>
       </div>
 
-      <div class="col-span-1 lg:hidden">
-        <div class="bg-white rounded-xl shadow overflow-hidden">
-          <button
-            class="w-full flex items-center gap-3 font-medium p-6"
-            :class="isSidebarOpen ? 'border-b' : ''"
-            @click="isSidebarOpen = !isSidebarOpen"
-          >
-            <div class="space-y-1">
-              <div class="w-6 h-0.5 bg-gray-700" />
-              <div class="w-6 h-0.5 bg-gray-700" />
-              <div class="w-6 h-0.5 bg-gray-700" />
-            </div>
-            เมนู
-          </button>
-        </div>
-
-        <transition name="slide-down">
-          <div v-if="isSidebarOpen" class="bg-white rounded-xl shadow p-4 space-y-4">
-            <div
-              v-for="(section, sectionIndex) in menuSections"
-              :key="section.title"
-              :class="sectionIndex > 0 ? 'border-t pt-3' : ''"
-            >
-              <p class="font-medium mb-2">{{ section.title }}</p>
-              <ul class="text-sm space-y-2 text-gray-600">
-                <li
-                  v-for="(item, itemIndex) in section.items"
-                  :key="item"
-                  :class="sectionIndex === 0 && itemIndex === 0 ? 'text-primary font-medium' : ''"
-                >
-                  {{ item }}
-                </li>
-              </ul>
-            </div>
-          </div>
-        </transition>
-      </div>
-
       <div class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3">
         <div class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2">
           📄 รายการสั่งซื้อทั้งหมด
@@ -125,21 +75,33 @@ const initials = computed(() => {
 
       <div class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2">
         <div class="p-4 space-y-5 flex-1">
-          <div v-for="(section, sectionIndex) in menuSections" :key="section.title">
+          <div
+            v-for="(group, groupIndex) in menuGroups"
+            :key="group.title"
+          >
+            <!-- Title + icon -->
             <div class="flex items-center gap-2 mb-2">
-              <span class="font-medium text-gray-800">{{ section.title }}</span>
+              <span>{{ group.icon }}</span>
+              <span class="font-medium text-gray-800">
+                {{ group.title }}
+              </span>
             </div>
 
+            <!-- Links -->
             <ul class="text-sm space-y-2">
               <li
-                v-for="(item, itemIndex) in section.items"
-                :key="item"
+                v-for="(link, linkIndex) in group.links"
+                :key="link"
                 class="cursor-pointer"
-                :class="sectionIndex === 0 && itemIndex === 0 ? 'flex items-center justify-between text-primary font-medium' : 'text-gray-600 hover:text-primary'"
+                :class="groupIndex === 0 && linkIndex === 0 
+                  ? 'flex items-center justify-between text-primary font-medium' 
+                  : 'text-gray-600 hover:text-primary'"
               >
-                <span>{{ item }}</span>
+                <span>{{ link }}</span>
+
+                <!-- badge เฉพาะอันแรก -->
                 <span
-                  v-if="sectionIndex === 0 && itemIndex === 0"
+                  v-if="groupIndex === 0 && linkIndex === 0"
                   class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
                 >
                   {{ orderCount }}
@@ -147,10 +109,13 @@ const initials = computed(() => {
               </li>
             </ul>
 
-            <div v-if="sectionIndex < menuSections.length - 1" class="border-t border-gray-200 mt-4" />
+            <div
+              v-if="groupIndex < menuGroups.length - 1"
+              class="border-t border-gray-200 mt-4"
+            />
           </div>
         </div>
-
+        <!-- Logout -->
         <div class="mt-auto p-4 mb-3">
           <button
             class="w-full flex items-center justify-center gap-2 border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium hover:bg-red-600 hover:text-white hover:border-red-600 active:bg-red-700 active:border-red-700 transition"
@@ -167,11 +132,12 @@ const initials = computed(() => {
             class="w-40 opacity-70"
           >
           <p class="mt-4 text-gray-500">ไม่มีรายการสั่งซื้อของคุณ</p>
-          <button
-            class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2"
+          <NuxtLink
+            to="/category"
+            class="mt-6 bg-primary hover:bg-[#004a85] text-white px-6 py-2 rounded-full flex items-center gap-2 inline-flex"
           >
             🛒 เปิดสั่งซื้อสินค้าทันที
-          </button>
+          </NuxtLink>
         </div>
       </div>
     </div>
