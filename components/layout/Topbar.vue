@@ -141,7 +141,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
           <Icon icon="mdi:magnify" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
           <input
             type="text"
-            :placeholder="$t('header.search_field')"
+            placeholder="ค้นหาสินค้า เช่น RTX 4090 , iPhone"
             :aria-label="$t('header.search_field')"
             class="w-full h-11 pl-12 pr-12 border border-gray-300 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
             autofocus
@@ -178,28 +178,28 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
       <div class="relative w-full max-w-3xl z-100">
         <input
           type="text"
-          :placeholder="$t('header.search_field')"
+          placeholder="ค้นหาสินค้า เช่น RTX 4090 , iPhone"
           :aria-label="$t('header.search_field')"
           class="w-full h-11 pl-5 pr-28 border rounded-full transition focus:outline-none"
           :class="showSearchModal ? 'ring-2 ring-primary border-primary bg-white shadow-xl' : 'border-gray-300 bg-white'"
           @focus="activateSearch"
         >
         <button class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2" :aria-label="$t('header.search_btn')">
-          🔍 {{ $t('header.search_btn') }}
+          🔍 ค้นหา
         </button>
       </div>
     </div>
 
     <div class="hidden md:flex items-center gap-4">
-      <LanguageSwitcher />
+      <!-- <LanguageSwitcher /> -->
 
       <button 
         class="flex items-center gap-2 px-5 h-10 rounded-full text-black bg-[#0D95DA]/10 border border-[#0D95DA] hover:bg-[#0D95DA]/20 transition" 
         :aria-label="$t('header.order_list')" 
         @click="goToLatestPO"
       >
-        {{ $t('header.order_list') }}
-        <span class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full">{{ totalPO }}</span>
+        📋 รายการการสั่งซื้อ
+        <span v-if="userOrders.length > 0" class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full">{{ totalPO }}</span>
       </button>
 
       <div class="h-6 w-px bg-gray-300" />
@@ -212,7 +212,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         >
           <div class="w-8 h-8 rounded-full bg-[#003E73] flex items-center justify-center text-white text-sm font-black border border-white/20">{{ initials }}</div>
           <div class="flex flex-col items-start leading-tight text-left">
-            <span class="text-[12px] font-bold text-white truncate max-w-25">{{ currentUser?.fname || $t('header.login') }}</span>
+            <span class="text-[12px] font-bold text-white truncate max-w-25">{{ currentUser?.fname || 'เข้าสู่ระบบ' }}</span>
             <span v-if="currentUser" class="text-[8px] bg-white/20 px-1.5 rounded text-white font-black uppercase tracking-tighter">{{ currentUser.role }}</span>
           </div>
           <Icon icon="mdi:chevron-down" class="w-4 h-4 text-white transition-transform" :class="{ 'rotate-180': showAccountMenu }" />
@@ -248,17 +248,17 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
   <transition name="slide-left">
     <div v-if="isSidebarOpen" class="fixed top-0 left-0 h-full w-80 bg-white z-150 shadow-xl md:hidden flex flex-col">
       <div class="flex items-center justify-between p-4 border-b">
-        <div class="font-bold text-lg">{{ $t('header.menu_title') }}</div>
+        <div class="font-bold text-lg">เมนูจัดการ</div>
         <button :aria-label="$t('aria.close_nav')" @click="closeSidebar">
           <Icon icon="mdi:close" class="w-6 h-6" />
         </button>
       </div>
 
       <div class="p-4 space-y-6 overflow-y-auto">
-        <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col gap-2">
-           <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">Language</span>
+        <!-- <div class="bg-slate-50 p-4 rounded-2xl border border-slate-100 flex flex-col gap-2">
+           <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest">ภาษา</span>
            <LanguageSwitcher />
-        </div>
+        </div> -->
 
         <div v-for="group in menuGroups" :key="group.title">
           <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">

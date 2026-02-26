@@ -118,8 +118,6 @@ const mockPOs: PurchaseOrder[] = [
       },
     ]
   },
-  { id: 'PO123454', userId: 101, dealerId: 111234, cartId: 'c1', items: [], status: 'pending', totalAmount: 15200, createdAt: '2026-02-15T11:45:00Z' },
-  { id: 'PO123453', userId: 101, dealerId: 111234, cartId: 'c1', items: [], status: 'completed', totalAmount: 8900, createdAt: '2026-02-14T13:20:00Z' },
   { id: 'PO123452', userId: 303, dealerId: 113334, cartId: 'c1', items: [], status: 'completed', totalAmount: 8900, createdAt: '2026-02-14T14:00:00Z' }
 ];
 

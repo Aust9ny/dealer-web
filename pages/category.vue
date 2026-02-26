@@ -115,10 +115,10 @@ const desktopStyles = computed((): StyleValue => {
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4 font-sans">
     <nav class="flex items-center gap-2 mb-4 px-2 md:px-4 text-xs md:text-sm font-medium overflow-x-auto whitespace-nowrap scrollbar-hide">
       <NuxtLink to="/" :aria-label="$t('aria.home_link')" class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors">
-        <Icon icon="mdi:home-outline" class="w-4 h-4" /> {{ $t('category.home') }}
+        <Icon icon="mdi:home-outline" class="w-4 h-4" /> หน้าแรก
       </NuxtLink>
       <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
-      <span class="text-slate-500">{{ $t('category.title') }}</span>
+      <span class="text-slate-500">หมวดหมู่สินค้า</span>
       <Icon icon="mdi:chevron-right" class="w-4 h-4 text-slate-300" />
       <span class="text-[#0D95DA] font-bold">{{ activeSubCategory || activeCategoryName }}</span>
     </nav>
@@ -126,7 +126,7 @@ const desktopStyles = computed((): StyleValue => {
     <div class="flex flex-1 flex-col lg:flex-row gap-3 items-start overflow-visible">
       <aside :class="[isSidebarOpen ? 'lg:w-64' : 'lg:w-20']" class="hidden lg:flex w-full lg:sticky lg:top-4 lg:h-[calc(100vh-60px)] bg-white transition-all duration-300 flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden">
         <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
-          <span v-if="isSidebarOpen" class="font-bold truncate text-black">{{ $t('category.title') }}</span>
+          <span v-if="isSidebarOpen" class="font-bold truncate text-black">หมวดหมู่สินค้า</span>
           <button :aria-label="$t('aria.toggle_sidebar')" class="hover:bg-slate-100 p-1.5 rounded-lg ml-1" @click="isSidebarOpen = !isSidebarOpen">
             <Icon icon="mdi:menu" class="w-6 h-6 text-slate-600" />
           </button>
@@ -154,14 +154,14 @@ const desktopStyles = computed((): StyleValue => {
 
       <main class="flex-1 flex flex-col min-w-0 gap-3 w-full">
         <button :aria-label="$t('aria.open_category_selector')" class="lg:hidden flex items-center justify-center gap-2 bg-white p-4 rounded-xl shadow-sm border-t-4 border-t-[#0D95DA] font-bold text-slate-700 w-full active:scale-[0.98] transition-transform" @click="isQuickSelectOpen = true; tempCategory = null;">
-          <Icon icon="mdi:grid" /> {{ $t('category.title') }}
+          <Icon icon="mdi:grid" /> หมวดหมู่สินค้า
         </button>
 
         <header class="bg-white border-b border-slate-200 p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-2">
           <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
             <div class="flex items-baseline gap-2">
               <h2 class="text-xl text-slate-800">{{ activeSubCategory || activeCategoryName }}</h2>
-              <span class="text-slate-400 text-xs">({{ filteredProducts.length }} {{ $t('category.items') }})</span>
+              <span class="text-slate-400 text-xs">({{ filteredProducts.length }} รายการ)</span>
             </div>
             <div class="flex items-center gap-3">
               <button :aria-label="$t('aria.print_page')" class="p-2 text-slate-400 hover:bg-slate-50 rounded-lg border border-slate-200">
@@ -178,7 +178,7 @@ const desktopStyles = computed((): StyleValue => {
           </div>
 
           <div class="space-y-4">
-            <div class="flex items-center gap-2"><span class="text-slate-800 text-md text-semibold">{{ $t('category.series_filter') }}</span></div>
+            <div class="flex items-center gap-2"><span class="text-slate-800 text-md text-semibold">รุ่น / ซีรีส์:</span></div>
             <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
               <button :aria-label="$t('aria.select_sub_cat', { name: 'ALL' })" :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500 hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = 'ALL'">ALL</button>
               <button v-for="tag in currentSubCatTags" :key="tag" :aria-label="$t('aria.select_sub_cat', { name: tag })" :class="[activeSubTag === tag ? 'bg-primary text-white' : 'bg-white text-slate-500  hover:bg-slate-50']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = tag">{{ tag }}</button>
@@ -187,16 +187,16 @@ const desktopStyles = computed((): StyleValue => {
 
           <div class="mt-6 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="relative w-full max-w-md">
-              <input v-model="searchQuery" :aria-label="$t('aria.search_input')" type="text" :placeholder="$t('category.search_placeholder')" class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm">
+              <input v-model="searchQuery" :aria-label="$t('aria.search_input')" type="text" placeholder="ค้นหาชื่อสินค้า..." class="w-full pl-4 pr-10 py-2.5 bg-white border border-slate-200 rounded-full text-sm focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-[#0D95DA] shadow-sm">
               <Icon icon="mdi:magnify" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
             </div>
             <div class="flex items-center gap-3">
-              <span class="text-sm text-slate-600 font-medium">{{ $t('category.stock_label') }}</span>
+              <span class="text-sm text-slate-600 font-medium">สถานะสินค้า:</span>
               <div class="relative min-w-35">
                 <select v-model="stockStatus" :aria-label="$t('aria.stock_status')" class="w-full appearance-none bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm focus:outline-none">
-                  <option value="ทั้งหมด">{{ $t('category.stock_all') }}</option>
-                  <option value="มีของ">{{ $t('category.stock_available') }}</option>
-                  <option value="ของหมด">{{ $t('category.stock_out') }}</option>
+                  <option value="ทั้งหมด">ทั้งหมด</option>
+                  <option value="มีของ">มีของ</option>
+                  <option value="ของหมด">ของหมด</option>
                 </select>
                 <Icon icon="mdi:chevron-down" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
               </div>
@@ -207,8 +207,8 @@ const desktopStyles = computed((): StyleValue => {
         <section class="mt-4 space-y-6 pb-20">
           <div v-if="filteredProducts.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
             <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
-            <p class="text-slate-400 font-medium">{{ $t('category.not_found') }}</p>
-            <button class="mt-2 text-[#0D95DA] text-sm font-bold underline" @click="resetFilters">{{ $t('category.clear_filter') }}</button>
+            <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ</p>
+            <button class="mt-2 text-[#0D95DA] text-sm font-bold underline" @click="resetFilters">ล้างการกรอง</button>
           </div>
           <template v-else>
             <div v-for="(taggedProducts, tagName) in productsBySubTag" :key="tagName">
@@ -230,8 +230,8 @@ const desktopStyles = computed((): StyleValue => {
               </button>
               <div v-else class="w-10 h-10 bg-white rounded-xl flex items-center justify-center shadow-sm text-xl border border-slate-100">{{ tempCategory?.icon || "📦" }}</div>
               <div>
-                <span class="block font-black text-slate-800 leading-tight">{{ tempCategory ? tempCategory.name : $t('category.quick_select_main') }}</span>
-                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ tempCategory ? $t('category.quick_select_sub') : $t('category.quick_select_title') }}</span>
+                <span class="block font-black text-slate-800 leading-tight">{{ tempCategory ? tempCategory.name : 'เลือกหมวดหมู่หลัก' }}</span>
+                <span class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">{{ tempCategory ? 'ระบุหมวดหมู่ย่อย' : 'เลือกหมวดหมู่ด่วน' }}</span>
               </div>
             </div>
             <button :aria-label="$t('aria.close_modal')" class="p-2 hover:bg-slate-100 rounded-full text-slate-400 transition-colors" @click="isQuickSelectOpen = false">
@@ -244,7 +244,7 @@ const desktopStyles = computed((): StyleValue => {
                 <span class="text-2xl bg-slate-50 w-11 h-11 flex items-center justify-center rounded-xl group-hover:bg-white transition-colors shadow-sm">{{ cat.icon }}</span>
                 <div class="flex-1">
                   <span class="font-bold text-slate-700 block text-sm">{{ cat.name }}</span>
-                  <span class="text-[10px] text-slate-400 font-medium">{{ cat.subCats.length }} {{ $t('category.sub_count') }}</span>
+                  <span class="text-[10px] text-slate-400 font-medium">{{ cat.subCats.length }} หมวดหมู่ย่อย</span>
                 </div>
                 <Icon icon="mdi:chevron-right" class="text-slate-300 group-hover:text-[#0D95DA] transition-all transform group-hover:translate-x-1" />
               </button>
@@ -260,7 +260,7 @@ const desktopStyles = computed((): StyleValue => {
             </div>
           </div>
           <div class="p-4 bg-slate-50/50 text-center border-t border-slate-100 shrink-0">
-            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">Dealer Management System</p>
+            <p class="text-[9px] text-slate-400 font-black uppercase tracking-[0.2em]">ระบบจัดการดีลเลอร์</p>
           </div>
         </div>
       </div>
