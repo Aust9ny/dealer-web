@@ -124,6 +124,23 @@
 <script setup>
 import { ref, computed, h } from 'vue';
 
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: 'Change Password',
+  description: 'Secure page for changing account password.',
+  ogTitle: 'Change Password',
+  ogDescription: 'Secure password update page.',
+  robots: 'noindex, nofollow',
+});
+
 // State
 const isLoading = ref(false);
 const password = ref('');

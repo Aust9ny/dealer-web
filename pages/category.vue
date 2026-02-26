@@ -109,6 +109,23 @@ const desktopStyles = computed((): StyleValue => {
   }
   return styles as StyleValue;
 });
+
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: () => `${activeSubCategory.value || activeCategoryName.value} | Category`,
+  description: 'Browse product categories and filter catalog items.',
+  ogTitle: () => `${activeSubCategory.value || activeCategoryName.value} | Category`,
+  ogDescription: 'Secure product category browsing for dealer users.',
+  robots: 'noindex, nofollow',
+});
 </script>
 
 <template>

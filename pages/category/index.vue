@@ -215,6 +215,23 @@ const activeCategoryName = computed(() => {
   return cat ? cat.name : 'Select Category';
 });
 
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: () => `${activeSubCategory.value || activeCategoryName.value} | Category`,
+  description: 'Browse and filter products by category and sub-category.',
+  ogTitle: () => `${activeSubCategory.value || activeCategoryName.value} | Category`,
+  ogDescription: 'Secure category listing for dealer users.',
+  robots: 'noindex, nofollow',
+});
+
 // ใน category.vue
 // 🟢 Fixed currentSubCatTags in category.vue
 const currentSubCatTags = computed(() => {

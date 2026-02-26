@@ -7,6 +7,22 @@ const activeOrderTab = ref('ทั้งหมด');
 const orderCount = 99;
 const orderTabs = ['ทั้งหมด', 'ที่ต้องชำระ', 'รอตรวจสอบ', 'กำลังจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
 
+useHeadSafe({
+  meta: [
+    { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
+    { name: 'pragma', content: 'no-cache' },
+    { name: 'expires', content: '0' },
+    { name: 'referrer', content: 'no-referrer' },
+  ],
+});
+
+useSeoMeta({
+  title: 'Dealer Profile',
+  description: 'Dealer account profile and order overview.',
+  ogTitle: 'Dealer Profile',
+  ogDescription: 'Secure dealer profile and order management page.',
+  robots: 'noindex, nofollow',
+});
 
 const initials = computed(() => {
   const first = currentUser.value?.fname?.[0] || 'D';
