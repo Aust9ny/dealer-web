@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { Icon } from '@iconify/vue';
 import type { User } from '@/types/user';
+import { useMockPO } from '@/composables/po/useMockPO';
+
+const { userOrders } = useMockPO();
 
 type UserRole = 'Technician' | 'Dealer' | 'Franchise';
 
@@ -81,7 +84,7 @@ const emit = defineEmits<{
         @click="emit('go-po')"
       >
         <span>การสั่งซื้อของฉัน</span>
-        <span class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
+        <span v-if="userOrders.length > 0" class="ml-auto w-5 h-5 rounded-full bg-red-500 text-white text-[11px] flex items-center justify-center">
           {{ totalPO }}
         </span>
       </div>

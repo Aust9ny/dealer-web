@@ -197,7 +197,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         @click="goToLatestPO"
       >
         📋 รายการการสั่งซื้อ
-        <span class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full">{{ totalPO }}</span>
+        <span v-if="userOrders.length > 0" class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full">{{ totalPO }}</span>
       </button>
 
       <div class="h-6 w-px bg-gray-300" />
