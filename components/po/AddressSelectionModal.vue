@@ -586,7 +586,7 @@ onBeforeUnmount(() => {
               ย้อนกลับ
             </button>
             <button
-              class="flex-[2] py-4 bg-[#2D5A9E] text-white rounded-full font-black uppercase text-xs shadow-lg hover:bg-[#1E3F7D] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              class="flex-2 py-4 bg-[#2D5A9E] text-white rounded-full font-black uppercase text-xs shadow-lg hover:bg-[#1E3F7D] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="!newAddress.recipientName || newAddress.phone.length !== 10 || newAddress.postalCode.length !== 5"
               @click="handleAdd"
             >
