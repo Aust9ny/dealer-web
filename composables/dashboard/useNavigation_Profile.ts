@@ -34,7 +34,7 @@ export const useNavigationProfile = () => {
       title: 'ข้อมูลและการตั้งค่า',
       icon: '⚙️',
       links: [
-        { label: 'ข้อมูลส่วนตัวดีลเลอร์', to: '/Dealer_Profile/profile' },
+        { label: 'ข้อมูลส่วนตัวดีลเลอร์', to: '/Dealer_Profile/information' },
         { label: 'รายชื่อไฟล์ที่อัปโหลด', to: '/Dealer_Profile/uploaded-files' },
         { label: 'เงื่อนไขการจัดส่ง', to: '/Dealer_Profile/shipping-terms' },
         { label: 'เปลี่ยนรหัสผ่าน', to: '/Dealer_Profile/change-password' },
