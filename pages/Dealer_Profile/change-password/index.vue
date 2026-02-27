@@ -180,15 +180,15 @@ const resetFields = () => {
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto p-6">
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 lg:grid-cols-6 gap-4">
         <!-- LEFT SIDE -->
-        <div class="space-y-6">
+        <div class="space-y-6 lg:col-span-2">
           <!-- PROFILE CARD -->
           <div class="bg-white rounded-xl shadow overflow-hidden">
             <div class="h-2 bg-primary" />
 
             <div class="p-5">
-              <div class="flex items-center gap-3">
+              <div class="flex items-center gap-2">
                 <div
                   class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm"
                 >
@@ -220,7 +220,7 @@ const resetFields = () => {
           </div>
 
           <!-- SIDEBAR MENU (Dynamic) -->
-          <div class="bg-white rounded-xl shadow p-5 flex flex-col">
+          <div class="hidden lg:flex bg-white rounded-xl shadow p-5 flex-col">            
             <div class="space-y-6 flex-1">
               <div
                 v-for="(group, groupIndex) in menuGroupsProfile"
@@ -280,7 +280,7 @@ const resetFields = () => {
         </div>
 
         <!-- RIGHT CONTENT -->
-        <div class="bg-white rounded-xl shadow overflow-hidden lg:col-span-3">
+        <div class="bg-white rounded-xl shadow overflow-hidden lg:col-span-4">
           <div class="p-8 text-center border-b border-slate-50">
             <h1 class="text-2xl font-black text-[#2196F3] uppercase">
               เปลี่ยนรหัสผ่าน
