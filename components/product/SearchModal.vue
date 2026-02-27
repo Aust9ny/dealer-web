@@ -1,28 +1,28 @@
 <template>
   <div
     v-if="modelValue"
-    class="fixed top-16 left-0 right-0 bottom-0 md:left-0 md:right-0 md:bottom-0 md:top-22 z-140 flex items-end md:items-start justify-center"
+    class="fixed top-16 left-0 right-0 bottom-0 lg:top-22 z-140 flex items-end lg:items-start justify-center"
   >
     <!-- Overlay -->
     <div class="absolute inset-0" @click="close" />
 
     <!-- Modal -->
     <div
-      class="relative w-full md:w-425 h-[90vh] md:h-[80vh] bg-white rounded-t-3xl md:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.25)] md:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)] overflow-hidden"
+      class="relative bg-white w-full lg:w-425 h-[90vh] lg:h-[80vh] rounded-t-3xl lg:rounded-2xl shadow-[0_-10px_40px_rgba(0,0,0,0.25)] lg:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.35)]"
     >
       <div
-        class="flex flex-col md:grid md:grid-cols-12 min-h-full max-h-full overflow-y-auto md:overflow-hidden"
+        class="flex flex-col lg:grid lg:grid-cols-12 min-h-full max-h-full overflow-y-auto lg:overflow-hidden"
       >
         <!-- Col 1 -->
         <div
-          class="md:col-span-3 relative flex flex-col border-b md:border-b-0"
+          class="lg:col-span-3 relative flex flex-col border-b lg:border-b-0"
         >
           <div
-            class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"
+            class="hidden lg:block absolute right-0 top-6 bottom-6 w-px bg-gray-400"
           />
 
           <!-- Trending -->
-          <div class="px-4 py-5 md:p-5">
+          <div class="px-4 py-5 lg:p-5">
             <div class="text-[15px] font-bold text-gray-900 mb-4">
               📈 เทรนด์การค้นหาช่วงนี้
             </div>
@@ -45,12 +45,12 @@
           </div>
 
           <!-- เส้นคั่น -->
-          <div class="px-4 py-5 md:p-5">
+          <div class="px-4 py-5 lg:p-5">
             <div class="h-px w-4/4 bg-gray-400" />
           </div>
 
           <!-- History -->
-          <div class="px-4 py-5 md:p-5">
+          <div class="px-4 py-5 lg:p-5">
             <div class="flex items-center justify-between mb-4">
               <div class="text-[15px] font-bold text-gray-900">
                 🕘 ประวัติที่คุณเคยค้นหา
@@ -82,16 +82,16 @@
 
         <!-- Col 2 : Products -->
         <div
-          class="md:col-span-5 md:col-start-4 relative flex flex-col md:max-h-[80vh] border-b md:border-b-0"
+          class="lg:col-span-5 lg:col-start-4 relative flex flex-col lg:max-h-[80vh] border-b lg:border-b-0"
         >
           <!-- เส้นแบ่ง desktop -->
           <div
-            class="hidden md:block absolute right-0 top-6 bottom-6 w-px bg-gray-300"
+            class="hidden lg:block absolute right-0 top-6 bottom-6 w-px bg-gray-300"
           />
 
           <!-- Header -->
           <div
-            class="flex items-center justify-between px-4 md:px-6 pt-4 md:pt-6 pb-4 shrink-0"
+            class="flex items-center justify-between px-4 lg:px-6 pt-4 lg:pt-6 pb-4 shrink-0"
           >
             <div class="text-[16px] font-bold text-gray-900">
               🔥 สินค้าที่เป็นเทรนด์ตอนนี้
@@ -104,11 +104,11 @@
           </div>
 
           <!-- Product List -->
-          <div class="flex-1 overflow-y-auto px-4 md:px-4 pb-4 md:pb-6">
+          <div class="flex-1 overflow-y-auto px-4 lg:px-4 pb-4 lg:pb-6">
             <div
               v-for="product in trendingProducts"
               :key="product.id"
-              class="flex flex-col sm:flex-row gap-2 md:gap-3 px-2 md:px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
+              class="flex flex-col sm:flex-row gap-2 lg:gap-3 px-2 lg:px-3 py-4 border-b border-gray-100 hover:bg-gray-50 rounded-xl transition"
             >
               <!-- Image -->
               <div
@@ -191,9 +191,8 @@
         </div>
 
         <!-- Col 3 : Banner -->
-
         <div
-          class="md:col-span-4 md:col-start-9 p-4 md:p-5 flex flex-col md:max-h-[80vh]"
+          class="lg:col-span-4 lg:col-start-9 p-4 lg:p-5 flex flex-col lg:max-h-[80vh]"
         >
           <!-- Header -->
 
@@ -209,20 +208,20 @@
             </button>
           </div>
 
-          <div class="overflow-y-auto space-y-3 pr-0 md:pr-2">
+          <div class="overflow-y-auto space-y-3 pr-0 lg:pr-2">
             <a
               v-for="banner in banners"
               :key="banner.id"
               :href="banner.link"
               target="_blank"
-              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-md"
+              class="block mb-3 overflow-hidden rounded-xl border hover:shadow-lg"
             >
-              <NuxtImg 
-                :src="banner.image" 
-                :alt="banner.title" 
-                loading="lazy" 
+              <NuxtImg
+                :src="banner.image"
+                :alt="banner.title"
+                loading="lazy"
                 format="webp"
-                class="w-full h-36 object-cover" 
+                class="w-full h-36 object-cover"
               />
             </a>
           </div>
@@ -233,7 +232,7 @@
 </template>
 
 <script setup lang="ts">
-import { useThaiFormatters } from '~/composables/shared/useThaiFormatters';
+import { useThaiFormatters } from "~/composables/shared/useThaiFormatters";
 
 defineProps<{
   modelValue: boolean;
@@ -247,11 +246,11 @@ defineProps<{
 
 const emit = defineEmits<{
   // eslint-disable-next-line no-unused-vars
-  (e: 'update:modelValue', value: boolean): void;
+  (e: "update:modelValue", value: boolean): void;
 }>();
 const { formatNumber } = useThaiFormatters();
 
 const close = () => {
-  emit('update:modelValue', false);
+  emit("update:modelValue", false);
 };
 </script>

@@ -65,12 +65,25 @@ useSeoMeta({
                   {{ group.title }}
                 </h3>
                 <ul class="space-y-2 text-sm text-slate-600">
-                  <li
-                    v-for="link in group.links"
-                    :key="link"
-                    class="hover:text-[#2196F3] cursor-pointer transition"
-                  >
-                    {{ link }}
+                  <li v-for="link in group.links" :key="link.label">
+                    <!-- external -->
+                    <a
+                      v-if="link.external"
+                      :href="link.to"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:text-[#2196F3] transition block"
+                    >
+                      {{ link.label }}
+                    </a>
+                    <!-- internal -->
+                    <NuxtLink
+                      v-else
+                      :to="link.to"
+                      class="hover:text-[#2196F3] transition block"
+                    >
+                      {{ link.label }}
+                    </NuxtLink>
                   </li>
                   <div class="mt-4 h-px w-full bg-slate-600" />
                 </ul>

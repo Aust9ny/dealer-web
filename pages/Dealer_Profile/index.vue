@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useAuth } from '~/composables/auth/useAuth';
-import { useNavigation } from '~/composables/dashboard/useNavigation';
-const { menuGroups } = useNavigation();
+import { useNavigationProfile } from '~/composables/dashboard/useNavigation_Profile';
+const { menuGroupsProfile } = useNavigationProfile();
 const { currentUser } = useAuth();
 const activeOrderTab = ref('ทั้งหมด');
 const orderCount = 99;
@@ -92,7 +92,7 @@ const initials = computed(() => {
       <div class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2">
         <div class="p-4 space-y-5 flex-1">
           <div
-            v-for="(group, groupIndex) in menuGroups"
+            v-for="(group, groupIndex) in menuGroupsProfile"
             :key="group.title"
           >
             <!-- Title + icon -->
@@ -126,7 +126,7 @@ const initials = computed(() => {
             </ul>
 
             <div
-              v-if="groupIndex < menuGroups.length - 1"
+              v-if="groupIndex < menuGroupsProfile.length - 1"
               class="border-t border-gray-200 mt-4"
             />
           </div>
