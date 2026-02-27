@@ -9,7 +9,7 @@ export const useNavigationProfile = () => {
       links: [
         { label: 'รายการสั่งซื้อทั้งหมด', action: 'latestPO' },        
         { label: 'รายการสินค้าค้างส่ง', to: '/Dealer_Profile/pending' },
-        { label: 'ติดตามสถานะการจัดส่ง', to: '/Dealer_Profile/history' },
+        { label: 'ติดตามสถานะการจัดส่ง',  to: 'https://www.advice.co.th/services/check-tracking', external: true },
       ],
     },
     {
@@ -25,9 +25,9 @@ export const useNavigationProfile = () => {
       title: 'งานบริการและติดตามสถานะและเคลม',
       icon: '📦',
       links: [
-        { label: 'ตรวจสอบสถานะการแจ้งเคลม', to: '/Dealer_Profile/claim-status' },
-        { label: 'สินค้าเคลมรอตัดสินใจ', to: '/Dealer_Profile/claim-decision' },
-        { label: 'รายงานการส่งคืน', to: '/Dealer_Profile/return-report' },
+        { label: 'ตรวจสอบสถานะการแจ้งเคลม', to: 'https://www.advice.co.th/services/checkclaim', external: true },
+        { label: 'สินค้าเคลมรอตัดสินใจ', to: '/claim/claim_Decision' },
+        { label: 'รายงานการจัดส่ง', to: '/claim/claim_Report' },
       ],
     },
     {

@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { useAuth } from '~/composables/auth/useAuth';
 import { useNavigationProfile } from '~/composables/dashboard/useNavigation_Profile';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useMockPO } from '~/composables/po/useMockPO';
 import type { NavLink } from '~/composables/dashboard/useNavigation';
 const { menuGroupsProfile } = useNavigationProfile();
 const { currentUser } = useAuth();
 const router = useRouter();
+const route = useRoute();
 const { userOrders, getLatestUserPO } = useMockPO();
 const latestUserPO = computed(() => getLatestUserPO.value);
 const totalPO = computed(() => userOrders.value.length);
@@ -32,7 +33,9 @@ const handleNavClick = (link: NavLink) => {
     return;
   }
 
-  router.push(link.to);
+  if (link.to) {
+    router.push(link.to);
+  }
 };
 const activeOrderTab = ref('ทั้งหมด');
 const orderTabs = [
@@ -165,12 +168,13 @@ const initials = computed(() => {
               <li
                 v-for="(link, linkIndex) in group.links"
                 :key="link.label"
-                class="cursor-pointer"
-                :class="
-                  groupIndex === 0 && linkIndex === 0
-                    ? 'flex items-center justify-between text-primary font-medium'
-                    : 'text-gray-600 hover:text-primary'
-                "
+                class="cursor-pointer rounded-lg transition-all"
+                :class="[
+                  route.path === link.to
+                    ? 'bg-blue-100 text-primary font-medium'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-primary',
+                  'px-3 py-2'
+                ]"
                 @click="handleNavClick(link)"
               >
                 <div class="flex items-center justify-between w-full">
