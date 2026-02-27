@@ -1,26 +1,45 @@
 // composables/dashboard/useNavigation_Profile.ts
+import type { NavGroup } from './useNavigation';
+
 export const useNavigationProfile = () => {
-  const menuGroupsProfile = [
+  const menuGroupsProfile: NavGroup[] = [
     {
       title: 'ระบบการสั่งซื้อ',
       icon: '🛒',
-      links: [ 'รายการสั่งซื้อทั้งหมด', 'รายการสินค้าค้างส่ง', 'ใบสั่งซื้อย้อนหลัง' ]
+      links: [
+        { label: 'รายการสั่งซื้อทั้งหมด', action: 'latestPO' },        
+        { label: 'รายการสินค้าค้างส่ง', to: '/Dealer_Profile/pending' },
+        { label: 'ใบสั่งซื้อย้อนหลัง', to: '/Dealer_Profile/history' },
+      ],
     },
     {
       title: 'การเงินและชำระเงิน',
       icon: '💳',
-      links: ['ชำระ / อัปโหลดหลักฐานโอน', 'ชำระหนี้ Advice สนญ.', 'รายการเคลื่อนไหวบัญชี']
+      links: [
+        { label: 'ชำระ / อัปโหลดหลักฐานโอน', to: '/Dealer_Profile/payment-upload' },
+        { label: 'ชำระหนี้ Advice สนญ.', to: '/Dealer_Profile/debt' },
+        { label: 'รายการเคลื่อนไหวบัญชี', to: '/Dealer_Profile/account-activity' },
+      ],
     },
     {
       title: 'งานบริการและติดตามสถานะและเคลม',
       icon: '📦',
-      links: ['ตรวจสอบสถานะการแจ้งเคลม', 'สินค้าเคลมรอตัดสินใจ', 'รายงานการส่งคืน']
+      links: [
+        { label: 'ตรวจสอบสถานะการแจ้งเคลม', to: '/Dealer_Profile/claim-status' },
+        { label: 'สินค้าเคลมรอตัดสินใจ', to: '/Dealer_Profile/claim-decision' },
+        { label: 'รายงานการส่งคืน', to: '/Dealer_Profile/return-report' },
+      ],
     },
     {
       title: 'ข้อมูลและการตั้งค่า',
       icon: '⚙️',
-      links: [ 'ข้อมูลส่วนตัวดีลเลอร์', 'รายขื่อไฟล์ที่อัปโหลด', 'เงื่อนไขการจัดส่ง', 'เปลี่ยนรหัสผ่าน']
-    }
+      links: [
+        { label: 'ข้อมูลส่วนตัวดีลเลอร์', to: '/Dealer_Profile/profile' },
+        { label: 'รายชื่อไฟล์ที่อัปโหลด', to: '/Dealer_Profile/uploaded-files' },
+        { label: 'เงื่อนไขการจัดส่ง', to: '/Dealer_Profile/shipping-terms' },
+        { label: 'เปลี่ยนรหัสผ่าน', to: '/Dealer_Profile/change-password' },
+      ],
+    },
   ];
 
   return { menuGroupsProfile };

@@ -7,27 +7,27 @@ const getGroup = (title: string) =>
 </script>
 
 <template>
-  <footer class="bg-white border-t border-slate-300">
+  <footer class="bg-white border-t border-slate-300 pb-16 lg:pb-0">
     <div
       class="max-w-screen-2xl mx-auto pl-8 pr-4 md:px-6 lg:px-12 py-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-[3fr_2fr_2fr_2fr_2fr] gap-8"
     >
       <!-- Column 1 -->
       <div class="space-y-4">
         <div class="text-3xl font-bold text-[#0D95DA]">
-          Advice <br />
+          Advice <br >
           <span class="text-green-500 italic">Dealers</span>
         </div>
         <div class="mt-2 h-0.5 w-85 bg-gray-200" />
         <p class="font-bold text-[#0D95DA] text-xl leading-8 tracking-wide">
-          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br />
+          “แอดไวซ์ ศูนย์รวมเทคโนโลยี <br >
           ไลฟ์สไตล์ ไอที สมาร์ทโฟน”
         </p>
 
         <p class="text-gray-500 text-xs leading-relaxed">
-          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br />
-          เพราะเราคือ “Lifestyle IT Community” <br />
+          จำหน่ายและซ่อม ครบ จบ ในที่เดียว “มากกว่าร้านขายคอม” <br >
+          เพราะเราคือ “Lifestyle IT Community” <br >
           มีสาขาครอบคลุมทั่วไทย, สปป.ลาว และ Online จะซื้อ จะซ่อม จะขาย
-          <br />
+          <br >
           พูดคุยทุกเรื่องราวไอที ครบ จบ ในที่เดียว
         </p>
       </div>
@@ -214,7 +214,7 @@ const getGroup = (title: string) =>
         </div>
       </div>
 
-      <!-- Column 5 (เหมือนเดิมทุกตัวอักษร) -->
+      <!-- Column 5 -->
       <div class="space-y-3">
         <div class="flex flex-col space-y-3 xl:pl-10">
           <h3 class="font-semibold text-gray-900">

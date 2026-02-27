@@ -1,16 +1,19 @@
 <script setup lang="ts">
-import { useRouter, useRoute } from "vue-router";
-import { useMockPO } from "@/composables/po/useMockPO";
-import { useDashboard } from "@/composables/dashboard/useDashboard";
-import { useNavigation } from "@/composables/dashboard/useNavigation";
-import { useAuth } from "@/composables/auth/useAuth";
-import AccountMenuContent from "@/components/layout/AccountMenuContent.vue";
-import SearchModal from "@/components/product/SearchModal.vue";
-import { Icon } from "@iconify/vue";
-import { watch, ref, onMounted, onBeforeUnmount, computed } from "vue";
-import { useScrollLock } from "~/composables/shared/useScrollLock";
+import { useRouter, useRoute } from 'vue-router';
+import { useMockPO } from '@/composables/po/useMockPO';
+import { useDashboard } from '@/composables/dashboard/useDashboard';
+import { useNavigation } from '@/composables/dashboard/useNavigation';
+import { useNavigationProfile } from '@/composables/dashboard/useNavigation_Profile';
+import type { NavLink } from '@/composables/dashboard/useNavigation';
+import { useAuth } from '@/composables/auth/useAuth';
+import AccountMenuContent from '@/components/layout/AccountMenuContent.vue';
+import SearchModal from '@/components/product/SearchModal.vue';
+import { Icon } from '@iconify/vue';
+import { watch, ref, onMounted, onBeforeUnmount, computed } from 'vue';
+import { useScrollLock } from '~/composables/shared/useScrollLock';
 
 const { menuGroups } = useNavigation();
+const { menuGroupsProfile } = useNavigationProfile();
 const isSidebarOpen = ref(false);
 useScrollLock(isSidebarOpen);
 const closeSidebar = () => {
@@ -44,20 +47,20 @@ const handleClickOutside = (event: MouseEvent) => {
 
 // 3️⃣ ปิดเมนูเมื่อกดปุ่ม ESC
 const handleEscape = (event: KeyboardEvent) => {
-  if (event.key === "Escape") {
+  if (event.key === 'Escape') {
     showAccountMenu.value = false;
     closeSidebar();
   }
 };
 
 onMounted(() => {
-  document.addEventListener("mousedown", handleClickOutside);
-  document.addEventListener("keydown", handleEscape);
+  document.addEventListener('mousedown', handleClickOutside);
+  document.addEventListener('keydown', handleEscape);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener("mousedown", handleClickOutside);
-  document.removeEventListener("keydown", handleEscape);
+  document.removeEventListener('mousedown', handleClickOutside);
+  document.removeEventListener('keydown', handleEscape);
 });
 
 const { userOrders, getLatestUserPO } = useMockPO();
@@ -67,7 +70,7 @@ const latestUserPO = computed(() => getLatestUserPO.value);
 const goToLatestPO = () => {
   const latest = latestUserPO.value;
   if (!latest) {
-    router.push("/po");
+    router.push('/po');
     return;
   }
   router.push(`/po/${latest.id}`);
@@ -81,17 +84,17 @@ const showAccountMenu = ref(false);
 const showSearchModal = ref(false);
 
 const roles = [
-  { name: "Technician", icon: "mdi:tools", color: "text-amber-500" },
-  { name: "Dealer", icon: "mdi:storefront-outline", color: "text-primary" },
+  { name: 'Technician', icon: 'mdi:tools', color: 'text-amber-500' },
+  { name: 'Dealer', icon: 'mdi:storefront-outline', color: 'text-primary' },
   {
-    name: "Franchise",
-    icon: "mdi:office-building-marker-outline",
-    color: "text-emerald-500",
+    name: 'Franchise',
+    icon: 'mdi:office-building-marker-outline',
+    color: 'text-emerald-500',
   },
 ] as const;
 
 const initials = computed(() => {
-  if (!currentUser.value) return "??";
+  if (!currentUser.value) return '??';
   return currentUser.value.fname.charAt(0) + currentUser.value.lname.charAt(0);
 });
 
@@ -103,7 +106,7 @@ const closeSearch = () => {
 };
 
 // ฟังก์ชันสำหรับสลับ Role ที่คุณถามถึง (ตอนนี้ถูกผูกกับ @switch-role ใน Template แล้ว)
-const handleSwitchRole = (role: "Technician" | "Dealer" | "Franchise") => {
+const handleSwitchRole = (role: 'Technician' | 'Dealer' | 'Franchise') => {
   login(role);
 };
 
@@ -113,16 +116,44 @@ const handleLogout = () => {
 };
 
 const trendingKeywords = [
-  "RTX 4090",
-  "MacBook Air",
-  "iPhone 14",
-  "Intel",
-  "Budget",
+  'RTX 4090',
+  'MacBook Air',
+  'iPhone 14',
+  'Intel',
+  'Budget',
 ];
-const searchHistory = ["ssd", "hdd", "cpu", "camera", "rtx 4080"];
+const searchHistory = ['ssd', 'hdd', 'cpu', 'camera', 'rtx 4080'];
 
 const mobileDropdownRef = ref<HTMLElement | null>(null);
 const desktopDropdownRef = ref<HTMLElement | null>(null);
+
+const activeMenuGroups = computed(() => {
+  return route.path.startsWith('/Dealer_Profile')
+    ? menuGroupsProfile
+    : menuGroups;
+});
+
+const handleNavClick = (link: NavLink) => {
+
+  // ✅ ใช้ action แทน label
+  if (link.action === 'latestPO') {
+    goToLatestPO();
+    closeSidebar();
+    return;
+  }
+
+  // external
+  if (link.external && link.to) {
+    window.open(link.to, '_blank');
+    return;
+  }
+
+  // internal
+  if (link.to) {
+    router.push(link.to);
+    closeSidebar();
+  }
+};
 </script>
 
 <template>
@@ -171,7 +202,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
             :aria-label="$t('header.search_field')"
             class="w-full h-11 pl-12 pr-12 border border-gray-300 rounded-full bg-white focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
             autofocus
-          />
+          >
           <button
             class="absolute right-3 top-1/2 -translate-y-1/2 p-1 rounded-full hover:bg-gray-100"
             :aria-label="$t('aria.close_search')"
@@ -225,7 +256,7 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
               : 'border-gray-300 bg-white'
           "
           @focus="activateSearch"
-        />
+        >
         <button
           class="absolute right-1 top-1/2 -translate-y-1/2 h-9 px-6 bg-primary text-white rounded-full flex items-center gap-2"
           :aria-label="$t('header.search_btn')"
@@ -247,8 +278,8 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
         <span
           v-if="userOrders.length > 0"
           class="ml-1 w-5 h-5 flex items-center justify-center bg-red-500 text-white text-xs rounded-full"
-          >{{ totalPO }}</span
-        >
+          >{{ totalPO }}
+        </span>
       </button>
 
       <div class="h-6 w-px bg-gray-300" />
@@ -333,32 +364,26 @@ const desktopDropdownRef = ref<HTMLElement | null>(null);
            <LanguageSwitcher />
         </div> -->
 
-        <div v-for="group in menuGroups" :key="group.title">
+        <div v-for="group in activeMenuGroups" :key="group.title">
           <h3 class="font-bold text-slate-800 flex items-center gap-2 mb-3">
             <span class="text-lg">{{ group.icon }}</span> {{ group.title }}
           </h3>
           <ul class="space-y-2 text-sm text-slate-600">
-            <li v-for="link in group.links" :key="link.label">
-              <!-- external -->
-              <a
-                v-if="link.external"
-                :href="link.to"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="hover:text-[#2196F3] transition block"
-              >
-                {{ link.label }}
-              </a>
-              <!-- internal -->
-              <NuxtLink
-                v-else
-                :to="link.to"
-                class="hover:text-[#2196F3] transition block"
-              >
-                {{ link.label }}
-              </NuxtLink>
-            </li>
-          </ul>
+            <li
+              v-for="link in group.links"
+              :key="link.label"
+              class="flex items-center justify-between hover:text-[#2196F3] transition cursor-pointer"
+              @click="handleNavClick(link)"
+            >
+                <span>{{ link.label }}</span>
+                <span
+                  v-if="link.label === 'รายการสั่งซื้อทั้งหมด' && totalPO > 0"
+                  class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
+                >
+                  {{ totalPO > 99 ? '99+' : totalPO }}
+                </span>
+              </li>
+            </ul>
           <div class="mt-4 h-px w-full bg-slate-200" />
         </div>
       </div>

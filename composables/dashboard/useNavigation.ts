@@ -1,8 +1,9 @@
 // composables/dashboard/useNavigation.ts
 export interface NavLink {
   label: string;
-  to: string;
+  to?: string;
   external?: boolean;
+  action?: 'latestPO';
 }
 
 export interface NavGroup {

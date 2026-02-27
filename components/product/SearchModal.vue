@@ -232,7 +232,7 @@
 </template>
 
 <script setup lang="ts">
-import { useThaiFormatters } from "~/composables/shared/useThaiFormatters";
+import { useThaiFormatters } from '~/composables/shared/useThaiFormatters';
 
 defineProps<{
   modelValue: boolean;
@@ -246,11 +246,11 @@ defineProps<{
 
 const emit = defineEmits<{
   // eslint-disable-next-line no-unused-vars
-  (e: "update:modelValue", value: boolean): void;
+  (e: 'update:modelValue', value: boolean): void;
 }>();
 const { formatNumber } = useThaiFormatters();
 
 const close = () => {
-  emit("update:modelValue", false);
+  emit('update:modelValue', false);
 };
 </script>

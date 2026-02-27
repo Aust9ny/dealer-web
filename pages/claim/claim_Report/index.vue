@@ -23,19 +23,19 @@
       <div class="flex flex-col text-sm">
         <label class="mb-1">วันที่เริ่ม</label>
         <input
-          type="date"
           v-model="startDate"
+          type="date"
           class="border border-gray-300 rounded px-3 py-1.5 min-w-[160px] bg-white"
-        />
+        >
       </div>
 
       <div class="flex flex-col text-sm">
         <label class="mb-1">ถึง</label>
         <input
-          type="date"
           v-model="endDate"
+          type="date"
           class="border border-gray-300 rounded px-3 py-1.5 min-w-[160px] bg-white"
-        />
+        >
       </div>
 
       <div class="flex flex-col text-sm">

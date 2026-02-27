@@ -44,7 +44,7 @@
               type="text"
               placeholder="SN / CM / CODE"
               class="flex-1 bg-white text-slate-700 border border-slate-300 rounded-md px-3 py-1.5 shadow-sm focus:ring-2 focus:ring-blue-300 outline-none"
-            />
+            >
           </div>
 
           <!-- 4 Checkbox + ช่วงวันที่ -->
@@ -52,7 +52,7 @@
             class="col-span-4 px-4 py-3 border-r border-blue-500 flex items-center gap-4"
           >
             <div class="flex items-center gap-2">
-              <input type="checkbox" class="w-4 h-4 accent-blue-600" />
+              <input type="checkbox" class="w-4 h-4 accent-blue-600" >
               <span>[คลิกเพื่อแก้ไข]</span>
             </div>
 
@@ -61,12 +61,12 @@
               <input
                 type="date"
                 class="bg-white text-slate-700 border border-slate-300 rounded-md px-2 py-1 shadow-sm focus:ring-2 focus:ring-blue-300 outline-none"
-              />
+              >
               <span>-</span>
               <input
                 type="date"
                 class="bg-white text-slate-700 border border-slate-300 rounded-md px-2 py-1 shadow-sm focus:ring-2 focus:ring-blue-300 outline-none"
-              />
+              >
             </div>
           </div>
 
@@ -123,7 +123,7 @@
       <!-- Footer -->
       <div class="mt-8 text-xs text-slate-500 border-t pt-4">
         Claim Decision Status : โปรแกรมเช็คการอนุมัติจากทางลูกค้า
-        เพื่อยืนยันการทราบเงื่อนไขเพิ่มเติม<br />
+        เพื่อยืนยันการทราบเงื่อนไขเพิ่มเติม<br >
         www.thesystem.co.th
       </div>
     </div>

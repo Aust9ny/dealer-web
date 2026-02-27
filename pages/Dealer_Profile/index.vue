@@ -1,11 +1,48 @@
 <script setup lang="ts">
 import { useAuth } from '~/composables/auth/useAuth';
 import { useNavigationProfile } from '~/composables/dashboard/useNavigation_Profile';
+import { useRouter } from 'vue-router';
+import { useMockPO } from '~/composables/po/useMockPO';
+import type { NavLink } from '~/composables/dashboard/useNavigation';
 const { menuGroupsProfile } = useNavigationProfile();
 const { currentUser } = useAuth();
+const router = useRouter();
+const { userOrders, getLatestUserPO } = useMockPO();
+const latestUserPO = computed(() => getLatestUserPO.value);
+const totalPO = computed(() => userOrders.value.length);
+const goToLatestPO = () => {
+  const latest = latestUserPO.value;
+
+  if (!latest) {
+    router.push('/po');
+    return;
+  }
+
+  router.push(`/po/${latest.id}`);
+};
+
+const handleNavClick = (link: NavLink) => {
+  if (link.action === 'latestPO') {
+    goToLatestPO();
+    return;
+  }
+
+  if (link.external) {
+    window.open(link.to, '_blank');
+    return;
+  }
+
+  router.push(link.to);
+};
 const activeOrderTab = ref('ทั้งหมด');
-const orderCount = 99;
-const orderTabs = ['ทั้งหมด', 'ที่ต้องชำระ', 'รอตรวจสอบ', 'กำลังจัดส่ง', 'สำเร็จ', 'ยกเลิก'];
+const orderTabs = [
+  'ทั้งหมด',
+  'ที่ต้องชำระ',
+  'รอตรวจสอบ',
+  'กำลังจัดส่ง',
+  'สำเร็จ',
+  'ยกเลิก',
+];
 
 useHeadSafe({
   meta: [
@@ -33,13 +70,19 @@ const initials = computed(() => {
 
 <template>
   <div class="bg-gray-100 min-h-screen">
-    <div class="max-w-7xl mx-auto p-3 gap-4 grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-7">
-      <div class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-2 lg:row-span-1">
+    <div
+      class="max-w-7xl mx-auto p-3 gap-4 grid grid-cols-1 lg:grid-cols-6 lg:grid-rows-7"
+    >
+      <div
+        class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-2 lg:row-span-1"
+      >
         <div class="h-2 bg-primary" />
 
         <div class="p-4">
           <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm">
+            <div
+              class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm"
+            >
               {{ initials }}
             </div>
             <p class="font-medium text-gray-800">
@@ -52,7 +95,9 @@ const initials = computed(() => {
           <div class="space-y-1 text-sm">
             <div class="flex justify-between text-gray-500">
               <span>Dealer ID:</span>
-              <span class="text-gray-700 font-medium">{{ currentUser?.dealerID }}</span>
+              <span class="text-gray-700 font-medium">{{
+                currentUser?.dealerID
+              }}</span>
             </div>
             <div class="flex justify-between text-gray-500">
               <span>Email:</span>
@@ -62,20 +107,30 @@ const initials = computed(() => {
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3">
-        <div class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2">
+      <div
+        class="bg-white rounded-xl shadow overflow-hidden col-span-1 lg:col-span-4 lg:row-span-1 lg:col-start-3"
+      >
+        <div
+          class="bg-primary text-white px-5 py-3 font-medium flex items-center gap-2"
+        >
           📄 รายการสั่งซื้อทั้งหมด
         </div>
         <div class="px-5 py-4">
-          <div class="flex gap-6 text-sm border-b overflow-x-auto whitespace-nowrap">
+          <div
+            class="flex gap-6 text-sm border-b overflow-x-auto whitespace-nowrap"
+          >
             <span
               v-for="tab in orderTabs"
               :key="tab"
               class="pb-2 cursor-pointer border-b-2 transition-colors"
-              :class="activeOrderTab === tab ? 'text-primary border-primary' : 'text-gray-500 border-transparent'"
+              :class="
+                activeOrderTab === tab
+                  ? 'text-primary border-primary'
+                  : 'text-gray-500 border-transparent'
+              "
               @click="activeOrderTab = tab"
             >
-              {{ tab }} ({{ orderCount }})
+              {{ tab }} ({{ totalPO }})
             </span>
           </div>
 
@@ -89,7 +144,9 @@ const initials = computed(() => {
         </div>
       </div>
 
-      <div class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2">
+      <div
+        class="hidden lg:flex bg-white rounded-xl shadow flex-col col-span-1 lg:col-span-2 lg:row-span-5 lg:row-start-2"
+      >
         <div class="p-4 space-y-5 flex-1">
           <div
             v-for="(group, groupIndex) in menuGroupsProfile"
@@ -107,21 +164,25 @@ const initials = computed(() => {
             <ul class="text-sm space-y-2">
               <li
                 v-for="(link, linkIndex) in group.links"
-                :key="link"
+                :key="link.label"
                 class="cursor-pointer"
-                :class="groupIndex === 0 && linkIndex === 0 
-                  ? 'flex items-center justify-between text-primary font-medium' 
-                  : 'text-gray-600 hover:text-primary'"
+                :class="
+                  groupIndex === 0 && linkIndex === 0
+                    ? 'flex items-center justify-between text-primary font-medium'
+                    : 'text-gray-600 hover:text-primary'
+                "
+                @click="handleNavClick(link)"
               >
-                <span>{{ link }}</span>
+                <div class="flex items-center justify-between w-full">
+                  <span>{{ link.label }}</span>
 
-                <!-- badge เฉพาะอันแรก -->
-                <span
-                  v-if="groupIndex === 0 && linkIndex === 0"
-                  class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
-                >
-                  {{ orderCount }}
-                </span>
+                  <span
+                    v-if="groupIndex === 0 && linkIndex === 0"
+                    class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
+                  >
+                    {{ totalPO }}
+                  </span>
+                </div>
               </li>
             </ul>
 
@@ -141,7 +202,9 @@ const initials = computed(() => {
         </div>
       </div>
 
-      <div class="bg-white rounded-xl shadow flex flex-col col-span-1 lg:col-span-4 lg:row-span-5 lg:col-start-3 lg:row-start-2">
+      <div
+        class="bg-white rounded-xl shadow flex flex-col col-span-1 lg:col-span-4 lg:row-span-5 lg:col-start-3 lg:row-start-2"
+      >
         <div class="flex-1 flex flex-col items-center justify-center p-6">
           <img
             src="https://cdn-icons-png.flaticon.com/512/679/679821.png"
