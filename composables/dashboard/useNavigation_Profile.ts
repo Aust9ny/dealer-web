@@ -9,7 +9,7 @@ export const useNavigationProfile = () => {
       links: [
         { label: 'รายการสั่งซื้อทั้งหมด', action: 'latestPO' },        
         { label: 'รายการสินค้าค้างส่ง', to: '/Dealer_Profile/pending' },
-        { label: 'ใบสั่งซื้อย้อนหลัง', to: '/Dealer_Profile/history' },
+        { label: 'ติดตามสถานะการจัดส่ง', to: '/Dealer_Profile/history' },
       ],
     },
     {
