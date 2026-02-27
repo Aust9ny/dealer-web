@@ -1,12 +1,14 @@
 <!-- eslint-disable no-unused-vars -->
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
 <script setup lang="ts">
+import type { Address } from '@/types/address';
 import { Icon } from '@iconify/vue';
 import AddressSelectionModal from '~/components/po/AddressSelectionModal.vue';
 import { usePOPricing } from '@/composables/po/usePOPricing';
 import { useUser } from '~/composables/auth/useUser';
 import { useAuth } from '~/composables/auth/useAuth';
 import { usePOCheckoutState } from '~/composables/po/usePOCheckoutState';
+import { useDeliveryMethods } from '~/composables/po/useDeliveryMethods';
 
 // 🟢 1. รับ PROPS จากไฟล์แม่ [id].vue
 const props = defineProps<{
@@ -27,6 +29,7 @@ const {
   setAddressSelections,
   setAddressValidationAttempted,
 } = usePOCheckoutState();
+const { deliveryMethods } = useDeliveryMethods();
 
 useSeoMeta({
   title: () => `PO #${props.po?.id} | Shipping & Tax Address`,
@@ -46,10 +49,10 @@ useHeadSafe({
 
 // 🟢 2. STATE MANAGEMENT
 const isAddressModalOpen = ref(false);
+const startWithDeliveryInModal = ref(false);
 const modalMode = ref<'shipping' | 'tax'>('shipping');
 const selectedPayment = ref<'bank' | 'qr' | ''>('');
-const selectedDeliveryMethod = ref<'next-day' | 'same-day' | ''>('');
-const isDeliveryPickerOpen = ref(false);
+const selectedDeliveryMethod = ref<'next-day' | 'same-day' | 'counter' | 'dealer-123' | 'tmg' | ''>('');
 const paymentMethods = ['bank', 'qr'] as const;
 const isSubmitted = ref(false);
 const isTelValid = ref(true);
@@ -81,9 +84,8 @@ const currentAddress = computed(() => {
 });
 
 const currentTaxAddress = computed(() => {
-  if (savedAddresses.value.length === 0) return null;
-  if (!selectedTaxAddressId.value) return null;
-  return savedAddresses.value.find((a: any) => a.id === selectedTaxAddressId.value) || null;
+  if (savedAddresses.value.length === 0 || !selectedTaxAddressId.value) return null;
+  return savedAddresses.value.find((a: Address) => a.id === selectedTaxAddressId.value) || null;
 });
 
 const showSelectionErrors = computed(
@@ -93,34 +95,19 @@ const isShippingMissing = computed(() => !currentAddress.value);
 const isTaxMissing = computed(() => !currentTaxAddress.value);
 const isDeliveryMissing = computed(() => !selectedDeliveryMethod.value);
 const isPaymentMissing = computed(() => !selectedPayment.value);
-const selectedDeliveryLabel = computed(() => {
-  if (selectedDeliveryMethod.value === 'next-day') {
-    return 'TGM Dealer Delivery';
-  }
-  if (selectedDeliveryMethod.value === 'same-day') {
-    return 'TGM Dealer Same Day';
-  }
-  return '';
-});
-const selectedDeliveryDescription = computed(() => {
-  if (selectedDeliveryMethod.value === 'next-day') {
-    return 'ส่งด่วนวันถัดไป (ก่อน 17:00 น.)';
-  }
-  if (selectedDeliveryMethod.value === 'same-day') {
-    return 'จัดส่งภายในวัน (เฉพาะเงื่อนไขที่กำหนด)';
-  }
-  return '';
+const selectedDeliveryData = computed(() => {
+  return deliveryMethods.find((method) => method.id === selectedDeliveryMethod.value) || null;
 });
 
-// 🟢 4. ACTIONS
-const openModal = (mode: 'shipping' | 'tax') => {
+const openModal = (mode: 'shipping' | 'tax', startWithDelivery = false) => {
   modalMode.value = mode;
+  startWithDeliveryInModal.value = startWithDelivery;
   isAddressModalOpen.value = true;
 };
 
-const selectDeliveryMethod = (method: 'next-day' | 'same-day') => {
-  selectedDeliveryMethod.value = method;
-  isDeliveryPickerOpen.value = false;
+const handleDeliveryConfirm = (method: string) => {
+  selectedDeliveryMethod.value = method as 'next-day' | 'same-day' | 'counter' | 'dealer-123' | 'tmg';
+  isAddressModalOpen.value = false;
 };
 
 const handleAddressSelect = (id: number | string) => {
@@ -135,12 +122,52 @@ const handleAddressAdd = (newAddr: any) => {
   if (newAddr.isDefault) {
     currentUser.value.addresses.forEach((a: any) => (a.isDefault = false));
   }
-  currentUser.value.addresses.push({ id, ...newAddr });
+  currentUser.value.addresses.push({ id, ...newAddr } as Address);
 
   if (modalMode.value === 'shipping') selectedAddressId.value = id;
   else selectedTaxAddressId.value = id;
 
   isAddressModalOpen.value = false;
+};
+
+const handleAddressUpdate = (payload: { id: number | string } & Record<string, any>) => {
+  if (!currentUser.value) return;
+
+  const index = currentUser.value.addresses.findIndex((a: any) => a.id === payload.id);
+  if (index === -1) return;
+
+  if (payload.isDefault) {
+    currentUser.value.addresses.forEach((a: any) => {
+      a.isDefault = false;
+    });
+  }
+
+  currentUser.value.addresses[index] = {
+    ...currentUser.value.addresses[index],
+    ...payload,
+  } as Address;
+
+  if (modalMode.value === 'shipping') selectedAddressId.value = payload.id;
+  else selectedTaxAddressId.value = payload.id;
+
+  isAddressModalOpen.value = false;
+};
+
+const handleAddressDelete = (id: number | string) => {
+  if (!currentUser.value) return;
+
+  currentUser.value.addresses = currentUser.value.addresses.filter((a: any) => a.id !== id);
+
+  if (selectedAddressId.value === id) selectedAddressId.value = '';
+  if (selectedTaxAddressId.value === id) selectedTaxAddressId.value = '';
+};
+
+const handleSetDefaultAddress = (id: number | string) => {
+  if (!currentUser.value) return;
+
+  currentUser.value.addresses.forEach((a: any) => {
+    a.isDefault = a.id === id;
+  });
 };
 
 const goBack = () => {
@@ -160,8 +187,21 @@ const getLineTotal = (item: any) => {
 };
 
 // Sync Default Address on Load
+// ค้นหาที่อยู่เริ่มต้นสำหรับจัดส่ง และที่อยู่เริ่มต้นสำหรับภาษี
 watch(savedAddresses, (newAddrs) => {
-  if (newAddrs.length === 0) {
+  if (newAddrs.length > 0) {
+    // 1. หาที่อยู่จัดส่งที่เป็น Default
+    const defaultShipping = newAddrs.find((a: Address) => a.isDefault && !a.isTaxAddress);
+    if (defaultShipping && !selectedAddressId.value) {
+      selectedAddressId.value = defaultShipping.id;
+    }
+
+    // 2. ✨ Logic ที่คุณต้องการ: หาที่อยู่ภาษีที่เป็น Default
+    const defaultTax = newAddrs.find((a: Address) => a.isDefault && a.isTaxAddress);
+    if (defaultTax && !selectedTaxAddressId.value) {
+      selectedTaxAddressId.value = defaultTax.id;
+    }
+  } else {
     selectedAddressId.value = '';
     selectedTaxAddressId.value = '';
   }
@@ -267,19 +307,19 @@ onMounted(() => {
               <div class="flex justify-between items-center mb-4">
                 <span class="font-bold text-slate-500 text-xs uppercase tracking-widest">วิธีการจัดส่ง:</span>
                 <button
-                  v-if="selectedDeliveryMethod && !isDeliveryPickerOpen"
+                  v-if="selectedDeliveryMethod"
                   class="text-[#0D95DA] text-xs font-black underline hover:text-blue-700"
-                  @click="isDeliveryPickerOpen = true"
+                  @click="openModal('shipping', true)"
                 >
                   แก้ไข
                 </button>
               </div>
 
               <div
-                v-if="!selectedDeliveryMethod && !isDeliveryPickerOpen"
+                v-if="!selectedDeliveryMethod"
                 class="border-2 border-dashed rounded-2xl p-6 bg-slate-50 flex flex-col items-center justify-center min-h-45 group transition-all cursor-pointer"
                 :class="showSelectionErrors && isDeliveryMissing ? 'border-red-400 bg-red-50/30' : 'border-slate-200 hover:border-[#0D95DA]'"
-                @click="isDeliveryPickerOpen = true"
+                @click="openModal('shipping',true)"
               >
                 <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
                   <Icon icon="mdi:truck-plus-outline" class="w-6 h-6 text-slate-300 group-hover:text-[#0D95DA]" />
@@ -287,41 +327,13 @@ onMounted(() => {
                 <span class="text-sm font-bold text-slate-400 group-hover:text-[#0D95DA]">เลือกวิธีการจัดส่ง</span>
               </div>
 
-              <div v-else-if="selectedDeliveryMethod && !isDeliveryPickerOpen" class="p-4 rounded-2xl bg-secondary">
-                <p class="text-primary text-sm font-semibold">{{ selectedDeliveryLabel }}</p>
+              <div v-else class="p-4 rounded-2xl bg-secondary">
+                <p class="text-primary text-sm font-semibold">{{ selectedDeliveryData?.label }}</p>
                 <div class="w-full border-b my-2 border-slate-200" />
                 <div class="flex items-center justify-between">
-                  <span class="text-xs text-primary font-medium">{{ selectedDeliveryDescription }}</span>
+                  <span class="text-xs text-primary font-medium">{{ selectedDeliveryData?.desc }}</span>
                   <span class="text-sm text-[#12B76A] font-black uppercase">ฟรี</span>
                 </div>
-              </div>
-
-              <div v-else class="space-y-2">
-                <button
-                  class="w-full p-4 rounded-2xl border text-left transition-all"
-                  :class="selectedDeliveryMethod === 'next-day' ? 'border-[#0D95DA] bg-secondary' : 'border-slate-200 hover:border-[#0D95DA]'"
-                  @click="selectDeliveryMethod('next-day')"
-                >
-                  <p class="text-primary text-sm font-semibold">TGM Dealer Delivery</p>
-                  <div class="w-full border-b my-2 border-slate-200" />
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs text-primary font-medium">ส่งด่วนวันถัดไป (ก่อน 17:00 น.)</span>
-                    <span class="text-sm text-[#12B76A] font-black uppercase">ฟรี</span>
-                  </div>
-                </button>
-
-                <button
-                  class="w-full p-4 rounded-2xl border text-left transition-all"
-                  :class="selectedDeliveryMethod === 'same-day' ? 'border-[#0D95DA] bg-secondary' : 'border-slate-200 hover:border-[#0D95DA]'"
-                  @click="selectDeliveryMethod('same-day')"
-                >
-                  <p class="text-primary text-sm font-semibold">TGM Dealer Same Day</p>
-                  <div class="w-full border-b my-2 border-slate-200" />
-                  <div class="flex items-center justify-between">
-                    <span class="text-xs text-primary font-medium">จัดส่งภายในวัน (เฉพาะเงื่อนไขที่กำหนด)</span>
-                    <span class="text-sm text-[#12B76A] font-black uppercase">ฟรี</span>
-                  </div>
-                </button>
               </div>
             </div>
           </div>
@@ -346,31 +358,70 @@ onMounted(() => {
           
           <div
             v-if="currentTaxAddress"
-            class="border rounded-2xl p-6 bg-white relative"
-            :class="showSelectionErrors && isTaxMissing ? 'border-red-400 bg-red-50/30' : 'border-slate-200'"
+            class="border rounded-2xl p-6 bg-white relative transition-all"
+            :class="showSelectionErrors && isTaxMissing ? 'border-red-400 bg-red-50/30' : 'border-slate-300'"
           >
             <div class="flex justify-between items-center mb-4">
-              <span class="font-bold text-slate-500 text-xs uppercase tracking-widest">ที่อยู่ออกใบกำกับ:</span>
-              <button class="text-[#0D95DA] text-xs font-bold underline hover:text-blue-700" @click="openModal('tax')">แก้ไข</button>
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-slate-500 text-xs uppercase tracking-widest">ที่อยู่ออกใบกำกับ:</span>
+                <span v-if="currentTaxAddress.label" class="text-[10px] bg-blue-50 text-[#0D95DA] px-2 py-0.5 rounded-full font-bold uppercase">{{ currentTaxAddress.label }}</span>
+              </div>
+              
+              <button 
+                class="text-xs font-black underline transition-all duration-200" 
+                :class="(isShippingMissing || isDeliveryMissing) 
+                  ? 'text-slate-300 cursor-not-allowed no-underline' 
+                  : 'text-[#0D95DA] hover:text-blue-700 active:scale-95'"
+                :disabled="isShippingMissing || isDeliveryMissing"
+                @click="openModal('tax')"
+              >
+                แก้ไข
+              </button>
             </div>
+
             <div class="bg-secondary p-4 rounded-xl">
               <p class="font-black text-sm text-primary">{{ currentTaxAddress.recipientName }}</p>
               <p class="text-sm mt-1 text-slate-500">{{ currentTaxAddress.phone }}</p>
-              <p class="text-xs text-slate-400 mt-2 leading-relaxed">{{ getFullAddress(currentTaxAddress) }}</p>
+              <p class="text-xs text-slate-400 mt-2 leading-relaxed line-clamp-2">{{ getFullAddress(currentTaxAddress) }}</p>
             </div>
           </div>
 
           <div
             v-else
-            class="border-2 border-dashed rounded-2xl p-10 bg-slate-50 flex flex-col items-center justify-center group transition-all cursor-pointer"
-            :class="showSelectionErrors && isTaxMissing ? 'border-red-400 bg-red-50/30' : 'border-slate-200 hover:border-[#0D95DA]'"
-            @click="openModal('tax')"
+            class="border-2 border-slate-200 rounded-3xl p-4 bg-white min-h-45 flex items-center justify-center transition-all"
+            :class="[
+              (isShippingMissing || isDeliveryMissing) 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'group cursor-pointer hover:border-[#0D95DA] hover:shadow-lg hover:shadow-[#0D95DA]/5',
+              showSelectionErrors && isTaxMissing ? 'border-red-400 bg-red-50/30' : ''
+            ]"
+            @click="(!isShippingMissing && !isDeliveryMissing) ? openModal('tax') : null"
           >
-            <Icon icon="mdi:file-document-plus-outline" class="w-10 h-10 text-slate-200 group-hover:text-[#0D95DA] mb-2" />
-            <span class="text-sm font-bold text-slate-400 group-hover:text-[#0D95DA]">เพิ่มที่อยู่ออกใบกำกับภาษี</span>
+            <div 
+              class="w-full h-full border-2 border-dashed rounded-2xl p-6 bg-slate-50 flex flex-col items-center justify-center transition-colors"
+              :class="[
+                (isShippingMissing || isDeliveryMissing) 
+                  ? 'border-slate-200' 
+                  : 'group-hover:bg-white group-hover:border-[#0D95DA]/30',
+                showSelectionErrors && isTaxMissing ? 'border-red-300' : 'border-slate-200'
+              ]"
+            >
+              <Icon 
+                icon="mdi:file-document-plus-outline" 
+                class="w-10 h-10 mb-2 transition-colors" 
+                :class="(isShippingMissing || isDeliveryMissing) ? 'text-slate-200' : 'text-slate-300 group-hover:text-[#0D95DA]'"
+              />
+              <span 
+                class="text-sm font-bold transition-colors"
+                :class="(isShippingMissing || isDeliveryMissing) ? 'text-slate-200' : 'text-slate-400 group-hover:text-[#0D95DA]'"
+              >
+                เพิ่มที่อยู่ออกใบกำกับภาษี
+              </span>
+            </div>
           </div>
-          <p v-if="showSelectionErrors && isTaxMissing" class="mt-3 text-xs font-bold text-red-500">
-            กรุณาเลือกที่อยู่ออกใบกำกับภาษี
+          
+          <p v-if="showSelectionErrors && isTaxMissing" class="mt-3 text-xs font-bold text-red-500 italic">
+            ! กรุณาเลือกที่อยู่ออกใบกำกับภาษี
           </p>
         </div>
 
@@ -497,13 +548,19 @@ onMounted(() => {
       :is-open="isAddressModalOpen"
       :addresses="savedAddresses"
       :selected-id="modalMode === 'tax' ? selectedTaxAddressId : selectedAddressId"
+      :selected-delivery-method="selectedDeliveryMethod"
+      :start-with-delivery="startWithDeliveryInModal"
       :mode="modalMode"
       :is-submitted="isSubmitted"
       :is-tel-valid="isTelValid"
       :form="addressForm"
-      @close="isAddressModalOpen = false"
+      @close="isAddressModalOpen = false; startWithDeliveryInModal = false"
       @select="handleAddressSelect"
       @add="handleAddressAdd"
+      @update="handleAddressUpdate"
+      @delete="handleAddressDelete"
+      @set-default="handleSetDefaultAddress"
+      @delivery-confirm="handleDeliveryConfirm"
       @reset-submit="isSubmitted = false"
     />
   </div>
