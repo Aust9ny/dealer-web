@@ -36,6 +36,8 @@ export const useUser = () => {
           province: 'นนทบุรี',
           postalCode: '11120',
           isDefault: true,
+          isDefaultTax: true,
+          isDefaultShipping: false,
           isTaxAddress: true
         },
         {
@@ -49,6 +51,8 @@ export const useUser = () => {
           province: 'นนทบุรี',
           postalCode: '11110',
           isDefault: false,
+          isDefaultShipping: true,
+          isDefaultTax: false,
           isTaxAddress: false
         }
       ]
