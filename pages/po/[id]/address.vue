@@ -4,6 +4,7 @@
 import type { Address } from '@/types/address';
 import { Icon } from '@iconify/vue';
 import AddressSelectionModal from '~/components/po/AddressSelectionModal.vue';
+import TaxAddressModal from '~/components/po/TaxAddressModal.vue';
 import { usePOPricing } from '@/composables/po/usePOPricing';
 import { useUser } from '~/composables/auth/useUser';
 import { useAuth } from '~/composables/auth/useAuth';
@@ -49,6 +50,7 @@ useHeadSafe({
 
 // 🟢 2. STATE MANAGEMENT
 const isAddressModalOpen = ref(false);
+const isTaxAddressModalOpen = ref(false);
 const startWithDeliveryInModal = ref(false);
 const modalMode = ref<'shipping' | 'tax'>('shipping');
 const selectedPayment = ref<'bank' | 'qr' | ''>('');
@@ -98,6 +100,26 @@ const isPaymentMissing = computed(() => !selectedPayment.value);
 const selectedDeliveryData = computed(() => {
   return deliveryMethods.find((method) => method.id === selectedDeliveryMethod.value) || null;
 });
+const currentTaxId = computed(() => {
+  return currentTaxAddress.value?.taxId || '';
+});
+const isShippingDefaultAddress = (address: Address) => {
+  if (typeof address.isDefaultShipping === 'boolean') return address.isDefaultShipping;
+  return !!address.isDefault && !address.isTaxAddress;
+};
+const isTaxDefaultAddress = (address: Address) => {
+  if (typeof address.isDefaultTax === 'boolean') return address.isDefaultTax;
+  return !!address.isDefault && !!address.isTaxAddress;
+};
+const currentShippingIsDefault = computed(() => {
+  return currentAddress.value ? isShippingDefaultAddress(currentAddress.value as Address) : false;
+});
+const currentTaxIsDefault = computed(() => {
+  return currentTaxAddress.value ? isTaxDefaultAddress(currentTaxAddress.value as Address) : false;
+});
+const modalAddresses = computed(() => {
+  return savedAddresses.value;
+});
 
 const openModal = (mode: 'shipping' | 'tax', startWithDelivery = false) => {
   modalMode.value = mode;
@@ -111,8 +133,8 @@ const handleDeliveryConfirm = (method: string) => {
 };
 
 const handleAddressSelect = (id: number | string) => {
-  if (modalMode.value === 'shipping') selectedAddressId.value = id;
-  else selectedTaxAddressId.value = id;
+  if (modalMode.value === 'tax') selectedTaxAddressId.value = id;
+  else selectedAddressId.value = id;
   isAddressModalOpen.value = false;
 };
 
@@ -120,12 +142,21 @@ const handleAddressAdd = (newAddr: any) => {
   if (!currentUser.value) return;
   const id = Date.now();
   if (newAddr.isDefault) {
-    currentUser.value.addresses.forEach((a: any) => (a.isDefault = false));
+    currentUser.value.addresses.forEach((a: any) => {
+      if (modalMode.value === 'tax') a.isDefaultTax = false;
+      else a.isDefaultShipping = false;
+    });
   }
-  currentUser.value.addresses.push({ id, ...newAddr } as Address);
+  currentUser.value.addresses.push({
+    id,
+    ...newAddr,
+    isDefaultTax: modalMode.value === 'tax' ? !!newAddr.isDefault : false,
+    isDefaultShipping: modalMode.value === 'shipping' ? !!newAddr.isDefault : false,
+    isDefault: !!newAddr.isDefault,
+  } as Address);
 
-  if (modalMode.value === 'shipping') selectedAddressId.value = id;
-  else selectedTaxAddressId.value = id;
+  if (modalMode.value === 'tax') selectedTaxAddressId.value = id;
+  else selectedAddressId.value = id;
 
   isAddressModalOpen.value = false;
 };
@@ -138,17 +169,24 @@ const handleAddressUpdate = (payload: { id: number | string } & Record<string, a
 
   if (payload.isDefault) {
     currentUser.value.addresses.forEach((a: any) => {
-      a.isDefault = false;
+      if (modalMode.value === 'tax') a.isDefaultTax = false;
+      else a.isDefaultShipping = false;
     });
   }
 
   currentUser.value.addresses[index] = {
     ...currentUser.value.addresses[index],
     ...payload,
+    isDefaultTax: modalMode.value === 'tax'
+      ? !!payload.isDefault
+      : !!currentUser.value.addresses[index].isDefaultTax,
+    isDefaultShipping: modalMode.value === 'shipping'
+      ? !!payload.isDefault
+      : !!currentUser.value.addresses[index].isDefaultShipping,
   } as Address;
 
-  if (modalMode.value === 'shipping') selectedAddressId.value = payload.id;
-  else selectedTaxAddressId.value = payload.id;
+  if (modalMode.value === 'tax') selectedTaxAddressId.value = payload.id;
+  else selectedAddressId.value = payload.id;
 
   isAddressModalOpen.value = false;
 };
@@ -166,8 +204,93 @@ const handleSetDefaultAddress = (id: number | string) => {
   if (!currentUser.value) return;
 
   currentUser.value.addresses.forEach((a: any) => {
-    a.isDefault = a.id === id;
+    if (modalMode.value === 'tax') a.isDefaultTax = a.id === id;
+    else a.isDefaultShipping = a.id === id;
+    a.isDefault = !!a.isDefaultShipping || !!a.isDefaultTax;
   });
+};
+
+const joinAddressParts = (...parts: (string | undefined)[]) => {
+  return parts.map((part) => (part || '').trim()).filter(Boolean).join(' ');
+};
+
+const taxModalInitialData = computed(() => {
+  return currentTaxAddress.value;
+});
+
+const handleTaxAddressSubmit = (taxForm: Partial<Address>) => {
+  if (!currentUser.value) return;
+
+  const detailParts = [
+    taxForm.houseNo ? `เลขที่ ${taxForm.houseNo}` : '',
+    taxForm.building ? `อาคาร ${taxForm.building}` : '',
+    taxForm.floor ? `ชั้น ${taxForm.floor}` : '',
+    taxForm.moo ? `หมู่ ${taxForm.moo}` : '',
+    taxForm.village ? `หมู่บ้าน ${taxForm.village}` : '',
+    taxForm.soi ? `ซอย ${taxForm.soi}` : '',
+    taxForm.road ? `ถนน ${taxForm.road}` : '',
+  ];
+
+  const payload = {
+    label: 'ที่อยู่ออกใบกำกับภาษี',
+    recipientName: taxForm.recipientName || '',
+    phone: taxForm.phone || currentTaxAddress.value?.phone || currentAddress.value?.phone || '',
+    addressDetail: joinAddressParts(...detailParts) || taxForm.addressNote || '-',
+    subDistrict: taxForm.subDistrict || '',
+    district: taxForm.district || '',
+    province: taxForm.province || '',
+    postalCode: taxForm.postalCode || '',
+    isDefault: !!taxForm.isDefault,
+    isTaxAddress: true,
+    taxPayerType: taxForm.taxPayerType,
+    taxId: taxForm.taxId || '',
+    houseNo: taxForm.houseNo || '',
+    building: taxForm.building || '',
+    floor: taxForm.floor || '',
+    moo: taxForm.moo || '',
+    village: taxForm.village || '',
+    soi: taxForm.soi || '',
+    road: taxForm.road || '',
+    addressNote: taxForm.addressNote || '',
+  };
+
+  const existingId = selectedTaxAddressId.value;
+  const currentIndex = currentUser.value.addresses.findIndex((a: Address) => a.id === existingId);
+
+  if (payload.isDefault) {
+    currentUser.value.addresses.forEach((a: any) => {
+      a.isDefaultTax = false;
+      a.isDefault = !!a.isDefaultShipping || !!a.isDefaultTax;
+    });
+  }
+
+  if (currentIndex !== -1 && existingId) {
+    currentUser.value.addresses[currentIndex] = {
+      ...currentUser.value.addresses[currentIndex],
+      ...payload,
+      isDefaultTax: payload.isDefault,
+      isDefault: !!currentUser.value.addresses[currentIndex].isDefaultShipping || !!payload.isDefault,
+    } as Address;
+    selectedTaxAddressId.value = existingId;
+  } else {
+    const newId = Date.now();
+    currentUser.value.addresses.push({
+      id: newId,
+      ...payload,
+      isDefaultTax: payload.isDefault,
+      isDefaultShipping: false,
+      isDefault: !!payload.isDefault,
+    } as Address);
+    selectedTaxAddressId.value = newId;
+  }
+
+  isTaxAddressModalOpen.value = false;
+};
+
+const handleTaxAddressAddRequest = () => {
+  isAddressModalOpen.value = false;
+  startWithDeliveryInModal.value = false;
+  isTaxAddressModalOpen.value = true;
 };
 
 const goBack = () => {
@@ -191,13 +314,13 @@ const getLineTotal = (item: any) => {
 watch(savedAddresses, (newAddrs) => {
   if (newAddrs.length > 0) {
     // 1. หาที่อยู่จัดส่งที่เป็น Default
-    const defaultShipping = newAddrs.find((a: Address) => a.isDefault && !a.isTaxAddress);
+    const defaultShipping = newAddrs.find((a: Address) => isShippingDefaultAddress(a) && !a.isTaxAddress);
     if (defaultShipping && !selectedAddressId.value) {
       selectedAddressId.value = defaultShipping.id;
     }
 
     // 2. ✨ Logic ที่คุณต้องการ: หาที่อยู่ภาษีที่เป็น Default
-    const defaultTax = newAddrs.find((a: Address) => a.isDefault && a.isTaxAddress);
+    const defaultTax = newAddrs.find((a: Address) => isTaxDefaultAddress(a) && a.isTaxAddress);
     if (defaultTax && !selectedTaxAddressId.value) {
       selectedTaxAddressId.value = defaultTax.id;
     }
@@ -279,7 +402,7 @@ onMounted(() => {
                 <p class="text-sm font-semibold text-primary">{{ currentAddress.recipientName }}</p>
                 <p class="text-sm text-slate-500 mt-1">{{ currentAddress.phone }}</p>
                 <p class="text-sm text-slate-400 mt-2 leading-relaxed line-clamp-2">{{ getFullAddress(currentAddress) }}</p>
-                <p v-if="currentAddress.isDefault" class="text-[10px] mt-2 text-slate-400 bg-slate-200 w-fit px-2 py-0.5 rounded-full uppercase font-bold">ค่าเริ่มต้น</p>
+                <p v-if="currentShippingIsDefault" class="text-[10px] mt-2 text-slate-400 bg-slate-200 w-fit px-2 py-0.5 rounded-full uppercase font-bold">ค่าเริ่มต้น</p>
               </div>
             </div>
             
@@ -319,7 +442,7 @@ onMounted(() => {
                 v-if="!selectedDeliveryMethod"
                 class="border-2 border-dashed rounded-2xl p-6 bg-slate-50 flex flex-col items-center justify-center min-h-45 group transition-all cursor-pointer"
                 :class="showSelectionErrors && isDeliveryMissing ? 'border-red-400 bg-red-50/30' : 'border-slate-200 hover:border-[#0D95DA]'"
-                @click="openModal('shipping',true)"
+                @click="openModal('shipping', true)"
               >
                 <div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm mb-3 group-hover:scale-110 transition-transform">
                   <Icon icon="mdi:truck-plus-outline" class="w-6 h-6 text-slate-300 group-hover:text-[#0D95DA]" />
@@ -381,6 +504,10 @@ onMounted(() => {
 
             <div class="bg-secondary p-4 rounded-xl">
               <p class="font-black text-sm text-primary">{{ currentTaxAddress.recipientName }}</p>
+              <p v-if="currentTaxIsDefault" class="text-[10px] mt-2 text-slate-400 bg-slate-200 w-fit px-2 py-0.5 rounded-full uppercase font-bold">ค่าเริ่มต้น</p>
+              <p v-if="currentTaxId" class="text-xs mt-1 text-slate-500">
+                เลขผู้เสียภาษี: {{ currentTaxId }}
+              </p>
               <p class="text-sm mt-1 text-slate-500">{{ currentTaxAddress.phone }}</p>
               <p class="text-xs text-slate-400 mt-2 leading-relaxed line-clamp-2">{{ getFullAddress(currentTaxAddress) }}</p>
             </div>
@@ -546,7 +673,7 @@ onMounted(() => {
 
     <AddressSelectionModal
       :is-open="isAddressModalOpen"
-      :addresses="savedAddresses"
+      :addresses="modalAddresses"
       :selected-id="modalMode === 'tax' ? selectedTaxAddressId : selectedAddressId"
       :selected-delivery-method="selectedDeliveryMethod"
       :start-with-delivery="startWithDeliveryInModal"
@@ -562,6 +689,14 @@ onMounted(() => {
       @set-default="handleSetDefaultAddress"
       @delivery-confirm="handleDeliveryConfirm"
       @reset-submit="isSubmitted = false"
+      @tax-add-request="handleTaxAddressAddRequest"
+    />
+
+    <TaxAddressModal
+      :is-open="isTaxAddressModalOpen"
+      :initial-data="taxModalInitialData"
+      @close="isTaxAddressModalOpen = false"
+      @submit="handleTaxAddressSubmit"
     />
   </div>
 </template>
