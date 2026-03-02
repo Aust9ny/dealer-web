@@ -35,6 +35,7 @@ const emit = defineEmits([
   "close",
   "select",
   "add",
+  "tax-add-request",
   "update",
   "delete",
   "set-default",
@@ -47,6 +48,15 @@ const emit = defineEmits([
 const isLocked = computed(() => props.isOpen);
 useScrollLock(isLocked);
 const hasSelectedDeliveryMethod = computed(() => !!props.selectedDeliveryMethod);
+const modalTitle = computed(() => (props.mode === "tax" ? "เลือกที่อยู่ออกใบกำกับภาษี" : "เลือกที่อยู่จัดส่ง"));
+const isAddressDefaultByMode = (address: Address) => {
+  if (props.mode === "tax") {
+    if (typeof address.isDefaultTax === "boolean") return address.isDefaultTax;
+    return !!address.isDefault && !!address.isTaxAddress;
+  }
+  if (typeof address.isDefaultShipping === "boolean") return address.isDefaultShipping;
+  return !!address.isDefault && !address.isTaxAddress;
+};
 
 // 🟢 2. LOCAL STATE
 const isAddingNew = ref(false);
@@ -166,7 +176,7 @@ const openEditModal = (id: number | string) => {
     district: target.district || "",
     province: target.province || "",
     postalCode: target.postalCode || "",
-    isDefault: !!target.isDefault,
+    isDefault: isAddressDefaultByMode(target),
     isTaxAddress: !!target.isTaxAddress,
   };
   activeMenuId.value = null;
@@ -222,7 +232,7 @@ onBeforeUnmount(() => {
         <div v-if="!isAddingNew" class="shrink-0">
           <div class="flex justify-end p-2">
             <button
-              class="mt-2 mr-2 text-slate-400 hover:bg-slate-100 rounded-xl"
+              class="mt-2 mr-2 text-slate-500 hover:bg-slate-100 rounded-xl"
               @click="close"
             >
               <Icon icon="mdi:close" class="w-6 h-6" />
@@ -230,9 +240,9 @@ onBeforeUnmount(() => {
           </div>
           <div class="border-b pb-3 flex flex-col items-center bg-slate-50/50">
             <h3 class="text-xl font-black text-slate-800 uppercase text-center">
-              เลือกที่อยู่จัดส่ง
+              {{ modalTitle }}
             </h3>
-            <p class="text-xs text-slate-400 font-bold">
+            <p class="text-xs text-slate-500 font-bold">
               บันทึกแล้ว {{ addresses.length }}/5 ที่อยู่
             </p>
           </div>
@@ -293,7 +303,7 @@ onBeforeUnmount(() => {
                     "
                   />
                   <span
-                    v-if="addr.isDefault"
+                    v-if="isAddressDefaultByMode(addr)"
                     class="text-[8px] bg-[#0D95DA] text-white px-1.5 py-0.5 rounded font-black uppercase"
                     >Default</span
                   >
@@ -320,7 +330,7 @@ onBeforeUnmount(() => {
                                 class="w-full px-4 py-2.5 text-left flex items-center gap-2 hover:bg-slate-50 transition-colors"
                                 @click.stop="makeDefault(addr.id)"
                             >
-                                <Icon icon="mdi:pin-outline" class="w-4 h-4 text-slate-400" />
+                                <Icon icon="mdi:pin-outline" class="w-4 h-4 text-slate-500" />
                                 <span class="text-[11px] font-bold text-slate-600">ตั้งที่อยู่เป็นค่าเริ่มต้น</span>
                             </button>
 
@@ -328,7 +338,7 @@ onBeforeUnmount(() => {
                                 class="w-full px-4 py-2.5 text-left flex items-center gap-2 hover:bg-slate-50 transition-colors border-t border-slate-50"
                                 @click.stop="openEditModal(addr.id)"
                             >
-                                <Icon icon="mdi:pencil-outline" class="w-4 h-4 text-slate-400" />
+                                <Icon icon="mdi:pencil-outline" class="w-4 h-4 text-slate-500" />
                                 <span class="text-[11px] font-bold text-slate-600">แก้ไขที่อยู่</span>
                             </button>
 
@@ -336,7 +346,7 @@ onBeforeUnmount(() => {
                                 class="w-full px-4 py-2.5 text-left flex items-center gap-2 hover:bg-red-50 transition-colors border-t border-slate-50 group"
                                 @click.stop="deleteAddress(addr.id)"
                             >
-                                <Icon icon="mdi:delete-outline" class="w-4 h-4 text-slate-400 group-hover:text-red-400" />
+                                <Icon icon="mdi:delete-outline" class="w-4 h-4 text-slate-500 group-hover:text-red-400" />
                                 <span class="text-[11px] font-bold text-slate-600 group-hover:text-red-500">ลบที่อยู่</span>
                             </button>
                         </div>
@@ -350,7 +360,7 @@ onBeforeUnmount(() => {
                   </p>
                   <p class="text-sm text-slate-500">{{ addr.phone }}</p>
                 </div>
-                <p class="text-[12px] text-slate-400 mt-1 leading-relaxed">
+                <p class="text-[12px] text-slate-500 mt-1 leading-relaxed">
                   {{ addr.addressDetail }} ต.{{ addr.subDistrict }} อ.{{
                     addr.district
                   }}
@@ -361,8 +371,8 @@ onBeforeUnmount(() => {
           </div>
           <button
             v-if="addresses.length < 5"
-            class="w-full py-6 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-400 hover:border-[#0D95DA] hover:text-[#0D95DA] transition-all"
-            @click="isAddingNew = true"
+            class="w-full py-6 border-2 border-dashed border-slate-200 rounded-2xl flex flex-col items-center justify-center gap-2 text-slate-500 hover:border-[#0D95DA] hover:text-[#0D95DA] transition-all"
+            @click="props.mode === 'tax' ? emit('tax-add-request') : isAddingNew = true"
           >
             <Icon icon="mdi:plus-circle-outline" class="w-8 h-8" />
             <span class="text-xs font-black uppercase tracking-widest"
@@ -387,8 +397,8 @@ onBeforeUnmount(() => {
             <div class="ml-14 grid grid-cols-2 gap-6">
               <div class="space-y-1.5">
                 <label
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1"
-                  >ชื่อผู้รับ / บริษัท *</label
+                  class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1"
+                  >ชื่อ - นามสกุล*</label
                 >
                 <input
                   v-model="newAddress.recipientName"
@@ -399,7 +409,7 @@ onBeforeUnmount(() => {
               </div>
               <div class="space-y-1.5">
                 <label
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1"
+                  class="text-[10px] font-black text-slate-500 uppercase tracking-widest px-1"
                   >เบอร์โทรศัพท์ติดต่อ *</label
                 >
                 <input
@@ -419,7 +429,7 @@ onBeforeUnmount(() => {
             <div class="ml-14 space-y-5">
               <div class="grid grid-cols-2 gap-6">
                 <div class="space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >รหัสไปรษณีย์ *</label
                   >
                   <div class="relative">
@@ -433,19 +443,19 @@ onBeforeUnmount(() => {
                     >
                     <Icon
                       icon="mdi:chevron-down"
-                      class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400"
+                      class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-500"
                     />
                   </div>
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >จังหวัด</label
                   >
                   <input
                     v-model="newAddress.province"
                     type="text"
                     readonly
-                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-400"
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-500"
                     placeholder="จังหวัด"
                   >
                 </div>
@@ -453,26 +463,26 @@ onBeforeUnmount(() => {
 
               <div class="grid grid-cols-2 gap-6">
                 <div class="space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >อำเภอ / เขต</label
                   >
                   <input
                     v-model="newAddress.district"
                     type="text"
                     readonly
-                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-400"
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-500"
                     placeholder="อำเภอ"
                   >
                 </div>
                 <div class="space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >ตำบล / แขวง</label
                   >
                   <input
                     v-model="newAddress.subDistrict"
                     type="text"
                     readonly
-                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-400"
+                    class="w-full p-4 bg-slate-50 border border-slate-200 rounded-xl font-bold text-sm text-slate-500"
                     placeholder="ตำบล"
                   >
                 </div>
@@ -480,7 +490,7 @@ onBeforeUnmount(() => {
 
               <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-3 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >เลขที่</label
                   >
                   <input
@@ -489,7 +499,7 @@ onBeforeUnmount(() => {
                   >
                 </div>
                 <div class="col-span-6 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >ชื่ออาคาร</label
                   >
                   <input
@@ -498,7 +508,7 @@ onBeforeUnmount(() => {
                   >
                 </div>
                 <div class="col-span-3 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >ชั้นที่</label
                   >
                   <input
@@ -510,7 +520,7 @@ onBeforeUnmount(() => {
 
               <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-3 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >หมู่</label
                   >
                   <input
@@ -519,7 +529,7 @@ onBeforeUnmount(() => {
                   >
                 </div>
                 <div class="col-span-9 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >หมู่บ้าน</label
                   >
                   <input
@@ -531,7 +541,7 @@ onBeforeUnmount(() => {
 
               <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >ซอย</label
                   >
                   <input
@@ -540,7 +550,7 @@ onBeforeUnmount(() => {
                   >
                 </div>
                 <div class="col-span-6 space-y-1.5">
-                  <label class="text-[10px] font-black text-slate-400 px-1"
+                  <label class="text-[10px] font-black text-slate-500 px-1"
                     >ถนน</label
                   >
                   <input
@@ -552,9 +562,12 @@ onBeforeUnmount(() => {
 
               <div class="space-y-1.5">
                 <label
-                  class="text-[10px] font-black text-slate-400 uppercase tracking-widest px-1"
-                  >ตัวอย่างที่อยู่ฉบับเต็ม</label
+                  class="text-[11px] font-black text-slate-500 uppercase tracking-widest px-1"
+                  >ตัวอย่าง</label
                 >
+                <p  class="text-xs ml-3 text-slate-500">
+                  * กรุณาระบุข้อมูลตามที่ท่านต้องการ กรณีไม่มีข้อมูลให้เว้นว่างไม่ต้องใส่ - (ขีด)
+                </p>
                 <textarea
                   v-model="newAddress.addressDetail"
                   rows="2"
@@ -578,13 +591,15 @@ onBeforeUnmount(() => {
               </div>
             </div>
           </div>
-          <div v-else class="flex gap-4">
-            <button
-              class="flex-1 py-4 font-black text-[#0D95DA] border-2 border-[#0D95DA] rounded-full uppercase text-xs"
-              @click="isAddingNew = false; editingAddressId = null; resetNewAddress()"
-            >
-              ย้อนกลับ
-            </button>
+          <div v-else class="flex items-center gap-4">
+            <label class="flex-1 flex items-center gap-2 text-slate-600 font-bold text-xs">
+              <input
+                v-model="newAddress.isDefault"
+                type="checkbox"
+                class="w-4 h-4 rounded border-slate-300 accent-[#0D95DA]"
+              >
+              ตั้งเป็นที่อยู่เริ่มต้น
+            </label>
             <button
               class="flex-2 py-4 bg-[#2D5A9E] text-white rounded-full font-black uppercase text-xs shadow-lg hover:bg-[#1E3F7D] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               :disabled="!newAddress.recipientName || newAddress.phone.length !== 10 || newAddress.postalCode.length !== 5"
