@@ -1,43 +1,4 @@
 <script setup lang="ts">
-import { useAuth } from '~/composables/auth/useAuth';
-import { useNavigationProfile } from '~/composables/dashboard/useNavigation_Profile';
-import { useRouter, useRoute } from 'vue-router';
-import { useMockPO } from '~/composables/po/useMockPO';
-import type { NavLink } from '~/composables/dashboard/useNavigation';
-const { menuGroupsProfile } = useNavigationProfile();
-const { currentUser } = useAuth();
-const router = useRouter();
-const route = useRoute();
-const { userOrders, getLatestUserPO } = useMockPO();
-const latestUserPO = computed(() => getLatestUserPO.value);
-const totalPO = computed(() => userOrders.value.length);
-const goToLatestPO = () => {
-  const latest = latestUserPO.value;
-
-  if (!latest) {
-    router.push('/po');
-    return;
-  }
-
-  router.push(`/po/${latest.id}`);
-};
-
-const handleNavClick = (link: NavLink) => {
-  if (link.action === 'latestPO') {
-    goToLatestPO();
-    return;
-  }
-
-  if (link.external) {
-    window.open(link.to, '_blank');
-    return;
-  }
-
-  if (link.to) {
-    router.push(link.to);
-  }
-};
-
 useHeadSafe({
   meta: [
     { name: 'cache-control', content: 'no-store, no-cache, must-revalidate' },
@@ -55,17 +16,13 @@ useSeoMeta({
   robots: 'noindex, nofollow',
 });
 
-const initials = computed(() => {
-  const first = currentUser.value?.fname?.[0] || 'D';
-  const last = currentUser.value?.lname?.[0] || 'L';
-  return `${first}${last}`;
-});
-
 // State
 const isLoading = ref(false);
 const password = ref('');
 const newPassword = ref('');
 const confirmNewPassword = ref('');
+const errorMessage = ref('');
+const successMessage = ref('');
 
 // Visibility State
 const showPass = ref(false);
@@ -127,15 +84,27 @@ const strength = computed(() => {
       label: 'รหัสผ่านต้องยาวอย่างน้อย 8 ตัวอักษร',
       met: pwd.length >= 8,
     },
-    { id: 2, label: 'ประกอบด้วยตัวพิมพ์เล็ก (a-z)', met: /[a-z]/.test(pwd) },
-    { id: 3, label: 'ประกอบด้วยตัวพิมพ์ใหญ่ (A-Z)', met: /[A-Z]/.test(pwd) },
+    {
+      id: 2,
+      label: 'ประกอบด้วยตัวพิมพ์เล็ก (a-z)',
+      met: /[a-z]/.test(pwd),
+    },
+    {
+      id: 3,
+      label: 'ประกอบด้วยตัวพิมพ์ใหญ่ (A-Z)',
+      met: /[A-Z]/.test(pwd),
+    },
     {
       id: 4,
+      label: 'ประกอบด้วยตัวเลข (0-9)',
+      met: /[0-9]/.test(pwd),
+    },
+    {
+      id: 5,
       label: 'ประกอบด้วยอักขระพิเศษ (เช่น !@#$?%^&*)',
       met: /[!@#$%^&*(),.?":{}|<>]/.test(pwd),
     },
   ];
-
   const passedCount = constraints.filter((c) => c.met).length;
 
   return {
@@ -147,27 +116,31 @@ const strength = computed(() => {
 
 // Handlers
 const handlePasswordChange = () => {
+  errorMessage.value = '';
+  successMessage.value = '';
+
   if (newPassword.value !== confirmNewPassword.value) {
-    alert('โปรดตรวจสอบรหัสผ่านใหม่อีกครั้ง');
+    errorMessage.value = 'โปรดตรวจสอบรหัสผ่านใหม่อีกครั้ง';
     return;
   }
 
   if (newPassword.value === password.value) {
-    alert('รหัสผ่านใหม่ต้องไม่เหมือนรหัสผ่านเดิม');
+    errorMessage.value = 'รหัสผ่านใหม่ต้องไม่เหมือนรหัสผ่านเดิม';
     return;
   }
 
   isLoading.value = true;
+
   setTimeout(() => {
     isLoading.value = false;
-    alert('เปลี่ยนรหัสผ่านสำเร็จ');
+    successMessage.value = 'เปลี่ยนรหัสผ่านสำเร็จ';
     resetFields();
-  }, 2000);
-};
 
-const handleCancel = () => {
-  resetFields();
-  navigateTo('/');
+    // ซ่อนข้อความหลัง 3 วิ
+    setTimeout(() => {
+      successMessage.value = '';
+    }, 3000);
+  }, 2000);
 };
 
 const resetFields = () => {
@@ -175,261 +148,254 @@ const resetFields = () => {
   newPassword.value = '';
   confirmNewPassword.value = '';
 };
+
+const passwordsMatch = computed(
+  () =>
+    newPassword.value &&
+    confirmNewPassword.value &&
+    newPassword.value === confirmNewPassword.value,
+);
+
+const canSubmit = computed(
+  () =>
+    strength.value.isComplete &&
+    passwordsMatch.value &&
+    password.value.length > 0,
+);
+
+const showModal = ref(false);
+
+const handleConfirm = () => {
+  showModal.value = false;
+  handlePasswordChange();
+};
 </script>
 
 <template>
   <div class="bg-gray-100 min-h-screen">
     <div class="max-w-7xl mx-auto p-6">
       <div class="grid grid-cols-1 lg:grid-cols-6 gap-4">
-        <!-- LEFT SIDE -->
-        <div class="space-y-6 lg:col-span-2">
-          <!-- PROFILE CARD -->
-          <div class="bg-white rounded-xl shadow overflow-hidden">
-            <div class="h-2 bg-primary" />
-
-            <div class="p-5">
-              <div class="flex items-center gap-2">
-                <div
-                  class="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center font-semibold text-sm"
-                >
-                  {{ initials }}
-                </div>
-                <p class="font-medium text-gray-800">
-                  สวัสดี, {{ currentUser?.fname }} {{ currentUser?.lname }}
-                </p>
-              </div>
-
-              <div class="my-4 border-t border-gray-200" />
-
-              <div class="text-sm space-y-2">
-                <div class="flex justify-between text-gray-500">
-                  <span>Dealer ID:</span>
-                  <span class="text-gray-800 font-medium">
-                    {{ currentUser?.dealerID }}
-                  </span>
-                </div>
-
-                <div class="flex justify-between text-gray-500">
-                  <span>Email:</span>
-                  <span class="text-gray-700">
-                    {{ currentUser?.email }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- SIDEBAR MENU (Dynamic) -->
-          <div class="hidden lg:flex bg-white rounded-xl shadow p-5 flex-col">            
-            <div class="space-y-6 flex-1">
-              <div
-                v-for="(group, groupIndex) in menuGroupsProfile"
-                :key="group.title"
-              >
-                <!-- Group Title -->
-                <div class="flex items-center gap-2 mb-3">
-                  <span>{{ group.icon }}</span>
-                  <span class="font-medium text-gray-800">
-                    {{ group.title }}
-                  </span>
-                </div>
-
-                <!-- Links -->
-                <ul class="text-sm space-y-2">
-                  <li
-                    v-for="(link, linkIndex) in group.links"
-                    :key="link.label"
-                    class="cursor-pointer rounded-lg transition-all px-3 py-2"
-                    :class="[
-                      route.path === link.to
-                        ? 'bg-blue-100 text-primary font-medium'
-                        : 'text-gray-600 hover:bg-gray-100 hover:text-primary',
-                    ]"
-                    @click="handleNavClick(link)"
-                  >
-                    <div class="flex items-center justify-between">
-                      <span>{{ link.label }}</span>
-
-                      <!-- Badge total PO (เฉพาะเมนูแรก group แรก link แรก) -->
-                      <span
-                        v-if="groupIndex === 0 && linkIndex === 0"
-                        class="text-xs bg-red-500 text-white w-5 h-5 rounded-full flex items-center justify-center"
-                      >
-                        {{ totalPO }}
-                      </span>
-                    </div>
-                  </li>
-                </ul>
-
-                <div
-                  v-if="groupIndex < menuGroupsProfile.length - 1"
-                  class="border-t border-gray-200 mt-4"
-                />
-              </div>
-            </div>
-
-            <!-- Logout -->
-            <div class="mt-auto p-4 mb-4">
-              <button
-                class="w-full flex items-center justify-center gap-2 border border-red-400 text-red-600 rounded-full py-2 text-sm font-medium hover:bg-red-600 hover:text-white hover:border-red-600 active:bg-red-700 active:border-red-700 transition"
-              >
-                ⏻ ออกจากระบบ
-              </button>
-            </div>
-          </div>
-        </div>
-
+        <MenuProfile @logout="navigateTo('/')" />
         <!-- RIGHT CONTENT -->
         <div class="bg-white rounded-xl shadow overflow-hidden lg:col-span-4">
-          <div class="p-8 text-center border-b border-slate-50">
-            <h1 class="text-2xl font-black text-[#2196F3] uppercase">
+          <div class="p-6 text-center bg-primary">
+            <h1 class="text-xl text-white uppercase tracking-wide">
               เปลี่ยนรหัสผ่าน
             </h1>
           </div>
 
-          <form class="space-y-6 p-8" @submit.prevent="handlePasswordChange">
-            <div class="relative group">
-              <input
-                v-model="password"
-                :type="showPass ? 'text' : 'password'"
-                placeholder="รหัสผ่านปัจจุบัน..."
-                class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
-              >
-              <button
-                type="button"
-                class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
-                @click="showPass = !showPass"
-              >
-                <EyeIcon v-if="!showPass" />
-                <EyeSlashIcon v-else />
-              </button>
+          <form
+            class="max-w-xl mx-auto space-y-6 p-8"
+            @submit.prevent="handlePasswordChange"
+          >
+            <!-- CURRENT PASSWORD -->
+            <div>
+              <!-- Label -->
+              <label class="block text-sm font-medium mb-2 text-gray-700">
+                รหัสผ่านเดิม
+              </label>
+
+              <!-- Input -->
+              <div class="relative">
+                <input
+                  v-model="password"
+                  :type="showPass ? 'text' : 'password'"
+                  class="w-full rounded-lg border border-gray-300 px-4 py-3 pr-12 focus:ring-2 focus:ring-primary focus:border-primary outline-none"
+                >
+
+                <button
+                  type="button"
+                  class="absolute right-3 top-3 text-gray-400 hover:text-primary"
+                  @click="showPass = !showPass"
+                >
+                  <EyeIcon v-if="!showPass" />
+                  <EyeSlashIcon v-else />
+                </button>
+              </div>
+
+              <!-- Forgot Password -->
+              <div class="flex justify-end mt-1">
+                <button
+                  type="button"
+                  class="text-xs text-primary hover:underline"
+                >
+                  ลืมรหัสผ่าน?
+                </button>
+              </div>
             </div>
 
-            <div class="space-y-2">
-              <div class="relative group">
+            <!-- NEW PASSWORD -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-700">
+                รหัสผ่านใหม่
+              </label>
+
+              <div class="relative">
                 <input
                   v-model="newPassword"
                   :type="showNewPass ? 'text' : 'password'"
-                  placeholder="รหัสผ่านใหม่..."
-                  class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
+                  class="w-full rounded-lg px-4 py-3 pr-12 outline-none transition"
+                  :class="[
+                    confirmNewPassword && !passwordsMatch
+                      ? 'border border-red-500 focus:ring-2 focus:ring-red-500'
+                      : 'border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary',
+                  ]"
                 >
+
                 <button
                   type="button"
-                  class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
+                  class="absolute right-3 top-3 text-gray-400 hover:text-primary"
                   @click="showNewPass = !showNewPass"
                 >
                   <EyeIcon v-if="!showNewPass" />
                   <EyeSlashIcon v-else />
                 </button>
               </div>
-
-              <Transition
-                enter-active-class="transition duration-500 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-                enter-from-class="transform -translate-y-4 opacity-0 scale-95"
-                enter-to-class="transform translate-y-0 opacity-100 scale-100"
-                leave-active-class="transition duration-300 ease-in"
-                leave-from-class="transform translate-y-0 opacity-100 scale-100"
-                leave-to-class="transform -translate-y-4 opacity-0 scale-95"
-              >
+              <!-- RULES -->
+              <div class="mt-3 grid grid-cols-2 gap-x-8 gap-y-2 text-xs">
                 <div
-                  v-if="newPassword.length > 0"
-                  class="mt-4 space-y-2 rounded-2xl p-4 transition-all duration-500 border-2 overflow-hidden"
-                  :class="[
-                    strength.isComplete
-                      ? 'border-emerald-500 bg-emerald-50/30 shadow-md shadow-emerald-100'
-                      : 'border-rose-400 bg-slate-50',
-                  ]"
+                  v-for="rule in strength.constraints"
+                  :key="rule.id"
+                  class="flex items-center gap-2 transition-all duration-300"
+                  :class="rule.met ? 'text-green-600' : 'text-gray-400'"
                 >
+                  <!-- ICON -->
                   <div
-                    v-for="rule in strength.constraints"
-                    :key="rule.id"
-                    class="flex items-center gap-2 text-xs transition-all duration-500"
+                    class="w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition-all duration-300"
                     :class="
                       rule.met
-                        ? 'text-emerald-600 font-bold translate-x-2'
-                        : 'text-slate-400'
+                        ? 'bg-green-500 text-white scale-110 shadow-sm shadow-green-200'
+                        : 'bg-gray-300 text-transparent'
                     "
                   >
-                    <div
-                      class="h-1.5 w-1.5 rounded-full transition-all duration-300"
-                      :class="
-                        rule.met ? 'bg-emerald-500 scale-150' : 'bg-slate-300'
-                      "
-                    />
-                    {{ rule.label }}
+                    ✓
                   </div>
 
-                  <div
-                    class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200/60"
+                  <!-- TEXT -->
+                  <span
+                    class="transition-all duration-300"
+                    :class="rule.met ? 'translate-x-1 font-medium' : ''"
                   >
-                    <div
-                      class="h-full transition-all duration-700 ease-[cubic-bezier(0.34,1.56,0.64,1)]"
-                      :class="
-                        strength.isComplete ? 'bg-emerald-500' : 'bg-amber-500'
-                      "
-                      :style="{ width: `${(strength.passedCount / 4) * 100}%` }"
-                    />
-                  </div>
+                    {{ rule.label }}
+                  </span>
                 </div>
-              </Transition>
+              </div>
             </div>
 
-            <div class="relative group">
-              <input
-                v-model="confirmNewPassword"
-                :type="showConfirm ? 'text' : 'password'"
-                placeholder="ยืนยันรหัสผ่านใหม่..."
-                class="w-full rounded-2xl border-none bg-slate-50 p-4 pr-12 ring-1 ring-slate-200 transition-all focus:bg-white focus:ring-2 focus:ring-[#2196F3] outline-none"
-              >
-              <button
-                type="button"
-                class="absolute right-4 top-4 text-slate-400 hover:text-[#2196F3]"
-                @click="showConfirm = !showConfirm"
-              >
-                <EyeIcon v-if="!showConfirm" />
-                <EyeSlashIcon v-else />
-              </button>
+            <!-- CONFIRM -->
+            <div>
+              <label class="block text-sm font-medium mb-2 text-gray-700">
+                ยืนยันรหัสผ่านใหม่
+              </label>
+
+              <div class="relative">
+                <input
+                  v-model="confirmNewPassword"
+                  :type="showConfirm ? 'text' : 'password'"
+                  class="w-full rounded-lg px-4 py-3 pr-12 outline-none transition"
+                  :class="[
+                    confirmNewPassword && !passwordsMatch
+                      ? 'border border-red-500 focus:ring-2 focus:ring-red-500'
+                      : confirmNewPassword && passwordsMatch
+                        ? 'border border-green-500 focus:ring-2 focus:ring-green-500'
+                        : 'border border-gray-300 focus:ring-2 focus:ring-primary focus:border-primary',
+                  ]"
+                >
+
+                <button
+                  type="button"
+                  class="absolute right-3 top-3 text-gray-400 hover:text-primary"
+                  @click="showConfirm = !showConfirm"
+                >
+                  <EyeIcon v-if="!showConfirm" />
+                  <EyeSlashIcon v-else />
+                </button>
+              </div>
+
+              <!-- MATCH MESSAGE -->
+              <div v-if="confirmNewPassword" class="mt-2 text-xs">
+                <span v-if="!passwordsMatch" class="text-red-500">
+                  รหัสผ่านไม่ตรงกัน
+                </span>
+                <span v-else class="text-green-600"> รหัสผ่านตรงกัน </span>
+              </div>
+            </div>
+
+            <!-- SUBMIT -->
+            <button
+              type="button"
+              :disabled="!canSubmit || isLoading"
+              class="w-full rounded-full py-3 font-semibold text-white transition"
+              :class="[
+                !canSubmit
+                  ? 'bg-gray-300 cursor-not-allowed'
+                  : 'bg-primary hover:bg-primary/90',
+              ]"
+              @click="showModal = true"
+            >
+              <span v-if="!isLoading">ยืนยันข้อมูล</span>
+              <span v-else>กำลังดำเนินการ...</span>
+            </button>
+            <div v-if="errorMessage" class="text-sm text-red-500 text-center">
+              {{ errorMessage }}
             </div>
 
             <div
-              v-if="newPassword !== '' && confirmNewPassword !== ''"
-              class="mt-2 font-thai text-sm"
+              v-if="successMessage"
+              class="text-sm text-green-600 text-center"
             >
-              <div
-                v-if="newPassword !== confirmNewPassword"
-                class="text-red-500"
-              >
-                รหัสผ่านใหม่และการยืนยันรหัสผ่านไม่ตรงกัน
-              </div>
-
-              <div v-else class="text-green-500 font-bold">รหัสผ่านตรงกัน</div>
-            </div>
-
-            <div class="flex flex-col gap-3 pt-4">
-              <button
-                type="submit"
-                :disabled="isLoading || !strength.isComplete"
-                class="w-full rounded-2xl bg-[#2196F3] py-4 font-black uppercase text-white transition-all hover:bg-[#1976D2] active:scale-[0.98] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 disabled:pointer-events-none shadow-lg"
-              >
-                <span v-if="!isLoading">เปลี่ยนรหัสผ่าน</span>
-                <div v-else class="flex items-center justify-center gap-2">
-                  <div
-                    class="h-4 w-4 animate-spin rounded-full border-2 border-white/20 border-t-white"
-                  />
-                  กำลังประมวลผล...
-                </div>
-              </button>
-
-              <button
-                type="button"
-                class="w-full rounded-2xl bg-red-500 border border-slate-200 py-4 font-thai uppercase text-white transition-all hover:bg-red-600 hover:text-white hover:border-red-100 active:scale-[0.98]"
-                @click="handleCancel"
-              >
-                ยกเลิก
-              </button>
+              {{ successMessage }}
             </div>
           </form>
         </div>
+        <!-- MODAL -->
+        <Transition
+          enter-active-class="transition duration-200 ease-out"
+          enter-from-class="opacity-0 scale-95"
+          enter-to-class="opacity-100 scale-100"
+          leave-active-class="transition duration-150 ease-in"
+          leave-from-class="opacity-100 scale-100"
+          leave-to-class="opacity-0 scale-95"
+        >
+          <div
+            v-if="showModal"
+            class="fixed inset-0 z-50 flex items-center justify-center"
+          >
+            <!-- Overlay -->
+            <div
+              class="absolute inset-0 bg-black/40"
+              @click="showModal = false"
+            />
+
+            <!-- Modal Box -->
+            <div
+              class="relative bg-white w-[90%] max-w-md rounded-2xl p-6 shadow-xl"
+            >
+              <h2 class="text-lg font-semibold mb-3">
+                ยืนยันการเปลี่ยนรหัสผ่าน
+              </h2>
+              <p class="text-sm text-gray-600 mb-6">
+                คุณแน่ใจหรือไม่ว่าต้องการเปลี่ยนรหัสผ่าน?
+              </p>
+
+              <div class="flex justify-end gap-3">
+                <button
+                  class="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300"
+                  @click="showModal = false"
+                >
+                  ยกเลิก
+                </button>
+
+                <button
+                  class="px-4 py-2 rounded-lg bg-primary text-white hover:bg-primary/90"
+                  @click="handleConfirm"
+                >
+                  ยืนยัน
+                </button>
+              </div>
+            </div>
+          </div>
+        </Transition>
       </div>
     </div>
   </div>
