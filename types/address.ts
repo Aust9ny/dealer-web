@@ -26,7 +26,25 @@ export interface Address {
     lng: number;
   };
   /** Meta info */
-  isDefault: boolean;
+  isDefault?: boolean;
+  /** Default flag for shipping flow */
+  isDefaultShipping?: boolean;
+  /** Default flag for tax flow */
+  isDefaultTax?: boolean;
   /** Useful for Advice Dealer branch logic */
   isTaxAddress: boolean; 
-}
+  /** Tax invoice type */
+  taxPayerType?: 'personal' | 'company';
+  /** Tax ID / company tax number */
+  taxId?: string;
+  /** Optional tax-specific granular address fields */
+  houseNo?: string;
+  building?: string;
+  floor?: string;
+  moo?: string;
+  village?: string;
+  soi?: string;
+  road?: string;
+  /** Optional note used in tax address form */
+  addressNote?: string;
+} 
