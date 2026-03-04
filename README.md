@@ -1,75 +1,79 @@
-# Nuxt Minimal Starter
+# Dealer Web Platform
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A comprehensive B2B e-commerce and dashboard platform for dealers, built with Nuxt 3, Vue 3, and Tailwind CSS.
 
-## Setup
+## 🚀 Features
 
-Make sure to install dependencies:
+- **📊 Interactive Dashboard:** Real-time sales insights, performance metrics, and monthly growth charts using Chart.js.
+- **🛒 Purchase Order (PO) System:** A streamlined 3-step checkout process for dealers:
+  1. **Review:** Check items and quantities.
+  2. **Delivery:** Select address and shipping methods.
+  3. **Payment:** Secure payment processing.
+- **📦 Product Management:** Extensive product catalog with categories, search, and detailed product views.
+- **👤 User Profiles:** Role-based access and pricing (Technician, Dealer, Franchise).
+- **🌍 Internationalization:** Full support for Thai (default) and English languages.
+- **📱 Responsive Design:** Mobile-first approach with optimized views for all devices.
+- **🛡️ Claims System:** Integrated reporting and decision-making for product claims.
+
+## 🛠️ Tech Stack
+
+- **Framework:** [Nuxt 3](https://nuxt.com/)
+- **UI Logic:** [Vue 3](https://vuejs.org/) (Composition API)
+- **Styling:** [Tailwind CSS 4](https://tailwindcss.com/)
+- **State Management:** Nuxt Composables & `useState`
+- **Charts:** [Chart.js](https://www.chartjs.org/) with `vue-chartjs`
+- **i18n:** [@nuxtjs/i18n](https://i18n.nuxtjs.org/)
+- **Icons:** [Iconify](https://iconify.design/)
+
+## 📦 Project Structure
+
+```text
+├── components/          # Reusable Vue components (Domain-driven)
+├── composables/         # Shared business logic and state
+├── layouts/             # Application layouts
+├── middleware/          # Route middleware
+├── pages/               # Application routes (File-based routing)
+├── public/              # Static assets
+├── server/              # Nitro server-side code
+├── types/               # TypeScript interfaces and types
+└── assets/css/          # Global styles and Tailwind configuration
+```
+
+## 🛠️ Setup
+
+### Prerequisites
+
+- Node.js (>= 20.x < 24.x)
+- npm or pnpm
+
+### Installation
 
 ```bash
-# npm
+# Install dependencies
 npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
 ```
 
-## Development Server
-
-Start the development server on `http://localhost:3000`:
+### Development
 
 ```bash
-# npm
+# Start development server
 npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
-yarn dev
-
-# bun
-bun run dev
 ```
 
-## Production
-
-Build the application for production:
+### Production
 
 ```bash
-# npm
+# Build for production
 npm run build
 
-# pnpm
-pnpm build
-
-# yarn
-yarn build
-
-# bun
-bun run build
-```
-
-Locally preview production build:
-
-```bash
-# npm
+# Preview production build
 npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
-yarn preview
-
-# bun
-bun run preview
 ```
 
-Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+## 📖 Documentation
+
+- [Architecture Overview](./docs/ARCHITECTURE.md)
+
+## 📄 License
+
+Private - All rights reserved.
