@@ -1,7 +1,6 @@
-<!-- eslint-disable no-unused-vars -->
 <!-- eslint-disable @typescript-eslint/no-explicit-any -->
+<!-- eslint-disable no-unused-vars -->
 <script setup lang="ts">
-import type { Address } from '@/types/address';
 import { Icon } from '@iconify/vue';
 import AddressSelectionModal from '~/components/po/AddressSelectionModal.vue';
 import TaxAddressModal from '~/components/po/TaxAddressModal.vue';
@@ -10,10 +9,30 @@ import { useUser } from '~/composables/auth/useUser';
 import { useAuth } from '~/composables/auth/useAuth';
 import { usePOCheckoutState } from '~/composables/po/usePOCheckoutState';
 import { useDeliveryMethods } from '~/composables/po/useDeliveryMethods';
+import { usePOAddressStep } from '~/composables/po/usePOAddressStep';
+
+type POItem = {
+  quantity: number;
+  priceAtPurchase?: number;
+  product: {
+    id: number | string;
+    image: string;
+    name: string;
+    specs?: string;
+    warranty?: string;
+    stock?: number;
+  };
+};
+
+type PurchaseOrderView = {
+  id?: number | string;
+  createdAt?: string;
+  items: POItem[];
+};
 
 // 🟢 1. รับ PROPS จากไฟล์แม่ [id].vue
 const props = defineProps<{
-  po: any;
+  po: PurchaseOrderView;
   subtotal: number;
   vat: number;
   grandTotal: number;
@@ -23,7 +42,6 @@ const props = defineProps<{
 
 const { getFullAddress } = useUser();
 const { currentUser } = useAuth();
-const router = useRouter();
 const { getEffectiveQuantity } = usePOPricing();
 const {
   state: checkoutState,
@@ -31,6 +49,54 @@ const {
   setAddressValidationAttempted,
 } = usePOCheckoutState();
 const { deliveryMethods } = useDeliveryMethods();
+
+const {
+  addressForm,
+  currentAddress,
+  currentShippingIsDefault,
+  currentTaxAddress,
+  currentTaxId,
+  currentTaxIsDefault,
+  getLineTotal,
+  getStockStatus,
+  goBack,
+  handleAddressAdd,
+  handleAddressDelete,
+  handleAddressSelect,
+  handleAddressUpdate,
+  handleDeliveryConfirm,
+  handleSetDefaultAddress,
+  handleTaxAddressAddRequest,
+  handleTaxAddressSubmit,
+  isAddressModalOpen,
+  isDeliveryMissing,
+  isPaymentMissing,
+  isShippingMissing,
+  isSubmitted,
+  isTaxAddressModalOpen,
+  isTaxMissing,
+  isTelValid,
+  modalAddresses,
+  modalMode,
+  openModal,
+  paymentMethods,
+  selectedAddressId,
+  selectedDeliveryData,
+  selectedDeliveryMethod,
+  selectedPayment,
+  selectedTaxAddressId,
+  showSelectionErrors,
+  startWithDeliveryInModal,
+  taxModalInitialData,
+} = usePOAddressStep({
+  currentUser,
+  deliveryMethods,
+  setAddressSelections,
+  setAddressValidationAttempted,
+  getEffectiveQuantity: getEffectiveQuantity as any,
+  checkoutState,
+  poId: props.po?.id,
+});
 
 useSeoMeta({
   title: () => `PO #${props.po?.id} | Shipping & Tax Address`,
@@ -46,305 +112,6 @@ useHeadSafe({
     { name: 'pragma', content: 'no-cache' },
     { name: 'expires', content: '0' },
   ],
-});
-
-// 🟢 2. STATE MANAGEMENT
-const isAddressModalOpen = ref(false);
-const isTaxAddressModalOpen = ref(false);
-const startWithDeliveryInModal = ref(false);
-const modalMode = ref<'shipping' | 'tax'>('shipping');
-const selectedPayment = ref<'bank' | 'qr' | ''>('');
-const selectedDeliveryMethod = ref<'next-day' | 'same-day' | 'counter' | 'dealer-123' | 'tmg' | ''>('');
-const paymentMethods = ['bank', 'qr'] as const;
-const isSubmitted = ref(false);
-const isTelValid = ref(true);
-
-const addressForm = ref({
-  addressDetail: {
-    label: '',
-    recipientName: '',
-    phone: '',
-    addressDetail: '',
-    subDistrict: '',
-    district: '',
-    province: '',
-    postalCode: '',
-    isDefault: false,
-    isTaxAddress: false,
-  } as any,
-});
-
-const savedAddresses = computed(() => currentUser.value?.addresses || []);
-const selectedAddressId = ref<number | string>('');
-const selectedTaxAddressId = ref<number | string>('');
-
-// 🟢 3. COMPUTED ADDRESSES (Handle First Use)
-const currentAddress = computed(() => {
-  if (savedAddresses.value.length === 0) return null;
-  if (!selectedAddressId.value) return null;
-  return savedAddresses.value.find((a: any) => a.id === selectedAddressId.value) || null;
-});
-
-const currentTaxAddress = computed(() => {
-  if (savedAddresses.value.length === 0 || !selectedTaxAddressId.value) return null;
-  return savedAddresses.value.find((a: Address) => a.id === selectedTaxAddressId.value) || null;
-});
-
-const showSelectionErrors = computed(
-  () => checkoutState.value.addressValidationAttempted,
-);
-const isShippingMissing = computed(() => !currentAddress.value);
-const isTaxMissing = computed(() => !currentTaxAddress.value);
-const isDeliveryMissing = computed(() => !selectedDeliveryMethod.value);
-const isPaymentMissing = computed(() => !selectedPayment.value);
-const selectedDeliveryData = computed(() => {
-  return deliveryMethods.find((method) => method.id === selectedDeliveryMethod.value) || null;
-});
-const currentTaxId = computed(() => {
-  return currentTaxAddress.value?.taxId || '';
-});
-const isShippingDefaultAddress = (address: Address) => {
-  if (typeof address.isDefaultShipping === 'boolean') return address.isDefaultShipping;
-  return !!address.isDefault && !address.isTaxAddress;
-};
-const isTaxDefaultAddress = (address: Address) => {
-  if (typeof address.isDefaultTax === 'boolean') return address.isDefaultTax;
-  return !!address.isDefault && !!address.isTaxAddress;
-};
-const currentShippingIsDefault = computed(() => {
-  return currentAddress.value ? isShippingDefaultAddress(currentAddress.value as Address) : false;
-});
-const currentTaxIsDefault = computed(() => {
-  return currentTaxAddress.value ? isTaxDefaultAddress(currentTaxAddress.value as Address) : false;
-});
-const modalAddresses = computed(() => {
-  return savedAddresses.value;
-});
-
-const openModal = (mode: 'shipping' | 'tax', startWithDelivery = false) => {
-  modalMode.value = mode;
-  startWithDeliveryInModal.value = startWithDelivery;
-  isAddressModalOpen.value = true;
-};
-
-const handleDeliveryConfirm = (method: string) => {
-  selectedDeliveryMethod.value = method as 'next-day' | 'same-day' | 'counter' | 'dealer-123' | 'tmg';
-  isAddressModalOpen.value = false;
-};
-
-const handleAddressSelect = (id: number | string) => {
-  if (modalMode.value === 'tax') selectedTaxAddressId.value = id;
-  else selectedAddressId.value = id;
-  isAddressModalOpen.value = false;
-};
-
-const handleAddressAdd = (newAddr: any) => {
-  if (!currentUser.value) return;
-  const id = Date.now();
-  if (newAddr.isDefault) {
-    currentUser.value.addresses.forEach((a: any) => {
-      if (modalMode.value === 'tax') a.isDefaultTax = false;
-      else a.isDefaultShipping = false;
-    });
-  }
-  currentUser.value.addresses.push({
-    id,
-    ...newAddr,
-    isDefaultTax: modalMode.value === 'tax' ? !!newAddr.isDefault : false,
-    isDefaultShipping: modalMode.value === 'shipping' ? !!newAddr.isDefault : false,
-    isDefault: !!newAddr.isDefault,
-  } as Address);
-
-  if (modalMode.value === 'tax') selectedTaxAddressId.value = id;
-  else selectedAddressId.value = id;
-
-  isAddressModalOpen.value = false;
-};
-
-const handleAddressUpdate = (payload: { id: number | string } & Record<string, any>) => {
-  if (!currentUser.value) return;
-
-  const index = currentUser.value.addresses.findIndex((a: any) => a.id === payload.id);
-  if (index === -1) return;
-
-  if (payload.isDefault) {
-    currentUser.value.addresses.forEach((a: any) => {
-      if (modalMode.value === 'tax') a.isDefaultTax = false;
-      else a.isDefaultShipping = false;
-    });
-  }
-
-  currentUser.value.addresses[index] = {
-    ...currentUser.value.addresses[index],
-    ...payload,
-    isDefaultTax: modalMode.value === 'tax'
-      ? !!payload.isDefault
-      : !!currentUser.value.addresses[index].isDefaultTax,
-    isDefaultShipping: modalMode.value === 'shipping'
-      ? !!payload.isDefault
-      : !!currentUser.value.addresses[index].isDefaultShipping,
-  } as Address;
-
-  if (modalMode.value === 'tax') selectedTaxAddressId.value = payload.id;
-  else selectedAddressId.value = payload.id;
-
-  isAddressModalOpen.value = false;
-};
-
-const handleAddressDelete = (id: number | string) => {
-  if (!currentUser.value) return;
-
-  currentUser.value.addresses = currentUser.value.addresses.filter((a: any) => a.id !== id);
-
-  if (selectedAddressId.value === id) selectedAddressId.value = '';
-  if (selectedTaxAddressId.value === id) selectedTaxAddressId.value = '';
-};
-
-const handleSetDefaultAddress = (id: number | string) => {
-  if (!currentUser.value) return;
-
-  currentUser.value.addresses.forEach((a: any) => {
-    if (modalMode.value === 'tax') a.isDefaultTax = a.id === id;
-    else a.isDefaultShipping = a.id === id;
-    a.isDefault = !!a.isDefaultShipping || !!a.isDefaultTax;
-  });
-};
-
-const joinAddressParts = (...parts: (string | undefined)[]) => {
-  return parts.map((part) => (part || '').trim()).filter(Boolean).join(' ');
-};
-
-const taxModalInitialData = computed(() => {
-  return currentTaxAddress.value;
-});
-
-const handleTaxAddressSubmit = (taxForm: Partial<Address>) => {
-  if (!currentUser.value) return;
-
-  const detailParts = [
-    taxForm.houseNo ? `เลขที่ ${taxForm.houseNo}` : '',
-    taxForm.building ? `อาคาร ${taxForm.building}` : '',
-    taxForm.floor ? `ชั้น ${taxForm.floor}` : '',
-    taxForm.moo ? `หมู่ ${taxForm.moo}` : '',
-    taxForm.village ? `หมู่บ้าน ${taxForm.village}` : '',
-    taxForm.soi ? `ซอย ${taxForm.soi}` : '',
-    taxForm.road ? `ถนน ${taxForm.road}` : '',
-  ];
-
-  const payload = {
-    label: 'ที่อยู่ออกใบกำกับภาษี',
-    recipientName: taxForm.recipientName || '',
-    phone: taxForm.phone || currentTaxAddress.value?.phone || currentAddress.value?.phone || '',
-    addressDetail: joinAddressParts(...detailParts) || taxForm.addressNote || '-',
-    subDistrict: taxForm.subDistrict || '',
-    district: taxForm.district || '',
-    province: taxForm.province || '',
-    postalCode: taxForm.postalCode || '',
-    isDefault: !!taxForm.isDefault,
-    isTaxAddress: true,
-    taxPayerType: taxForm.taxPayerType,
-    taxId: taxForm.taxId || '',
-    houseNo: taxForm.houseNo || '',
-    building: taxForm.building || '',
-    floor: taxForm.floor || '',
-    moo: taxForm.moo || '',
-    village: taxForm.village || '',
-    soi: taxForm.soi || '',
-    road: taxForm.road || '',
-    addressNote: taxForm.addressNote || '',
-  };
-
-  const existingId = selectedTaxAddressId.value;
-  const currentIndex = currentUser.value.addresses.findIndex((a: Address) => a.id === existingId);
-
-  if (payload.isDefault) {
-    currentUser.value.addresses.forEach((a: any) => {
-      a.isDefaultTax = false;
-      a.isDefault = !!a.isDefaultShipping || !!a.isDefaultTax;
-    });
-  }
-
-  if (currentIndex !== -1 && existingId) {
-    currentUser.value.addresses[currentIndex] = {
-      ...currentUser.value.addresses[currentIndex],
-      ...payload,
-      isDefaultTax: payload.isDefault,
-      isDefault: !!currentUser.value.addresses[currentIndex].isDefaultShipping || !!payload.isDefault,
-    } as Address;
-    selectedTaxAddressId.value = existingId;
-  } else {
-    const newId = Date.now();
-    currentUser.value.addresses.push({
-      id: newId,
-      ...payload,
-      isDefaultTax: payload.isDefault,
-      isDefaultShipping: false,
-      isDefault: !!payload.isDefault,
-    } as Address);
-    selectedTaxAddressId.value = newId;
-  }
-
-  isTaxAddressModalOpen.value = false;
-};
-
-const handleTaxAddressAddRequest = () => {
-  isAddressModalOpen.value = false;
-  startWithDeliveryInModal.value = false;
-  isTaxAddressModalOpen.value = true;
-};
-
-const goBack = () => {
-  router.push(`/po/${props.po?.id}`);
-};
-
-const getStockStatus = (item: any) => {
-  const stock = item.product.stock || 0;
-  if (stock <= 0) return { text: 'สินค้าหมด', colorClass: 'text-red-500', bgClass: 'bg-red-50' };
-  if (stock < item.quantity) return { text: `สินค้าไม่พอ (เหลือ ${stock})`, colorClass: 'text-orange-500', bgClass: 'bg-orange-50' };
-  return { text: 'พร้อมส่งครบ', colorClass: 'text-emerald-600', bgClass: 'bg-emerald-50' };
-};
-
-const getLineTotal = (item: any) => {
-  const price = item.priceAtPurchase ?? 0;
-  return price * getEffectiveQuantity(item);
-};
-
-// Sync Default Address on Load
-// ค้นหาที่อยู่เริ่มต้นสำหรับจัดส่ง และที่อยู่เริ่มต้นสำหรับภาษี
-watch(savedAddresses, (newAddrs) => {
-  if (newAddrs.length > 0) {
-    // 1. หาที่อยู่จัดส่งที่เป็น Default
-    const defaultShipping = newAddrs.find((a: Address) => isShippingDefaultAddress(a) && !a.isTaxAddress);
-    if (defaultShipping && !selectedAddressId.value) {
-      selectedAddressId.value = defaultShipping.id;
-    }
-
-    // 2. ✨ Logic ที่คุณต้องการ: หาที่อยู่ภาษีที่เป็น Default
-    const defaultTax = newAddrs.find((a: Address) => isTaxDefaultAddress(a) && a.isTaxAddress);
-    if (defaultTax && !selectedTaxAddressId.value) {
-      selectedTaxAddressId.value = defaultTax.id;
-    }
-  } else {
-    selectedAddressId.value = '';
-    selectedTaxAddressId.value = '';
-  }
-}, { immediate: true });
-
-watch(
-  [currentAddress, currentTaxAddress, selectedDeliveryMethod, selectedPayment],
-  () => {
-    setAddressSelections({
-      shippingAddressSelected: !!currentAddress.value,
-      taxAddressSelected: !!currentTaxAddress.value,
-      deliveryMethodSelected: !!selectedDeliveryMethod.value,
-      paymentMethodSelected: !!selectedPayment.value,
-    });
-  },
-  { immediate: true },
-);
-
-onMounted(() => {
-  setAddressValidationAttempted(false);
 });
 </script>
 
