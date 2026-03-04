@@ -13,9 +13,7 @@ const { currentUser, logout } = useAuth();
 const { menuGroupsProfile } = useNavigationProfile();
 const { userOrders, getLatestUserPO } = useMockPO();
 
-const emit = defineEmits<{
-  (e: 'logout'): void
-}>();
+const emit = defineEmits(['logout']);
 
 /* ===============================
    COMPUTED
