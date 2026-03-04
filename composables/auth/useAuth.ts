@@ -1,81 +1,114 @@
-
+import type { CartItem, UserCart } from '~/types/cart';
 import type { Product } from '~/types/product';
-import type { CartItem } from '~/types/cart';
-import { useRolePricing } from './useRolePricing';
+import type { User } from '~/types/user';
+
+import { useRolePricing, type UserRole } from './useRolePricing';
 import { useUser } from './useUser';
 
-export const useAuth = () => {
-const currentUserId = useState<number | null>('active-user-id', () => 202); 
-  const { getRolePrice: calculateRolePrice } = useRolePricing();
-  
-  const { users: allUsers } = useUser();
+const createDefaultCart = (userId: number): UserCart => ({
+  id: `cart-default-${userId}`,
+  name: 'ตะกร้าสินค้าหลัก',
+  items: [],
+  isDefault: true,
+  createdAt: new Date().toISOString(),
+});
 
-  // 🟢 2. ดึงข้อมูล User จริงๆ จาก useUser เสมอ (Reactivity Link)
-  const currentUser = computed(() => 
-    allUsers.value.find(u => u.id === currentUserId.value) || null
+export const useAuth = () => {
+  const currentUserId = useState<number | null>('active-user-id', () => 202);
+  const { users } = useUser();
+  const { getRolePrice: calculateRolePrice } = useRolePricing();
+
+  const currentUser = computed(
+    () => users.value.find((user) => user.id === currentUserId.value) || null,
   );
 
-  const login = (role: 'Technician' | 'Dealer' | 'Franchise') => {
-    const foundUser = allUsers.value.find(u => u.role === role);
-    if (foundUser) {
-      currentUserId.value = foundUser.id; // 🟢 เปลี่ยนแค่ ID เดี๋ยวทุกหน้าจะเปลี่ยนตามเอง
-      
-      // Initialize cart if needed
-      if (!foundUser.carts) {
-        foundUser.carts = [{
-          id: `cart-default-${foundUser.id}`,
-          name: 'ตะกร้าสินค้าหลัก',
-          items: [],
-          isDefault: true,
-          createdAt: new Date().toISOString()
-        }];
-      }
+  const ensureUserDefaultCart = (user: User) => {
+    if (!user.carts?.length) {
+      user.carts = [createDefaultCart(user.id)];
     }
   };
 
-  const logout = () => { currentUserId.value = null; };
-
-  // 3. Cart Actions (Integrated into Auth)
   const activeCart = computed(() => {
-    if (!currentUser.value || !currentUser.value.carts) return null;
-    return currentUser.value.carts.find(c => c.isDefault) || currentUser.value.carts[0];
+    const user = currentUser.value;
+    if (!user?.carts?.length) return null;
+    return user.carts.find((cart) => cart.isDefault) || user.carts[0];
   });
 
+  const getRolePrice = (basePrice: number) =>
+    calculateRolePrice(basePrice, currentUser.value?.role);
+
   const addToCart = (product: Product, quantity: number = 1) => {
-    if (!currentUser.value || !activeCart.value) {
-    //   console.warn('Please login to add items to cart');
+    const user = currentUser.value;
+    if (!user) return;
+
+    ensureUserDefaultCart(user);
+    const cart = activeCart.value;
+    if (!cart) return;
+
+    const existingItem = cart.items.find((item) => item.product.id === product.id);
+    if (existingItem) {
+      existingItem.quantity += quantity;
       return;
     }
 
-    const priceAtAdded = getRolePrice(product.price);
+    const newItem: CartItem = {
+      product: JSON.parse(JSON.stringify(product)),
+      quantity,
+      priceAtAdded: getRolePrice(product.price),
+      addedAt: new Date().toISOString(),
+    };
 
-    // Check if product exists in current active cart
-    const existingItem = activeCart.value.items.find(item => item.product.id === product.id);
+    cart.items.push(newItem);
+  };
 
-    if (existingItem) {
-      existingItem.quantity += quantity;
-    } else {
-      const newItem: CartItem = {
-        product: { ...product }, // Snapshot of product
-        quantity,
-        priceAtAdded,
-        addedAt: new Date().toISOString()
-      };
-      activeCart.value.items.push(newItem);
+  const createNewCart = (name: string) => {
+    const user = currentUser.value;
+    if (!user) return;
+
+    if (!user.carts) {
+      user.carts = [];
     }
+
+    const newCart: UserCart = {
+      id: `cart-${Date.now()}`,
+      name,
+      items: [],
+      isDefault: false,
+      createdAt: new Date().toISOString(),
+    };
+
+    user.carts.push(newCart);
   };
 
-  // 4. Helper for Role Based Pricing
-  const getRolePrice = (basePrice: number) => {
-    return calculateRolePrice(basePrice, currentUser.value?.role);
+  const setDefaultCart = (cartId: string) => {
+    const carts = currentUser.value?.carts;
+    if (!carts) return;
+
+    carts.forEach((cart) => {
+      cart.isDefault = cart.id === cartId;
+    });
   };
 
-  return { 
-    currentUser, 
-    login, 
-    logout, 
-    activeCart, 
-    addToCart, 
-    getRolePrice 
+  const login = (role: UserRole) => {
+    const foundUser = users.value.find((user) => user.role === role);
+    if (!foundUser) return;
+
+    currentUserId.value = foundUser.id;
+    ensureUserDefaultCart(foundUser);
+  };
+
+  const logout = () => {
+    currentUserId.value = null;
+  };
+
+  return {
+    currentUser,
+    login,
+    logout,
+    activeCart,
+    addToCart,
+    createNewCart,
+    setDefaultCart,
+    getRolePrice,
   };
 };

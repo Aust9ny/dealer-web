@@ -1,4 +1,6 @@
-type UserRole = 'Technician' | 'Dealer' | 'Franchise';
+import type { User } from '~/types/user';
+
+export type UserRole = User['role'];
 
 const ROLE_MULTIPLIERS: Record<UserRole, number> = {
   Technician: 0.96,
