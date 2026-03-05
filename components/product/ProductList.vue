@@ -43,7 +43,7 @@ const filteredProducts = computed(() => {
 });
 
 const displayTitle = computed(() => {
-  if (selectedCategory.value === 'All') return props.title || 'รายการสินค้าแนะนำ';
+  if (selectedCategory.value === 'All') return  'รายการสินค้าแนะนำ';
   return `รายการสินค้าประเภท ${selectedCategory.value}`;
 });
 

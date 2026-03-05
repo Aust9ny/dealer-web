@@ -7,7 +7,6 @@ import TaxAddressModal from '~/components/po/TaxAddressModal.vue';
 import { usePOPricing } from '@/composables/po/usePOPricing';
 import { useUser } from '~/composables/auth/useUser';
 import { useAuth } from '~/composables/auth/useAuth';
-import { usePOCheckoutState } from '~/composables/po/usePOCheckoutState';
 import { useDeliveryMethods } from '~/composables/po/useDeliveryMethods';
 import { usePOAddressStep } from '~/composables/po/usePOAddressStep';
 
@@ -43,11 +42,6 @@ const props = defineProps<{
 const { getFullAddress } = useUser();
 const { currentUser } = useAuth();
 const { getEffectiveQuantity } = usePOPricing();
-const {
-  state: checkoutState,
-  setAddressSelections,
-  setAddressValidationAttempted,
-} = usePOCheckoutState();
 const { deliveryMethods } = useDeliveryMethods();
 
 const {
@@ -91,10 +85,7 @@ const {
 } = usePOAddressStep({
   currentUser,
   deliveryMethods,
-  setAddressSelections,
-  setAddressValidationAttempted,
   getEffectiveQuantity: getEffectiveQuantity as any,
-  checkoutState,
   poId: props.po?.id,
 });
 

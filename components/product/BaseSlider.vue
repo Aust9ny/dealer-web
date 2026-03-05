@@ -70,8 +70,7 @@ const updateVisibleItems = () => {
     if (width >= 1280) visibleItems.value = props.itemsPerRow || 5;
     else if (width >= 1024) visibleItems.value = 4;
     else if (width >= 768) visibleItems.value = 3;
-    else if (width >= 640) visibleItems.value = 2;
-    else visibleItems.value = 1;
+    else visibleItems.value = 2;
   }
 };
 
@@ -118,7 +117,7 @@ onUnmounted(() => {
 
 <template>
   <div class="carousel-container overflow-hidden">
-    <div class="flex items-center justify-between mb-4 md:mx-14 px-4 md:px-0">
+    <div class="flex items-center justify-between mb-2 md:mb-4 md:mx-14 px-4 md:px-0">
       <slot name="header-action" />
     </div>
 
@@ -132,14 +131,14 @@ onUnmounted(() => {
     >
       <button
         v-if="totalPages > 1 && shouldShowArrows"
-        class="nav-btn left-2 md:left-4"
+        class="nav-btn left-1 md:left-4 hidden md:flex" 
         :disabled="currentIndex === 0" 
         @click="prev()"
       >
-        <Icon icon="mdi:chevron-left" class="w-6 h-6" />
+        <Icon icon="mdi:chevron-left" class="w-5 h-5 md:w-6 md:h-6" />
       </button>
 
-      <div :class="['overflow-hidden rounded-2xl transition-all', visibleItems > 1 ? 'md:px-12 px-2' : 'px-0']">
+      <div :class="['overflow-hidden rounded-2xl transition-all', visibleItems > 1 ? 'md:px-12 px-1' : 'px-0']">
         <div
           class="flex transition-transform duration-700 ease-[cubic-bezier(0.25,1,0.5,1)]"
           :style="{ transform: `translateX(${transformOffset}%)` }"
@@ -149,8 +148,12 @@ onUnmounted(() => {
             :key="index"
             class="flex-none p-1 md:p-2 transition-none"
             :class="[
-              // กรณีพิเศษสำหรับ Banner ที่ต้องการ 1 รูปเสมอ
-              itemsPerRow === 1 ? 'w-full' : 'w-full sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5'
+              // 🟢 แก้ไขตรงนี้: 
+              // ถ้าไม่ใช่ Banner (itemsPerRow > 1) 
+              // ให้ Mobile แสดง 2 รูป (w-1/2) แทนการเต็มจอ (w-full)
+              itemsPerRow === 1 
+                ? 'w-full' 
+                : 'w-1/2 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5' 
             ]"
           >
             <slot :item="item" />
@@ -160,19 +163,19 @@ onUnmounted(() => {
 
       <button
         v-if="totalPages > 1 && shouldShowArrows"
-        class="nav-btn right-2 md:right-4"
+        class="nav-btn right-1 md:right-4 hidden md:flex"
         :disabled="currentIndex >= items.length - visibleItems"
         @click="next()"
       >
-        <Icon icon="mdi:chevron-right" class="w-6 h-6" />
+        <Icon icon="mdi:chevron-right" class="w-5 h-5 md:w-6 md:h-6" />
       </button>
     </div>
 
-    <div v-if="totalPages > 1" class="flex justify-center gap-1.5 mt-6 md:mt-8">
+    <div v-if="totalPages > 1" class="flex justify-center gap-1 mt-4 md:mt-8">
       <button
         v-for="(_, i) in totalPages" :key="i"
-        class="h-1.5 transition-all duration-300 rounded-full"
-        :class="currentPage === i ? 'w-8 md:w-10 bg-[#2196F3]' : 'w-1.5 md:w-2 bg-slate-300 hover:bg-slate-400'"
+        class="h-1 md:h-1.5 transition-all duration-300 rounded-full"
+        :class="currentPage === i ? 'w-6 md:w-10 bg-[#2196F3]' : 'w-1 md:w-2 bg-slate-300'"
         @click="currentIndex = i * visibleItems"
       />
     </div>
