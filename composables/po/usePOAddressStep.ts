@@ -1,5 +1,6 @@
 /* eslint-disable no-unused-vars */
 import type { Address } from '@/types/address';
+import { usePOCheckoutState } from './usePOCheckoutState';
 
 type PaymentMethod = 'bank' | 'qr' | '';
 type DeliveryMethod =
@@ -21,28 +22,22 @@ type POItem = {
 type UsePOAddressStepArgs = {
   currentUser: Ref<{ addresses: Address[] } | null | undefined>;
   deliveryMethods: Array<{ id: string; label?: string; desc?: string }>;
-  setAddressSelections: (_payload: {
-    shippingAddressSelected: boolean;
-    taxAddressSelected: boolean;
-    deliveryMethodSelected: boolean;
-    paymentMethodSelected: boolean;
-  }) => void;
-  setAddressValidationAttempted: (_value: boolean) => void;
   getEffectiveQuantity: (_item: POItem) => number;
-  checkoutState: Ref<{ addressValidationAttempted: boolean }>;
   poId: string | number | undefined;
 };
 
 export const usePOAddressStep = ({
   currentUser,
   deliveryMethods,
-  setAddressSelections,
-  setAddressValidationAttempted,
   getEffectiveQuantity,
-  checkoutState,
   poId,
 }: UsePOAddressStepArgs) => {
   const router = useRouter();
+  const {
+    state: checkoutState,
+    setAddressSelections,
+    setAddressValidationAttempted,
+  } = usePOCheckoutState();
 
   const isAddressModalOpen = ref(false);
   const isTaxAddressModalOpen = ref(false);
@@ -84,10 +79,10 @@ export const usePOAddressStep = ({
   });
 
   const showSelectionErrors = computed(() => checkoutState.value.addressValidationAttempted);
-  const isShippingMissing = computed(() => !currentAddress.value);
-  const isTaxMissing = computed(() => !currentTaxAddress.value);
-  const isDeliveryMissing = computed(() => !selectedDeliveryMethod.value);
-  const isPaymentMissing = computed(() => !selectedPayment.value);
+  const isShippingMissing = computed(() => !checkoutState.value.shippingAddressSelected);
+  const isTaxMissing = computed(() => !checkoutState.value.taxAddressSelected);
+  const isDeliveryMissing = computed(() => !checkoutState.value.deliveryMethodSelected);
+  const isPaymentMissing = computed(() => !checkoutState.value.paymentMethodSelected);
   const selectedDeliveryData = computed(() => {
     return deliveryMethods.find((method) => method.id === selectedDeliveryMethod.value) || null;
   });
