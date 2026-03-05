@@ -24,9 +24,10 @@ const mainPaddingClass = computed(() => {
     
     <Topbar />
     
-    <main :class="['', mainPaddingClass]">
+    <main :class="['pt-16 md:pt-23', mainPaddingClass]">
       <slot />
     </main>
+
     <BackToTop/>
     <BottomNav />
     <Footer v-if="footerType === 'default'" />

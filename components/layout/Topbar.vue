@@ -158,7 +158,7 @@ const handleNavClick = (link: NavLink) => {
 
 <template>
   <header
-    class="relative top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
+    class=" fixed top-0 left-0 w-full h-16 md:h-23 bg-white flex items-center px-4 md:px-12 border-t-8 md:border-t-10 border-primary shadow-sm z-110"
   >
     <div
       v-if="showSearchModal"
