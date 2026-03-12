@@ -1,0 +1,3 @@
+GET https://developback.advice.in.th/apiadvicedealer/v1.0.0/product/category/get
+# Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0eXBlIjoib25saW5lIiwicGxhdGZvcm0iOiJhZHZpY2VkZWFsZXIiLCJpc19tZW1iZXIiOnRydWUsInVzZXIiOiJDMkxSMCIsInVzZXI4IjoiMzA4ODI2ODAiLCJjdXNfbGV2ZWwiOiIyMSIsImlhdCI6MTc3MzIwMTQ1MiwiZXhwIjoxNzczODA2MjUyfQ.WIubp_dPhe-0ws028cfPL1xEXnP-cEqIsMQGR8DJrR0
+Content-Type: application/json
