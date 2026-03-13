@@ -2,30 +2,51 @@
 import { Icon } from '@iconify/vue';
 import type { StyleValue } from 'vue';
 import { productGroupsData } from '~/composables/category/usecategory_get';
+import { extractProductItems, productListData, type ProductListItem, type ProductListResponse } from '~/composables/category/useProduct_get';
 import type { ProductGroup, ProductGroupResponse } from '~/types/Product/product_group';
 import type { MenuSub } from '~/types/Product/menu_sub';
 import type { MenuDetail } from '~/types/Product/menu_dtl';
 
-// 🟢 1. FETCH DATA & INTERFACE
-const { data: ProductData, pending, error } = await useAsyncData<ProductGroupResponse>(
+// 🟢 1. FETCH DATA & INTERFACES
+const emptyCategoryResponse = (): ProductGroupResponse => ({
+  status: '',
+  statusCode: '',
+  data: [],
+  message: '',
+  message_m: '',
+});
+
+const emptyProductListResponse = (): ProductListResponse => ({
+  data: [],
+});
+
+const { data: ProductData, pending, error } = useLazyAsyncData<ProductGroupResponse>(
   'product-groups-key',
-  () => productGroupsData()
+  productGroupsData,
+  {
+    default: emptyCategoryResponse,
+  },
 );
 
 interface CategoryNode {
   id: number;
   name: string;
   icon: string;
-  subCats: string[];
+  subCats: Array<{
+    id: number;
+    name: string;
+    lookupName: string;
+    slug: string;
+  }>;
 }
 
 const productGroups = computed<ProductGroup[]>(() => ProductData.value?.data ?? []);
 
 // 🟢 2. STATES & REFS
 const isSidebarOpen = ref(true);
-const activeCategory = ref<number>(1);
-const activeSubCategory = ref<string>('iPhone');
-const activeSubTag = ref<string>('ALL');
+const activeCategory = ref<number | null>(null);
+const activeSubCategoryId = ref<number | null>(null);
+const activeSubTagId = ref<number | 'ALL'>('ALL');
 const globalLoading = useState('global-loading', () => false);
 const viewMode = ref<'grid' | 'list'>('list');
 
@@ -37,97 +58,121 @@ const isFlipped = ref(false);
 const searchQuery = ref('');
 const stockStatus = ref<'ทั้งหมด' | 'มีของ' | 'ของหมด'>('ทั้งหมด');
 
-// 🟢 1. ดึงข้อมูล Object ของหมวดหมู่ย่อยที่กำลังเลือกอยู่
+// 🟢 3. COMPUTED SELECTIONS
 const activeGroup = computed<ProductGroup | null>(() => {
   if (!activeCategory.value) return null;
   return productGroups.value.find((group) => group.group_id === activeCategory.value) ?? null;
 });
 
 const activeSubCategoryData = computed<MenuSub | null>(() => {
-  if (!activeGroup.value || !activeSubCategory.value) return null;
-  
-  return activeGroup.value.menu_sub.find((sub) => sub.grpname === activeSubCategory.value) ?? null;
+  if (!activeGroup.value || !activeSubCategoryId.value) return null;
+  return activeGroup.value.menu_sub.find((sub) => sub.id === activeSubCategoryId.value) ?? null;
 });
 
-// 🟢 2. สร้าง Dynamic Tags จาก menu_dtl
+const selectedMenuDetail = computed<MenuDetail | null>(() => {
+  if (!activeSubCategoryData.value || activeSubTagId.value === 'ALL') return null;
+  return activeSubCategoryData.value.menu_dtl.find((detail) => detail.menu_dtl_id === activeSubTagId.value) ?? null;
+});
+
+const activeSubCategory = computed(() => activeSubCategoryData.value?.grpname || activeSubCategoryData.value?.grp || '');
+const activeSubTag = computed(() => selectedMenuDetail.value?.menu_dtl_name || 'ALL');
+
 const currentSubCatTags = computed(() => {
   if (!activeSubCategoryData.value?.menu_dtl) return [];
-  
-  return activeSubCategoryData.value.menu_dtl.map((dtl) => dtl.menu_dtl_name);
+  return activeSubCategoryData.value.menu_dtl.map((dtl) => ({
+    id: dtl.menu_dtl_id,
+    name: dtl.menu_dtl_name,
+  }));
 });
 
-// 🟢 3. MAPPING REAL DATA TO CATEGORIES
 const categories = computed(() => {
   return productGroups.value.map((group) => ({
     id: group.group_id,
     name: group.group_name,
-    icon: group.group_id === 39 ? '📱' : '📦', // Apple ID 39
-    subCats: group.menu_sub.map((sub) => sub.grpname),
+    icon: group.group_id === 39 ? '📱' : '📦',
+    subCats: group.menu_sub.map((sub) => ({
+      id: sub.id,
+      name: sub.grpname,
+      lookupName: sub.grp,
+      slug: sub.slugs,
+    })),
   })) as CategoryNode[];
 });
 
-const filteredDetails = computed<MenuDetail[]>(() => {
-  let details = [...(activeSubCategoryData.value?.menu_dtl ?? [])];
+// 🟢 4. PRODUCT LIST DATA FETCHING
+const productListRequest = computed(() => ({
+  gr: activeSubCategoryData.value?.menu_id ?? '',
+  gmall: selectedMenuDetail.value?.menu_dtl_id ?? '',
+  mnew_grp: activeSubCategoryData.value?.grp ?? '',
+  hi_end: '',
+  old_data: '',
+}));
 
-  if (activeSubTag.value !== 'ALL') {
-    details = details.filter((detail) => detail.menu_dtl_name === activeSubTag.value);
+const {
+  data: productListResponse,
+  pending: productListPending,
+  error: productListError,
+} = useLazyAsyncData<ProductListResponse>(
+  'category-product-list',
+  async () => {
+    if (!productListRequest.value.gr || !productListRequest.value.mnew_grp) {
+      return emptyProductListResponse();
+    }
+    return await productListData(productListRequest.value);
+  },
+  {
+    default: emptyProductListResponse,
+    watch: [productListRequest],
+  },
+);
+
+const productItems = computed<ProductListItem[]>(() => extractProductItems(productListResponse.value));
+
+const getItemStock = (item: ProductListItem) => {
+  const value = item.stock ?? item.qty ?? item.item_no;
+  if (typeof value === 'number') return value;
+  if (typeof value === 'string' && value.trim() !== '') {
+    const parsed = Number(value.replace(/,/g, '')); // ลบลูกน้ำออกก่อนแปลง
+    return Number.isFinite(parsed) ? parsed : 0;
   }
+  return 0;
+};
+
+// 🟢 5. FIXED FILTER LOGIC (เปลี่ยน details เป็น items)
+const filteredProductItems = computed<ProductListItem[]>(() => {
+  let items = [...productItems.value];
 
   if (searchQuery.value) {
     const query = searchQuery.value.toLowerCase();
-    details = details.filter((detail) =>
-      detail.menu_dtl_name.toLowerCase().includes(query) ||
-      detail.slug_dtl.toLowerCase().includes(query),
+    items = items.filter((item) => 
+      (item.name?.toLowerCase().includes(query)) || 
+      (item.code?.toLowerCase().includes(query))
     );
   }
 
   if (stockStatus.value === 'มีของ') {
-    details = details.filter((detail) => detail.menu_dtl_alive === 'T' && detail.item_no > 0);
+    items = items.filter((item) => getItemStock(item) > 0);
   }
 
   if (stockStatus.value === 'ของหมด') {
-    details = details.filter((detail) => detail.menu_dtl_alive !== 'T' || detail.item_no <= 0);
+    items = items.filter((item) => getItemStock(item) <= 0);
   }
 
-  return details;
+  return items;
 });
 
-const dropdownGroups = computed<Record<string, ProductGroup[]>>(() => {
-  const activeGroupValue = activeGroup.value;
-  const activeSubValue = activeSubCategoryData.value;
-
-  if (!activeGroupValue || !activeSubValue) return {};
-
-  const groupByTag = new Map<string, MenuDetail[]>();
-
-  filteredDetails.value.forEach((detail) => {
-    const tagName = detail.menu_dtl_name || 'no data';
-    const existing = groupByTag.get(tagName) ?? [];
-    existing.push(detail);
-    groupByTag.set(tagName, existing);
-  });
-
-  return Array.from(groupByTag.entries()).reduce((acc, [tagName, details]) => {
-    acc[tagName] = [
-      {
-        ...activeGroupValue,
-        menu_sub: [
-          {
-            ...activeSubValue,
-            menu_dtl: details,
-          },
-        ],
-      },
-    ];
-    return acc;
-  }, {} as Record<string, ProductGroup[]>);
+// 🟢 6. FIXED DROPDOWN GROUPS (ประกันว่ามี Label เสมอ)
+const dropdownGroups = computed<Record<string, ProductListItem[]>>(() => {
+  if (filteredProductItems.value.length === 0) return {};
+  const label = (activeSubTagId.value === 'ALL' ? activeSubCategory.value : activeSubTag.value) || 'รายการสินค้า';
+  return { [label]: filteredProductItems.value };
 });
 
 const activeCategoryName = computed(
   () => categories.value.find((c) => c.id === activeCategory.value)?.name || 'Categories',
 );
 
-// 🟢 5. ACTIONS
+// 🟢 7. ACTIONS
 const toggleCategory = (cat: CategoryNode, event: MouseEvent) => {
   if (!isSidebarOpen.value) {
     const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
@@ -136,29 +181,33 @@ const toggleCategory = (cat: CategoryNode, event: MouseEvent) => {
     tempCategory.value = cat;
     isQuickSelectOpen.value = true;
   } else {
-    activeCategory.value = activeCategory.value === cat.id ? 0 : cat.id;
+    activeCategory.value = activeCategory.value === cat.id ? null : cat.id;
   }
 };
 
 const selectMainCategory = (cat: CategoryNode) => { tempCategory.value = cat; };
 
-const selectSubCategory = async (catId: number, subName: string) => {
+const selectSubCategory = async (catId: number, subId: number) => {
   globalLoading.value = true;
   activeCategory.value = catId;
-  activeSubCategory.value = subName;
-  activeSubTag.value = 'ALL';
+  activeSubCategoryId.value = subId;
+  activeSubTagId.value = 'ALL';
   isQuickSelectOpen.value = false;
   try { await new Promise((r) => setTimeout(r, 400)); } 
   finally { globalLoading.value = false; }
 };
 
-const handleModalSelect = (catId: number, subName: string) => selectSubCategory(catId, subName);
+const handleModalSelect = (catId: number, subId: number) => selectSubCategory(catId, subId);
   
 const resetFilters = () => {
   searchQuery.value = ''; 
   stockStatus.value = 'ทั้งหมด';
-  activeSubTag.value = 'ALL';
+  activeSubTagId.value = 'ALL';
 };
+
+const hasLoadedGroups = computed(() => productGroups.value.length > 0);
+const hasLoadedProductItems = computed(() => productItems.value.length > 0);
+const showProductDebug = true; // เปิดไว้เพื่อตรวจสอบค่า
 
 const dropdownStates = ref<Record<string, boolean>>({});
 const toggleDropdown = (tag: string) => (dropdownStates.value[tag] = !dropdownStates.value[tag]);
@@ -171,30 +220,21 @@ watch(dropdownGroups, (newG) => {
 
 watch(categories, (newCategories) => {
   if (!newCategories.length) return;
-
-  if (!newCategories.some((category) => category.id === activeCategory.value)) {
+  if (!activeCategory.value || !newCategories.some((c) => c.id === activeCategory.value)) {
     activeCategory.value = newCategories[0].id;
   }
-
-  const selectedCategory = newCategories.find((category) => category.id === activeCategory.value) ?? newCategories[0];
-  if (!selectedCategory.subCats.includes(activeSubCategory.value)) {
-    activeSubCategory.value = selectedCategory.subCats[0] ?? '';
+  const selectedCategory = newCategories.find((c) => c.id === activeCategory.value) ?? newCategories[0];
+  if (!activeSubCategoryId.value || !selectedCategory.subCats.some((s) => s.id === activeSubCategoryId.value)) {
+    activeSubCategoryId.value = selectedCategory.subCats[0]?.id ?? null;
   }
 }, { immediate: true });
 
-// VIEWPORT & STYLES (KEEP ORIGINAL)
 const { $viewport } = useNuxtApp();
 const desktopStyles = computed((): StyleValue => {
   if (!import.meta.client || !$viewport.isGreaterOrEquals('lg')) return {};
   const baseLeft = isSidebarOpen.value ? '280px' : '92px';
   const styles: Record<string, string | number> = { left: baseLeft, width: '340px', position: 'fixed' };
-  if (isFlipped.value) {
-    styles.bottom = `${window.innerHeight - (flyoutOffset.value + 48)}px`;
-    styles.top = 'auto';
-  } else {
-    styles.top = `${flyoutOffset.value - 12}px`;
-    styles.bottom = 'auto';
-  }
+  styles[isFlipped.value ? 'bottom' : 'top'] = isFlipped.value ? `${window.innerHeight - (flyoutOffset.value + 48)}px` : `${flyoutOffset.value - 12}px`;
   return styles as StyleValue;
 });
 
@@ -203,7 +243,6 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
 
 <template>
   <div class="flex flex-col min-h-screen w-full bg-slate-100 p-2 md:p-4 font-sans">
-    
     <nav class="flex items-center gap-2 mb-4 px-2 md:px-4 text-xs md:text-sm font-medium overflow-x-auto whitespace-nowrap scrollbar-hide">
       <NuxtLink to="/" class="flex items-center gap-1 text-slate-500 hover:text-[#0D95DA] transition-colors">
         <Icon icon="mdi:home-outline" class="w-4 h-4" /> หน้าแรก
@@ -215,7 +254,6 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
     </nav>
 
     <div class="flex flex-1 flex-col lg:flex-row gap-3 items-start overflow-visible">
-      
       <aside :class="[isSidebarOpen ? 'lg:w-64' : 'lg:w-20']" class="hidden lg:flex w-full lg:sticky lg:top-4 lg:h-[calc(100vh-60px)] bg-white transition-all duration-300 flex-col rounded-xl border-t-6 border-t-[#0D95DA] shadow-md shrink-0 overflow-hidden">
         <div class="p-4 flex justify-between items-center border-b h-16 shrink-0">
           <span v-if="isSidebarOpen" class="font-bold truncate text-black uppercase tracking-wider">Categories</span>
@@ -236,8 +274,8 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
               <Icon v-if="isSidebarOpen" icon="mdi:chevron-down" class="w-4 h-4 opacity-50" :class="{ 'rotate-180': activeCategory === cat.id }" />
             </div>
             <div v-if="activeCategory === cat.id && isSidebarOpen" class="overflow-hidden bg-white mb-2">
-              <div v-for="sub in cat.subCats" :key="sub" class="py-2.5 pl-12 pr-4 text-xs font-semibold cursor-pointer hover:text-[#0D95DA] hover:bg-slate-50 transition-colors" :class="activeSubCategory === sub ? 'text-[#0D95DA] bg-blue-50 rounded-lg' : 'text-slate-400'" @click="selectSubCategory(cat.id, sub)">
-                {{ sub }}
+              <div v-for="sub in cat.subCats" :key="sub.id" class="py-2.5 pl-12 pr-4 text-xs font-semibold cursor-pointer hover:text-[#0D95DA] hover:bg-slate-50 transition-colors" :class="activeSubCategoryId === sub.id ? 'text-[#0D95DA] bg-blue-50 rounded-lg' : 'text-slate-400'" @click="selectSubCategory(cat.id, sub.id)">
+                {{ sub.name }}
               </div>
             </div>
           </div>
@@ -245,30 +283,22 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
       </aside>
 
       <main class="flex-1 flex flex-col min-w-0 gap-3 w-full">
-        <button class="lg:hidden flex items-center justify-center gap-2 bg-white p-4 rounded-xl shadow-sm border-t-4 border-t-[#0D95DA] font-bold text-slate-700 w-full" @click="isQuickSelectOpen = true; tempCategory = null;">
-          <Icon icon="mdi:grid" /> เลือกหมวดหมู่สินค้า
-        </button>
-
         <header class="bg-white border-b border-slate-200 p-6 shadow-sm shrink-0 rounded-2xl border-t-6 border-t-[#0D95DA] mr-2">
           <div class="flex justify-between items-center mb-6 border-b border-slate-200 pb-4">
             <div class="flex items-baseline gap-2">
-              <h2 class="text-xl text-slate-800">{{ activeSubCategory || activeCategoryName }}</h2>
-              <span class="text-slate-400 text-xs">({{ filteredDetails.length }} รายการ)</span>
+              <h2 class="text-xl text-slate-800 font-bold uppercase">{{ activeSubCategory || activeCategoryName }}</h2>
+              <span class="text-slate-400 text-xs">({{ filteredProductItems.length }} รายการ)</span>
             </div>
             <div class="flex items-center gap-3">
-              <button class="p-2 transition-all rounded-lg border" :class="[viewMode === 'grid' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 border-slate-200']" @click="viewMode = 'grid'">
-                <Icon icon="mdi:view-grid-outline" class="w-5 h-5" />
-              </button>
-              <button class="p-2 transition-all rounded-lg border" :class="[viewMode === 'list' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 border-slate-200']" @click="viewMode = 'list'">
-                <Icon icon="mdi:format-list-bulleted" class="w-5 h-5" />
-              </button>
+              <button class="p-2 transition-all rounded-lg border" :class="[viewMode === 'grid' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 border-slate-200']" @click="viewMode = 'grid'"><Icon icon="mdi:view-grid-outline" class="w-5 h-5" /></button>
+              <button class="p-2 transition-all rounded-lg border" :class="[viewMode === 'list' ? 'text-[#0D95DA] bg-blue-50 border-blue-200' : 'text-slate-400 border-slate-200']" @click="viewMode = 'list'"><Icon icon="mdi:format-list-bulleted" class="w-5 h-5" /></button>
             </div>
           </div>
 
           <div class="space-y-4">
             <div class="flex flex-wrap gap-3 pb-6 border-b border-slate-200">
-              <button :class="[activeSubTag === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = 'ALL'">ALL</button>
-              <button v-for="tag in currentSubCatTags" :key="tag" :class="[activeSubTag === tag ? 'bg-primary text-white' : 'bg-white text-slate-500']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTag = tag">{{ tag }}</button>
+              <button :class="[activeSubTagId === 'ALL' ? 'bg-primary text-white' : 'bg-white text-slate-500']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTagId = 'ALL'">ALL</button>
+              <button v-for="tag in currentSubCatTags" :key="tag.id" :class="[activeSubTagId === tag.id ? 'bg-primary text-white' : 'bg-white text-slate-500']" class="px-5 py-2 rounded-full text-md border transition-all" @click="activeSubTagId = tag.id">{{ tag.name }}</button>
             </div>
           </div>
 
@@ -288,20 +318,36 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
           </div>
         </header>
 
+        <div v-if="showProductDebug" class="bg-slate-900 text-slate-100 rounded-2xl p-4 space-y-2 overflow-x-auto text-[10px]">
+           <p class="font-bold text-blue-400 uppercase tracking-widest border-b border-slate-700 pb-1 mb-2">Debug Info</p>
+           <p>Item Count: {{ productItems.length }} | Filtered: {{ filteredProductItems.length }}</p>
+           <p>Request: {{ productListRequest }}</p>
+           <p>Label Used: {{ Object.keys(dropdownGroups)[0] }}</p>
+           <p>data : {{ productListResponse?.data }}</p>
+        </div>
+
         <section class="mt-4 space-y-6 pb-20">
-          <div v-if="pending" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-            <p class="text-slate-400 font-medium">กำลังโหลดข้อมูลสินค้า...</p>
+          <div v-if="pending && !hasLoadedGroups" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
+            <p class="text-slate-400 font-medium tracking-widest animate-pulse">LOADING API...</p>
           </div>
-          <div v-else-if="error" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
-            <p class="text-slate-400 font-medium">โหลดข้อมูลสินค้าไม่สำเร็จ</p>
-          </div>
-          <div v-else-if="filteredDetails.length === 0" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
+          
+          <div v-else-if="filteredProductItems.length === 0 && !productListPending" class="flex flex-col items-center justify-center py-20 bg-white rounded-2xl border-2 border-dashed border-slate-200">
             <Icon icon="mdi:package-variant-closed" class="w-16 h-16 text-slate-200 mb-4" />
-            <p class="text-slate-400 font-medium">ไม่พบสินค้าที่คุณต้องการ</p>
+            <p class="text-slate-400 font-medium">ไม่พบสินค้าในหมวดหมู่นี้</p>
           </div>
+
           <template v-else>
-            <div v-for="(taggedGroups, tagName) in dropdownGroups" :key="tagName">
-              <ProductDropdown :label="tagName" :products="taggedGroups" :view-mode="viewMode" :is-open="dropdownStates[tagName]" @toggle="toggleDropdown(tagName)" />
+            <div v-for="(taggedProducts, tagName) in dropdownGroups" :key="tagName">
+              <ProductDropdown
+                :label="tagName"
+                :products="taggedProducts"
+                :view-mode="viewMode"
+                :is-open="dropdownStates[tagName]"
+                :active-category-name="activeCategoryName"
+                :active-sub-category-name="activeSubCategory"
+                @toggle="toggleDropdown(tagName)"
+                :table-headers="productListResponse?.data?.table_headers"
+              />
             </div>
           </template>
         </section>
@@ -314,27 +360,23 @@ useHead({ title: () => `${activeSubCategory.value || activeCategoryName.value} |
         <div class="bg-white w-full shadow-2xl z-10 flex flex-col overflow-hidden rounded-[2rem] max-h-[82vh] border border-slate-200 relative" :style="desktopStyles">
           <div class="p-5 border-b bg-slate-50/50 flex items-center justify-between">
             <div class="flex items-center gap-3">
-              <button v-if="tempCategory" class="p-2 bg-white rounded-full text-[#0D95DA]" @click="tempCategory = null">
-                <Icon icon="mdi:arrow-left" class="w-5 h-5" />
-              </button>
-              <span class="font-black text-slate-800 leading-tight">{{ tempCategory ? tempCategory.name : 'เลือกหมวดหมู่' }}</span>
+              <button v-if="tempCategory" class="p-2 bg-white rounded-full text-[#0D95DA]" @click="tempCategory = null"><Icon icon="mdi:arrow-left" /></button>
+              <span class="font-black text-slate-800">{{ tempCategory ? tempCategory.name : 'เลือกหมวดหมู่' }}</span>
             </div>
-            <button class="p-2 hover:bg-slate-100 rounded-full text-slate-400" @click="isQuickSelectOpen = false">
-              <Icon icon="mdi:close" class="w-5 h-5" />
-            </button>
+            <button @click="isQuickSelectOpen = false"><Icon icon="mdi:close" /></button>
           </div>
           <div class="flex-1 p-3 overflow-y-auto space-y-1 bg-white">
             <div v-if="!tempCategory" class="grid grid-cols-1 gap-1">
-              <button v-for="cat in categories" :key="cat.id" class="flex items-center gap-4 p-3.5 rounded-2xl hover:bg-blue-50 transition-all text-left group" @click="selectMainCategory(cat)">
-                <span class="text-2xl bg-slate-50 w-11 h-11 flex items-center justify-center rounded-xl group-hover:bg-white">{{ cat.icon }}</span>
+               <button v-for="cat in categories" :key="cat.id" class="flex items-center gap-4 p-3.5 rounded-2xl hover:bg-blue-50 text-left" @click="selectMainCategory(cat)">
+                <span class="text-2xl">{{ cat.icon }}</span>
                 <span class="font-bold text-slate-700 text-sm flex-1">{{ cat.name }}</span>
                 <Icon icon="mdi:chevron-right" class="text-slate-300" />
-              </button>
+               </button>
             </div>
             <div v-else class="space-y-1">
-              <button v-for="sub in tempCategory.subCats" :key="sub" class="w-full p-3.5 rounded-2xl text-left flex items-center justify-between" :class="activeSubCategory === sub ? 'bg-blue-50 text-[#0D95DA] font-bold' : 'text-slate-600'" @click="handleModalSelect(tempCategory.id, sub)">
-                <span class="text-sm">{{ sub }}</span>
-                <Icon :icon="activeSubCategory === sub ? 'mdi:check-circle' : 'mdi:chevron-right'" class="w-4 h-4" />
+              <button v-for="sub in tempCategory.subCats" :key="sub.id" class="w-full p-3.5 rounded-2xl text-left flex items-center justify-between" :class="activeSubCategoryId === sub.id ? 'bg-blue-50 text-[#0D95DA] font-bold' : 'text-slate-600'" @click="handleModalSelect(tempCategory.id, sub.id)">
+                <span class="text-sm">{{ sub.name }}</span>
+                <Icon :icon="activeSubCategoryId === sub.id ? 'mdi:check-circle' : 'mdi:chevron-right'" />
               </button>
             </div>
           </div>

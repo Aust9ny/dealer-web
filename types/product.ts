@@ -1,24 +1,16 @@
 // types/product.ts
 export interface Product {
-  id: number;
-  sku: string;
+  code?: string;
   name: string;
-  brand: string;
-  price: number;
-  category: string;
-  image: string;
-  brandImg? : string;
-  specs: string;
-  promotion?: string;
+  detail: string;
   warranty: string;
-  delivery?: string;
-  views?: string;
-  isHot?: boolean;
-  isDiscount?: boolean;
-  discountPercentage?: number;
-  isNew?: boolean;
-  isSale?: boolean;
-  stock?: number | 0;
-  isInStock? : boolean;
-  tag?: string; // This is the key for "Series" dropdowns
+  pack_qty:number;
+  stock?: number;
+  volume_prices: {
+    salesprice5: string;
+    salesprice4: string;
+    salesprice3: string;
+    salesprice2: string;
+  };
+  type : string;
 } 
